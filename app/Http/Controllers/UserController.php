@@ -7,16 +7,63 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function index()//get all users
+    /*
+    public function storeManager(Request $request)
     {
-      
-       // In your controller method
-      $users = User::simplepaginate(20); 
-      return view('users.users', compact('users'));
-        
-       /* $users = User::all(); // Fetch all users
-        return view('users.users', compact('users'));*/
+        // Validate the incoming data
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Create a new manager user
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'Manager', // Set the role to Manager
+        ]);
+
+        // Respond with success or the created user data
+        return response()->json([
+            'message' => 'Manager created successfully!',
+            'user' => $user,
+        ], 201); // 201 HTTP code indicates resource creation
     }
+        */
+        
+    public function createManager(Request $request)
+    {
+        $user = new User();
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = bcrypt($request->input('password'));
+        $user->role = $request->input('role', 'Manager'); // Default to Manager if missing
+        $user->save();
+        
+    }
+    
+
+    
+
+
+
+
+
+
+
+
+
+    public function index() // Get all users
+    {
+        // Use simple pagination for 20 users per page
+        $users = User::simplePaginate(20);
+
+        // Return paginated users as JSON
+        return response()->json($users);
+    }
+
 
     public function destroy($id)//delete
     {

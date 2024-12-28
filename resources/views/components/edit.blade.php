@@ -5,7 +5,7 @@
         
         <div class="my-3">
             <h1 class="text-center text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $title }}</h1>
-            <form action="{{ $formAction }}" method="POST">
+            <form id="{{ $formId }}" action="{{ $formAction }}" method="POST">
                 @csrf
                 @method('PUT')
                 @foreach ($fields as $field)

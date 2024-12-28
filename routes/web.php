@@ -8,6 +8,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\CartController;
 
+use App\Http\Middleware\CheckManagerRole;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,7 +27,7 @@ Route::get('/', function () {
 /*Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');*/
-Route::get('/dashboard', [ItemController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+//Route::get('/dashboard', [ItemController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -47,7 +48,23 @@ Route::get('/about', function () {
     return view('about');
 })->name('about');
 
+Route::middleware(['Manager'])->group(function () {
 
+    Route::get('/addmanager', function () {
+        return view('users.addmanager');
+    })->name('addmanager');
+
+    Route::get('/addsupply', function () {
+        return view('items.additem');
+    })->name('addsupply');
+
+
+
+
+    Route::get('/itemsupplier', function () {
+        return view('items.items');
+    })->name('itemsupplier');
+});
 
 //Cart Routes
 Route::post('cart/add/{itemId}', [CartController::class, 'addToCart'])->name('cart.add');
@@ -55,13 +72,20 @@ Route::delete('cart/remove/{itemId}', [CartController::class, 'removeFromCart'])
 Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 
 
-
-
+Route::get('/dashboard', function() {
+    return view('dashboard'); // The Blade view that contains the API fetch logic
+});
+Route::middleware(['Manager'])->group(function () {
+    Route::get('/users', function() {
+        return view('users.users'); // The Blade view that contains the API fetch logic
+    });
+});
 
 /*
+
 Route::get('/editsupply', function () {
     return view('items.editsupply');
-})->name('items.editsupply');*/
+})->name('items.editsupply');
 
 
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -83,7 +107,7 @@ Route::put('/itemsupply/{id}', [ItemSupplierController::class, 'update'])->name(
 
 
 
-Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');*/
 
 
 

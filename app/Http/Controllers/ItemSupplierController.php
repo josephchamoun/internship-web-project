@@ -8,15 +8,52 @@ use App\Models\Item;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
+
 class ItemSupplierController extends Controller
 {
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $itemsuppliers = ItemSupplier::with(['item', 'supplier'])->paginate(20);
-        return view('items.items', compact('itemsuppliers'));
+        // Paginate items, 20 per page
+        $items = ItemSupplier::with(['item', 'supplier'])->paginate(20);
+
+        // Return the paginated items as a JSON response
+        return response()->json($items);
     }
+
+
+
+    public function store(Request $request)
+    {
+       
+
+        $request->validate([
+            'itemname' => 'required|string|max:255',
+            'suppliername' => 'required|string|max:255',
+            'buyprice' => 'required|numeric',
+            'quantity' => 'required|integer',
+        ]);
+
+        // Find or create the item
+        $item = Item::firstOrCreate(['name' => $request->itemname]);
+
+        // Find or create the supplier
+        $supplier = Supplier::firstOrCreate(['name' => $request->suppliername]);
+
+        // Create the item-supplier relationship
+        $itemSupplier = ItemSupplier::create([
+            'item_id' => $item->id,
+            'supplier_id' => $supplier->id,
+            'buyprice' => $request->buyprice,
+            'quantity' => $request->quantity,
+        ]);
+
+        
+
+        return response()->json(['message' => 'Supply added successfully', 'itemSupplier' => $itemSupplier], 201);
+    }
+    
 
 
     public function destroy($id)//delete

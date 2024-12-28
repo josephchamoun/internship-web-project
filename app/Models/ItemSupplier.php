@@ -11,7 +11,7 @@ class ItemSupplier extends Model
 
     protected $table = 'item_supplier';
 
-    protected $fillable = ['item_id', 'supplier_id', 'quantity', 'price'];
+    protected $fillable = ['item_id', 'supplier_id', 'quantity', 'buyprice'];
 
     public function item()
     {

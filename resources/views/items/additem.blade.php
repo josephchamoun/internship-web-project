@@ -1,54 +1,80 @@
-<!--
-<script src="https://cdn.tailwindcss.com"></script>
-<div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-    
-     
-    <div class="container mx-auto max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl shadow-md dark:shadow-white py-4 px-6 sm:px-10 bg-white dark:bg-gray-800 border-emerald-500 rounded-md">
-    
-       
-        <a href="\dashboard" class="px-4 py-2 bg-red-500 rounded-md text-white text-sm sm:text-lg shadow-md">Go Back</a>
-        
-        <div class="my-3">
-          
-            <h1 class="text-center text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Add New Item</h1>
-            <form action="" method="POST">
-            
-                
-                <div class="my-2">
-                    <label for="name" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">Name</label>
-                    <input type="text" name="name" class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" id="name">
-                </div>
-
-                
-                <div class="my-2">
-                    <label for="first_name" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">Description</label>
-                    <input type="text" name="first_name" class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" id="first_name">
-                </div>
-
-              
-                <div class="my-2">
-                    <label for="class" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">Price</label>
-                    <input type="text" name="class" class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" id="class">
-                </div>
-
-               
-                <button class="px-4 py-1 bg-emerald-500 rounded-md text-black text-sm sm:text-lg shadow-md">Save</button>
-            </form>
-        </div>
-    </div>
-</div>
--->
-
-<!--ma7al l items store badde zid supplieritem store-->
 <x-add 
-    title="Add New Item" 
-    back-url="/items" 
-    form-action="/items/store" 
-    :fields="[
-        ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'id' => 'name'],
-        ['label' => 'Description', 'name' => 'description', 'type' => 'text', 'id' => 'description'],
-        ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity'],
-        ['label' => 'Price', 'name' => 'price', 'type' => 'text', 'id' => 'price'],
-        ['label' => 'Supplier', 'name' => 'itemsupplier', 'type' => 'text', 'id' => 'itemsupplier'],
+    title="Add New Supply" 
+    back-url="/itemsupplier" 
+    form-action="/api/itemsupplier/addsupply" 
+    form-id="itemsupplierForm"
+    :fields="[ 
+        ['label' => 'Item Name', 'name' => 'itemname', 'type' => 'text', 'id' => 'itemname'], 
+        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername'], 
+        ['label' => 'Buy Price', 'name' => 'buyprice', 'type' => 'text', 'id' => 'buyprice'], 
+        ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity'], 
     ]"
 />
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<script>
+document.querySelector('#itemsupplierForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    // Convert form data to JSON object
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify(data),
+        });
+
+        const contentType = response.headers.get('content-type');
+        let result;
+        if (response.ok) {
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                result = await response.json();
+            } else {
+                result = await response.text();
+            }
+            console.log('Form submission successful:', result);
+            // Redirect to /itemsupplier on success
+            window.location.href = '/itemsupplier';
+        } else {
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                result = await response.json();
+                console.log('Form submission failed:', result.errors);
+                displayErrors(result.errors); // Show errors if any
+            } else {
+                result = await response.text();
+                alert("An error occurred: " + result);
+            }
+        }
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        alert("There was a problem with the fetch operation");
+    }
+});
+
+function displayErrors(errors) {
+    const errorContainer = document.querySelector('#error-container');
+    errorContainer.innerHTML = ''; // Clear any existing errors
+
+    for (const field in errors) {
+        const errorList = errors[field];
+        errorList.forEach(error => {
+            const errorMessage = document.createElement('div');
+            errorMessage.classList.add('text-red-500');
+            errorMessage.textContent = `${field}: ${error}`;
+            errorContainer.appendChild(errorMessage);
+        });
+    }
+}
+</script>

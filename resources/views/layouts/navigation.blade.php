@@ -14,37 +14,40 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="url('/dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
 
+                @if (Auth::check() && Auth::user()->role === 'Manager')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('items.index')" :active="request()->routeIs('items.index')">
-                        {{ __('Items') }}
+                    <x-nav-link :href="url('/itemsupplier')" :active="request()->routeIs('itemsupplier')" >
+                        {{ __('Supplies') }}
                     </x-nav-link>
                 </div>
-
+                @endif
+                @if (Auth::check() && Auth::user()->role === 'Manager')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                    <x-nav-link :href="url('/users')" :active="request()->routeIs('users')">
                         {{ __('Users') }}
                     </x-nav-link>
                 </div>
-
+                @endif
+                @if (Auth::check() && Auth::user()->role === 'Manager')
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.index')">
+                    <x-nav-link >
                         {{ __('Suppliers') }}
                     </x-nav-link>
                 </div>
-
+                @endif
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+                    <x-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
                         {{ __('Contact') }}
                     </x-nav-link>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('about')" :active="request()->routeIs('about')">
+                    <x-nav-link :href="url('/about')" :active="request()->routeIs('about')">
                         {{ __('About') }}
                     </x-nav-link>
                 </div>
@@ -109,27 +112,27 @@
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('items.index')" :active="request()->routeIs('items.index')">
+            <x-responsive-nav-link >
                 {{ __('Items') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+            <x-responsive-nav-link >
                 {{ __('Users') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('suppliers.index')" :active="request()->routeIs('suppliers.index')">
+            <x-responsive-nav-link >
                 {{ __('Suppliers') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('contact')" :active="request()->routeIs('contact')">
+            <x-responsive-nav-link>
                 {{ __('Contact') }}
             </x-responsive-nav-link>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('about')" :active="request()->routeIs('about')">
+            <x-responsive-nav-link>
                 {{ __('About') }}
             </x-responsive-nav-link>
         </div>

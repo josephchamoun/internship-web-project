@@ -54,8 +54,9 @@ Route::prefix('itemsupplier')->middleware('Manager')->group(function () {
 });
 
 
-Route::prefix('suppliers')->group(function () {
+Route::prefix('suppliers')->middleware('Manager')->group(function () {
     Route::get('/', [SupplierController::class, 'index']);
+    Route::post('/addsupplier', [SupplierController::class, 'store']);
 });
 
 

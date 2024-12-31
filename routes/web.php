@@ -58,6 +58,10 @@ Route::middleware(['Manager'])->group(function () {
         return view('items.additem');
     })->name('addsupply');
 
+    Route::get('/addsupplier', function () {
+        return view('suppliers.addsupplier');
+    })->name('addsupplier');
+
 
 
 

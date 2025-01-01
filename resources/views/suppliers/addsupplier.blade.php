@@ -4,10 +4,9 @@
     form-action="/api/suppliers/addsupplier" 
     form-id="supplierForm"
     :fields="[ 
-        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername'], 
-        ['label' => 'Email', 'name' => 'email', 'type' => 'text', 'id' => 'email'], 
+        ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'id' => 'name'], 
+        ['label' => 'Email', 'name' => 'email', 'type' => 'email', 'id' => 'email'], 
         ['label' => 'Phone', 'name' => 'phone', 'type' => 'text', 'id' => 'phone'], 
-    
     ]"
 />
 
@@ -45,7 +44,7 @@ document.querySelector('#supplierForm').addEventListener('submit', async (event)
                 result = await response.text();
             }
             console.log('Form submission successful:', result);
-            // Redirect to /itemsupplier on success
+            // Redirect to /suppliers on success
             window.location.href = '/suppliers';
         } else {
             if (contentType && contentType.indexOf('application/json') !== -1) {

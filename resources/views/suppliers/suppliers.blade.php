@@ -2,9 +2,9 @@
     <x-slot name="header">
         <div class="flex items-center space-x-2 justify-between">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Supplier') }}
+                {{ __('Suppliers') }}
             </h2>
-            <!-- Button to Add Manager -->
+            <!-- Button to Add Supplier -->
             @if (Auth::check() && Auth::user()->role === 'Manager')
             <x-add-button url="/addsupplier">
                 Add Supplier
@@ -28,9 +28,9 @@
     <script>
         let currentPage = 1; // Track the current page
 
-        async function fetchItemsupplier(page = 1) {
+        async function fetchSuppliers(page = 1) {
             try {
-                const response = await fetch(`/api/itemsupplier?page=${page}`, {
+                const response = await fetch(`/api/suppliers?page=${page}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('token'), // Include token for authenticated requests
@@ -49,26 +49,17 @@
                 itemsContainer.innerHTML = '';
 
                 // Populate the items
-                data.data.forEach(supplier => { // `data.data` contains the paginated items
-                    const itemCard = `
+                data.data.forEach(supplier => { // `data.data` contains the paginated suppliers
+                    const supplierCard = `
                         <div class="bg-white shadow rounded-lg p-4">
-                            <figure>
-                                <img src="${item.image_url}" alt="${item.name}" class="w-full rounded-lg" />
-                            </figure>
                             <div class="mt-4">
-                                <h5 class="font-semibold text-lg">Supplier name: ${supplier.name}</h5>
-                                <h5 class="font-semibold text-lg">Email: ${supplier.email}</h5>
-                                <p class="text-gray-600 mt-2">Phone: ${phone}</p>
-
-                                <div class="mt-4 flex gap-2">
-                                    <form action="/cart/add/${item.id}" method="POST">
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit Supply</button>
-                                    </form>
-                                </div>
+                                <h5 class="font-semibold text-lg">${supplier.name}</h5>
+                                <p class="text-gray-600 mt-2">Email: ${supplier.email}</p>
+                                <p class="text-gray-600 mt-2">Phone: ${supplier.phone}</p>
                             </div>
                         </div>
                     `;
-                    itemsContainer.innerHTML += itemCard;
+                    itemsContainer.innerHTML += supplierCard;
                 });
 
                 // Handle pagination (Next and Previous buttons)
@@ -84,7 +75,7 @@
                         const prevButton = document.createElement('button');
                         prevButton.textContent = 'Previous';
                         prevButton.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
-                        prevButton.onclick = () => fetchItemsupplier(prevPage);
+                        prevButton.onclick = () => fetchSuppliers(prevPage);
                         paginationContainer.appendChild(prevButton);
                     }
 
@@ -93,7 +84,7 @@
                         const nextButton = document.createElement('button');
                         nextButton.textContent = 'Next';
                         nextButton.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
-                        nextButton.onclick = () => fetchItemsupplier(nextPage);
+                        nextButton.onclick = () => fetchSuppliers(nextPage);
                         paginationContainer.appendChild(nextButton);
                     }
                 }
@@ -103,7 +94,7 @@
         }
 
         // Initial fetch
-        fetchItemsupplier();
+        fetchSuppliers();
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>

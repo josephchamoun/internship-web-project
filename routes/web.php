@@ -62,7 +62,9 @@ Route::middleware(['Manager'])->group(function () {
         return view('suppliers.addsupplier');
     })->name('addsupplier');
 
-
+    Route::get('/suppliers', function () {
+        return view('suppliers.suppliers');
+    })->name('itemsupplier');
 
 
     Route::get('/itemsupplier', function () {

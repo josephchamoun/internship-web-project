@@ -27,9 +27,10 @@ class CartController extends Controller
                 'name' => $item->name,
                 'quantity' => 1,
                 'price' => $item->price,
-                'image' => $item->image, // Assuming you have an image column for items
+                
             ];
         }
+        
 
         // Save the updated cart in the session
         session()->put('cart', $cart);

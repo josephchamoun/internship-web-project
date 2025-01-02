@@ -78,7 +78,7 @@ Route::middleware(['Manager'])->group(function () {
 });
 
 //Cart Routes
-Route::post('cart/add/{itemId}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('cart/add/{itemId}', [CartController::class, 'addToCart']);
 Route::delete('cart/remove/{itemId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 

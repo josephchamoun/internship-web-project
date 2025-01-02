@@ -7,6 +7,8 @@ use App\Models\ItemSupplier;
 use App\Models\Item;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 
 class ItemSupplierController extends Controller
@@ -23,36 +25,50 @@ class ItemSupplierController extends Controller
     }
 
 
-
     public function store(Request $request)
     {
-       
-
         $request->validate([
             'itemname' => 'required|string|max:255',
             'suppliername' => 'required|string|max:255',
             'buyprice' => 'required|numeric',
-            'quantity' => 'required|integer',
+            'quantity' => 'required|integer|min:1',
         ]);
-
-        // Find or create the item
-        $item = Item::firstOrCreate(['name' => $request->itemname]);
-
-        // Find or create the supplier
-        $supplier = Supplier::firstOrCreate(['name' => $request->suppliername]);
-
-        // Create the item-supplier relationship
-        $itemSupplier = ItemSupplier::create([
-            'item_id' => $item->id,
-            'supplier_id' => $supplier->id,
-            'buyprice' => $request->buyprice,
-            'quantity' => $request->quantity,
-        ]);
-
-        
-
-        return response()->json(['message' => 'Supply added successfully', 'itemSupplier' => $itemSupplier], 201);
+    
+        DB::transaction(function () use ($request) {
+           
+            $item = Item::where('name', $request->itemname)->first();
+    
+         
+            if (!$item) {
+              
+                return response()->json(['error' => 'Item does not exist.'], 400);
+            }
+    
+          
+            $item->quantity += $request->quantity;
+            $item->save();
+    
+            
+            $supplier = Supplier::where('name', $request->suppliername)->first();
+    
+          
+            if (!$supplier) {
+                return response()->json(['error' => 'Supplier does not exist.'], 400);
+            }
+    
+           
+            ItemSupplier::create([
+                'item_id' => $item->id,
+                'supplier_id' => $supplier->id,
+                'buyprice' => $request->buyprice,
+                'quantity' => $request->quantity,
+            ]);
+        });
+    
+        return response()->json(['message' => 'Supply added successfully'], 201);
     }
+    
+    
     
 
 
@@ -61,7 +77,7 @@ class ItemSupplierController extends Controller
         $itemsupplier = ItemSupplier::find($id);
 
         if ($itemsupplier) {
-            $itemsupplier->delete(); // Deletes the user
+            $itemsupplier->delete();
             return redirect()->route('items.index')->with('success', 'User deleted successfully.');
         } else {
             return redirect()->route('items.index')->with('error', 'User not found.');

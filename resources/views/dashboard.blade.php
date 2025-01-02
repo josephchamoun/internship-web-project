@@ -4,6 +4,11 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
+        @if (Auth::check() && Auth::user()->role === 'Manager')
+        <x-add-button url="/additem">
+            Add New Item
+        </x-add-button>
+        @endif
     </div>
 </x-slot>
 
@@ -54,12 +59,13 @@
                             <h5 class="font-semibold text-lg">${item.name}</h5>
                             <p class="text-gray-600 mt-2">${item.description}</p>
                             <p class="text-gray-600 mt-2">${item.price} $</p>
+                            <p class="text-gray-600 mt-2">${item.quantity} left</p>
                             <div class="mt-4 flex gap-2">
                                 <form action="/cart/add/${item.id}" method="POST">
                                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to cart</button>
-                                    @if (Auth::check() && Auth::user()->role === 'Manager')
-                                    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button>
-                                    @endif
+                        @if (Auth::check() && Auth::user()->role === 'Manager')
+                        <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                        @endif
                                 </form>
                             </div>
                         </div>

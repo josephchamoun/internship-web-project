@@ -54,6 +54,11 @@ Route::middleware(['Manager'])->group(function () {
         return view('users.addmanager');
     })->name('addmanager');
 
+    Route::get('/additem', function () {
+        return view('items.addnewitem');
+    })->name('additem');
+    Route::get('/items/{id}/edit', [ItemController::class, 'edit'])->name('items.edit');
+
     Route::get('/addsupply', function () {
         return view('items.additem');
     })->name('addsupply');
@@ -73,7 +78,7 @@ Route::middleware(['Manager'])->group(function () {
 });
 
 //Cart Routes
-Route::post('cart/add/{itemId}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('cart/add/{itemId}', [CartController::class, 'addToCart']);
 Route::delete('cart/remove/{itemId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 

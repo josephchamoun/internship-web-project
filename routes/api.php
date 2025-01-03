@@ -59,6 +59,17 @@ Route::prefix('suppliers')->middleware('Manager')->group(function () {
     Route::post('/addsupplier', [SupplierController::class, 'store']);
 });
 
+Route::prefix('items')->middleware('Manager')->group(function () {
+    Route::get('/', [ItemController::class, 'index']);
+    Route::post('/addnewitem', [ItemController::class, 'store']);
+    Route::put('/edit/{id}', [ItemController::class, 'update']);
+
+});
+
+
+
+
+
 
 
 

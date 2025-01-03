@@ -56,6 +56,9 @@
                                 <h5 class="font-semibold text-lg">${supplier.name}</h5>
                                 <p class="text-gray-600 mt-2">Email: ${supplier.email}</p>
                                 <p class="text-gray-600 mt-2">Phone: ${supplier.phone}</p>
+                                @if (Auth::check() && Auth::user()->role === 'Manager')
+                                    <a href="/suppliers/${supplier.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                                @endif
                             </div>
                         </div>
                     `;

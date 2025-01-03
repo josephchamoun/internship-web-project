@@ -26,4 +26,26 @@ class SupplierController extends Controller
         
     }
 
+    
+    public function edit($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        return view('suppliers.editsupplier', compact('supplier'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255|unique:suppliers,phone,' . $id,
+            'email' => 'required|email|max:255|unique:suppliers,email,' . $id
+            
+        ]);
+
+        $supplier = Supplier::findOrFail($id);
+        $supplier->update($request->all());
+
+        return response()->json(['message' => 'Supplier updated successfully', 'supplier' => $supplier], 200);
+    }
+    
 }

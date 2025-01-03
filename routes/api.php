@@ -48,15 +48,14 @@ Route::middleware(['Manager'])->group(function () {
 Route::prefix('itemsupplier')->middleware('Manager')->group(function () {
     Route::get('/', [ItemSupplierController::class, 'index']);
     Route::post('/addsupply', [ItemSupplierController::class, 'store']);
-    Route::delete('/{id}', [ItemSupplierController::class, 'destroy']);
-    Route::get('/{id}/edit', [ItemSupplierController::class, 'edit']);
-    Route::put('/{id}', [ItemSupplierController::class, 'update']);
+    Route::put('/edit/{id}', [ItemSupplierController::class, 'update']);
 });
 
 
 Route::prefix('suppliers')->middleware('Manager')->group(function () {
     Route::get('/', [SupplierController::class, 'index']);
     Route::post('/addsupplier', [SupplierController::class, 'store']);
+    Route::put('/edit/{id}', [SupplierController::class, 'update']);
 });
 
 Route::prefix('items')->middleware('Manager')->group(function () {

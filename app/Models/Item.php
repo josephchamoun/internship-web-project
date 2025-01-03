@@ -14,5 +14,11 @@ class Item extends Model
     public function suppliers()
     {
         return $this->belongsToMany(Supplier::class, 'item_supplier');
+        
     }
+    public function orders()
+        {
+            return $this->belongsToMany(Order::class, 'itemorder')->withPivot('quantity')->withTimestamps();
+        }
+
 }

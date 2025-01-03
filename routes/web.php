@@ -63,18 +63,28 @@ Route::middleware(['Manager'])->group(function () {
         return view('items.additem');
     })->name('addsupply');
 
+
+
+
+
     Route::get('/addsupplier', function () {
         return view('suppliers.addsupplier');
     })->name('addsupplier');
+
+    Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
 
     Route::get('/suppliers', function () {
         return view('suppliers.suppliers');
     })->name('itemsupplier');
 
 
+
+
+
     Route::get('/itemsupplier', function () {
         return view('items.items');
     })->name('itemsupplier');
+    Route::get('/itemsupplier/{id}/edit', [ItemSupplierController::class, 'edit']);
 });
 
 //Cart Routes

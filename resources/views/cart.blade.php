@@ -14,8 +14,8 @@
       @foreach ($cart as $itemId => $item)
    <div class="md:flex items-stretch py-8 md:py-10 lg:py-8 border-t border-gray-50">
      <div class="md:w-4/12 2xl:w-1/4 w-full">
-       <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="h-full object-center object-cover md:block hidden" />
-       <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="md:hidden w-full h-full object-center object-cover" />
+       <!--hon l image-->
+       <!--hon l image-->
      </div>
      <div class="md:pl-3 md:w-8/12 2xl:w-3/4 flex flex-col justify-center">
 

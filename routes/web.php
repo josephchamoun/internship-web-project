@@ -54,6 +54,11 @@ Route::middleware(['Manager'])->group(function () {
         return view('users.addmanager');
     })->name('addmanager');
 
+    Route::get('/additem', function () {
+        return view('items.addnewitem');
+    })->name('additem');
+    Route::get('/items/{id}/edit', [ItemController::class, 'edit'])->name('items.edit');
+
     Route::get('/addsupply', function () {
         return view('items.additem');
     })->name('addsupply');
@@ -61,13 +66,29 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
+
+    Route::get('/addsupplier', function () {
+        return view('suppliers.addsupplier');
+    })->name('addsupplier');
+
+    Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+
+    Route::get('/suppliers', function () {
+        return view('suppliers.suppliers');
+    })->name('itemsupplier');
+
+
+
+
+
     Route::get('/itemsupplier', function () {
         return view('items.items');
     })->name('itemsupplier');
+    Route::get('/itemsupplier/{id}/edit', [ItemSupplierController::class, 'edit']);
 });
 
 //Cart Routes
-Route::post('cart/add/{itemId}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('cart/add/{itemId}', [CartController::class, 'addToCart']);
 Route::delete('cart/remove/{itemId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 

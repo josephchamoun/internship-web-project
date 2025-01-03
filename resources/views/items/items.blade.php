@@ -62,9 +62,9 @@
                                 <p class="text-gray-600 mt-2">Buy Price: ${item.buyprice} $</p>
                                 <p class="text-gray-600 mt-2">Supplied At: ${item.created_at}</p>
                                 <div class="mt-4 flex gap-2">
-                                    <form action="/cart/add/${item.id}" method="POST">
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit Supply</button>
-                                    </form>
+                                @if (Auth::check() && Auth::user()->role === 'Manager')
+                                    <a href="/itemsupplier/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                                @endif
                                 </div>
                             </div>
                         </div>

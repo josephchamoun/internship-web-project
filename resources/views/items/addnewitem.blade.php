@@ -1,22 +1,23 @@
-<!-- filepath: /resources/views/items/edititem.blade.php -->
-<x-edit 
-    title="Edit Supply" 
-    back-url="/itemsupplier" 
-    form-action="/api/itemsupplier/edit/{{ $itemsupplier->id }}"
-    form-id="editSupplierForm"
-    :fields="[
-            
-        ['label' => 'Item Name', 'name' => 'itemname', 'type' => 'text', 'id' => 'itemname', 'value' => $itemsupplier->item->name],
-        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername', 'value' => $itemsupplier->supplier->name], 
-        ['label' => 'Buy Price', 'name' => 'buyprice', 'type' => 'text', 'id' => 'buyprice', 'value' => $itemsupplier->buyprice], 
-        ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity', 'value' => $itemsupplier->quantity],
-
+<x-add 
+    title="Add New Item" 
+    back-url="/dashboard" 
+    form-action="/api/items/addnewitem" 
+    form-id="itemForm"
+    :fields="[ 
+        ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'id' => 'name'], 
+        ['label' => 'Description', 'name' => 'description', 'type' => 'text', 'id' => 'description'], 
+        ['label' => 'Price', 'name' => 'price', 'type' => 'text', 'id' => 'price'],
+         
+         
     ]"
 />
+
+
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script>
-document.querySelector('#editSupplierForm').addEventListener('submit', async (event) => {
+document.querySelector('#itemForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const form = event.target;
@@ -30,7 +31,7 @@ document.querySelector('#editSupplierForm').addEventListener('submit', async (ev
 
     try {
         const response = await fetch(form.action, {
-            method: 'PUT', // Use PUT method for updating resources
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -47,8 +48,8 @@ document.querySelector('#editSupplierForm').addEventListener('submit', async (ev
                 result = await response.text();
             }
             console.log('Form submission successful:', result);
-            // Redirect to /items on success
-            window.location.href = '/itemsupplier';
+            // Redirect to /suppliers on success
+            window.location.href = '/dashboard';
         } else {
             if (contentType && contentType.indexOf('application/json') !== -1) {
                 result = await response.json();
@@ -80,4 +81,3 @@ function displayErrors(errors) {
     }
 }
 </script>
-

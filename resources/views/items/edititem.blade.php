@@ -1,22 +1,20 @@
 <!-- filepath: /resources/views/items/edititem.blade.php -->
 <x-edit 
-    title="Edit Supply" 
-    back-url="/itemsupplier" 
-    form-action="/api/itemsupplier/edit/{{ $itemsupplier->id }}"
-    form-id="editSupplierForm"
-    :fields="[
-            
-        ['label' => 'Item Name', 'name' => 'itemname', 'type' => 'text', 'id' => 'itemname', 'value' => $itemsupplier->item->name],
-        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername', 'value' => $itemsupplier->supplier->name], 
-        ['label' => 'Buy Price', 'name' => 'buyprice', 'type' => 'text', 'id' => 'buyprice', 'value' => $itemsupplier->buyprice], 
-        ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity', 'value' => $itemsupplier->quantity],
-
+    title="Edit Item" 
+    back-url="/dashboard" 
+    form-action="/api/items/edit/{{ $item->id }}"
+    form-id="editItemForm"
+    :fields="[ 
+        ['label' => 'Item Name', 'name' => 'name', 'type' => 'text', 'id' => 'name', 'value' => $item->name], 
+        ['label' => 'Description', 'name' => 'description', 'type' => 'text', 'id' => 'description', 'value' => $item->description], 
+        ['label' => 'Price', 'name' => 'price', 'type' => 'text', 'id' => 'price', 'value' => $item->price], 
+        ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity', 'value' => $item->quantity], 
     ]"
 />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script>
-document.querySelector('#editSupplierForm').addEventListener('submit', async (event) => {
+document.querySelector('#editItemForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const form = event.target;
@@ -48,7 +46,7 @@ document.querySelector('#editSupplierForm').addEventListener('submit', async (ev
             }
             console.log('Form submission successful:', result);
             // Redirect to /items on success
-            window.location.href = '/itemsupplier';
+            window.location.href = '/dashboard';
         } else {
             if (contentType && contentType.indexOf('application/json') !== -1) {
                 result = await response.json();
@@ -80,4 +78,3 @@ function displayErrors(errors) {
     }
 }
 </script>
-

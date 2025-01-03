@@ -1,16 +1,13 @@
 <!-- filepath: /resources/views/items/edititem.blade.php -->
 <x-edit 
-    title="Edit Supply" 
-    back-url="/itemsupplier" 
-    form-action="/api/itemsupplier/edit/{{ $itemsupplier->id }}"
+    title="Edit Supplier" 
+    back-url="/suppliers" 
+    form-action="/api/suppliers/edit/{{ $supplier->id }}"
     form-id="editSupplierForm"
-    :fields="[
-            
-        ['label' => 'Item Name', 'name' => 'itemname', 'type' => 'text', 'id' => 'itemname', 'value' => $itemsupplier->item->name],
-        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername', 'value' => $itemsupplier->supplier->name], 
-        ['label' => 'Buy Price', 'name' => 'buyprice', 'type' => 'text', 'id' => 'buyprice', 'value' => $itemsupplier->buyprice], 
-        ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity', 'value' => $itemsupplier->quantity],
-
+    :fields="[ 
+        ['label' => 'Supplier Name', 'name' => 'name', 'type' => 'text', 'id' => 'name', 'value' => $supplier->name], 
+        ['label' => 'Phone', 'name' => 'phone', 'type' => 'text', 'id' => 'phone', 'value' => $supplier->phone], 
+        ['label' => 'Email', 'name' => 'email', 'type' => 'text', 'id' => 'email', 'value' => $supplier->email], 
     ]"
 />
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -48,7 +45,7 @@ document.querySelector('#editSupplierForm').addEventListener('submit', async (ev
             }
             console.log('Form submission successful:', result);
             // Redirect to /items on success
-            window.location.href = '/itemsupplier';
+            window.location.href = '/suppliers';
         } else {
             if (contentType && contentType.indexOf('application/json') !== -1) {
                 result = await response.json();
@@ -80,4 +77,3 @@ function displayErrors(errors) {
     }
 }
 </script>
-

@@ -74,12 +74,7 @@ class ItemSupplierController extends Controller
 
     public function edit($id)
     {
-        $itemsupplier = ItemSupplier::findOrFail($id);
-        
-        if (!is_object($itemsupplier)) {
-            return response()->json(['message' => 'ItemSupplier not found'], 404);
-        }
-
+        $itemsupplier = ItemSupplier::with(['item', 'supplier'])->findOrFail($id);
         return view('items.editsupply', compact('itemsupplier'));
     }
 
@@ -93,16 +88,39 @@ class ItemSupplierController extends Controller
         ]);
 
         $itemsupplier = ItemSupplier::findOrFail($id);
-        
-        if (!is_object($itemsupplier)) {
-            return response()->json(['message' => 'ItemSupplier not found'], 404);
+
+        // Fetch the item and supplier by their names
+        $item = Item::where('name', $request->itemname)->first();
+        $supplier = Supplier::where('name', $request->suppliername)->first();
+
+        if (!$item) {
+            return response()->json(['message' => 'Item not found'], 404);
         }
 
-        $itemsupplier->update($request->all());
+        if (!$supplier) {
+            return response()->json(['message' => 'Supplier not found'], 404);
+        }
+
+
+        $oldquantity=$item->quantity;
+        $quantitytoremove=$itemsupplier->quantity;
+        $newoldquantity=$oldquantity-$quantitytoremove;
+        $quantitytoadd=$request->quantity;
+
+        $finalquantity=$newoldquantity+$quantitytoadd;
+        $item->quantity=$finalquantity;
+        $item->save();
+        
+
+        // Update the ItemSupplier record with the item_id and supplier_id
+        $itemsupplier->item_id = $item->id;
+        $itemsupplier->supplier_id = $supplier->id;
+        $itemsupplier->buyprice = $request->buyprice;
+        $itemsupplier->quantity = $request->quantity;
+        $itemsupplier->save();
 
         return response()->json(['message' => 'ItemSupplier updated successfully', 'itemsupplier' => $itemsupplier], 200);
     }
-    
 }
     
 

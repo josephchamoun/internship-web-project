@@ -5,11 +5,12 @@
     form-action="/api/itemsupplier/edit/{{ $itemsupplier->id }}"
     form-id="editSupplierForm"
     :fields="[
-    
+            
+        ['label' => 'Item Name', 'name' => 'itemname', 'type' => 'text', 'id' => 'itemname', 'value' => $itemsupplier->item->name],
+        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername', 'value' => $itemsupplier->supplier->name], 
         ['label' => 'Buy Price', 'name' => 'buyprice', 'type' => 'text', 'id' => 'buyprice', 'value' => $itemsupplier->buyprice], 
         ['label' => 'Quantity', 'name' => 'quantity', 'type' => 'text', 'id' => 'quantity', 'value' => $itemsupplier->quantity],
-        ['label' => 'Supplier Name', 'name' => 'suppliername', 'type' => 'text', 'id' => 'suppliername', 'value' => $itemsupplier->supplier_id->name],
-        ['label' => 'Item Name', 'name' => 'itemname', 'type' => 'text', 'id' => 'itemname', 'value' => $itemsupplier->item_id->name], 
+
     ]"
 />
 <meta name="csrf-token" content="{{ csrf_token() }}">

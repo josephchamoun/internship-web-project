@@ -15,6 +15,11 @@ class Order extends Model
     {
         return $this->belongsToMany(Item::class, 'itemorder')->withPivot('quantity')->withTimestamps();
     }
+    
+        public function user()
+        {
+            return $this->belongsTo(User::class);
+        }
 
 
 }

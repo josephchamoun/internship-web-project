@@ -11,6 +11,20 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+
+
+
+
+    public function index() // Get all orders
+    {
+        // Use simple pagination for 20 orders per page and load the user relationship
+        $orders = Order::with('user')->simplePaginate(20);
+    
+        // Return paginated orders with user information as JSON
+        return response()->json($orders);
+    }
+
+
     // Method for saving the order and its items via API
     public function saveOrder(Request $request)
     {

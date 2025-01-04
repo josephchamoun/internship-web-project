@@ -53,6 +53,9 @@ Route::get('/about', function () {
 Route::get('/myorders', function () {
     return view('orders.myorders');
 })->name('myorders');
+
+
+
 Route::middleware(['Manager'])->group(function () {
 
     Route::get('/addmanager', function () {

@@ -7,6 +7,8 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ItemOrderController;
 
 use App\Http\Middleware\CheckManagerRole;
 /*
@@ -48,6 +50,9 @@ Route::get('/about', function () {
     return view('about');
 })->name('about');
 
+Route::get('/myorders', function () {
+    return view('orders.myorders');
+})->name('myorders');
 Route::middleware(['Manager'])->group(function () {
 
     Route::get('/addmanager', function () {
@@ -63,7 +68,9 @@ Route::middleware(['Manager'])->group(function () {
         return view('items.additem');
     })->name('addsupply');
 
-
+    Route::get('/usersorders', function () {
+        return view('orders.usersorders');
+    })->name('usersorders');
 
 
 

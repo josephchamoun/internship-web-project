@@ -7,6 +7,8 @@ use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ItemOrderController;
 use App\Http\Controllers\Auth\LoginController;
 
 use App\Http\Middleware\CheckManagerRole;
@@ -62,6 +64,13 @@ Route::prefix('items')->middleware('Manager')->group(function () {
     Route::get('/', [ItemController::class, 'index']);
     Route::post('/addnewitem', [ItemController::class, 'store']);
     Route::put('/edit/{id}', [ItemController::class, 'update']);
+
+});
+
+Route::prefix('orders')->group(function () {
+    Route::get('/', [OrderController::class, 'index']);
+    Route::post('/addorder', [OrderController::class, 'saveOrder']);
+    
 
 });
 

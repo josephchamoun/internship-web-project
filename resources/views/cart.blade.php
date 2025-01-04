@@ -78,14 +78,22 @@
         Apply
     </button>
     <div class="border-t mt-8">
-        <div class="flex font-semibold justify-between py-6 text-sm uppercase">
-            <span>Total cost</span>
-            <span>${{ number_format($totalPrice + 10, 2) }}</span> <!-- Adding shipping cost -->
-        </div>
-        <button class="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">
-            Checkout
-        </button>
+    <div class="flex font-semibold justify-between py-6 text-sm uppercase">
+        <span>Total cost</span>
+        <span>${{ number_format($totalPrice + 10, 2) }}</span> <!-- Adding shipping cost -->
     </div>
+    <form action="{{ url('/api/orders/addorder') }}" method="POST">
+    @csrf
+    @foreach ($cart as $itemId => $item)
+        <input type="hidden" name="cart[{{ $loop->index }}][item_id]" value="{{ $itemId }}">
+        <input type="hidden" name="cart[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
+        <input type="hidden" name="cart[{{ $loop->index }}][price]" value="{{ $item['price'] }}">
+    @endforeach
+    <button type="submit" class="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">
+        Checkout
+    </button>
+</form>
+</div>
 </div>
 
   </div>

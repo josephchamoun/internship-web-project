@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('user');
-            $table->string('status')->default('pending');
-            $table->timestamps();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            $table->string('status')->default('pending'); 
+            $table->decimal('total_amount', 10, 2)->nullable();           
+            $table->timestamps(); 
         });
     }
+    
 
     /**
      * Reverse the migrations.

@@ -69,6 +69,7 @@ Route::prefix('items')->middleware('Manager')->group(function () {
 
 Route::prefix('orders')->group(function () {
     Route::get('/', [OrderController::class, 'index']);
+    Route::get('/myorders', [OrderController::class, 'MyOrdersindex']);
     Route::post('/addorder', [OrderController::class, 'saveOrder']);
     
 

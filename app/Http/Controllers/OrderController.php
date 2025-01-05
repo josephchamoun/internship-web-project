@@ -12,17 +12,43 @@ use Illuminate\Support\Facades\Validator;
 class OrderController extends Controller
 {
 
-
-
-
-    public function index() // Get all orders
+    public function index()//Gets all orders with their users
     {
-        // Use simple pagination for 20 orders per page and load the user relationship
         $orders = Order::with('user')->simplePaginate(20);
     
-        // Return paginated orders with user information as JSON
+        // Format the `updated_at` field for each order
+        $orders->getCollection()->transform(function ($order) {
+            $order->updated_at = \Carbon\Carbon::parse($order->updated_at)->format('Y-m-d H:i:s');
+            return $order;
+        });
+    
         return response()->json($orders);
     }
+
+
+    public function MyOrdersindex() // Gets all orders for the authenticated user
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+    
+        // Get all orders belonging to the authenticated user, with pagination
+        $orders = Order::where('user_id', $user->id)
+            ->with('user') // Load the user relationship (optional, since you already have the user)
+            ->simplePaginate(20);
+    
+        // Format the `updated_at` field for each order
+        $orders->getCollection()->transform(function ($order) {
+            $order->updated_at = \Carbon\Carbon::parse($order->updated_at)->format('Y-m-d H:i:s');
+            return $order;
+        });
+       
+    
+        // Return the orders as a JSON response
+        return response()->json($orders);
+    }
+    
+    
+
 
 
     // Method for saving the order and its items via API

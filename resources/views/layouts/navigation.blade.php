@@ -47,13 +47,13 @@
                     </x-nav-link>
                 </div>
                 @endif
-                @if (Auth::check() && Auth::user()->role === 'Manager')
+                
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="url('/myorders')" :active="request()->routeIs('myorders')">
                         {{ __('My Orders') }}
                     </x-nav-link>
                 </div>
-                @endif
+                
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
                         {{ __('Contact') }}

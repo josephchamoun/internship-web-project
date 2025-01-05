@@ -25,7 +25,7 @@
 
     async function fetchItems(page = 1) {
         try {
-            const response = await fetch(`/api/orders?page=${page}`, {
+            const response = await fetch(`/api/orders/myorders?page=${page}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
@@ -54,6 +54,7 @@
         <h5 class="font-semibold text-lg">${order.user.name}</h5>
        
         <p class="text-gray-600 mt-2">${order.total_amount} $</p>
+        <h5 class="font-semibold text-lg">${order.updated_at}</h5>
         
         <div class="mt-4 flex gap-2">
             <x-primary-button class="bg-blue-500 hover:bg-blue-600">View</x-primary-button>

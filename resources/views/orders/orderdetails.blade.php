@@ -1,137 +1,179 @@
-<!-- component -->
-<script src="https://cdn.tailwindcss.com"></script>
-<div class="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto">
-
-  <!--- more free and premium Tailwind CSS components at https://tailwinduikit.com/ --->
-
-  <div class="flex justify-start item-start space-y-2 flex-col">
-    <h1 class="text-3xl dark:text-white lg:text-4xl font-semibold leading-7 lg:leading-9 text-gray-800">Order #13432</h1>
-    <p class="text-base dark:text-gray-300 font-medium leading-6 text-gray-600">21st Mart 2021 at 10:34 PM</p>
-  </div>
-  <div class="mt-10 flex flex-col xl:flex-row jusitfy-center items-stretch w-full xl:space-x-8 space-y-4 md:space-y-6 xl:space-y-0">
-    <div class="flex flex-col justify-start items-start w-full space-y-4 md:space-y-6 xl:space-y-8">
-      <div class="flex flex-col justify-start items-start dark:bg-gray-800 bg-gray-50 px-4 py-4 md:py-6 md:p-6 xl:p-8 w-full">
-        <p class="text-lg md:text-xl dark:text-white font-semibold leading-6 xl:leading-5 text-gray-800">Customer’s Cart</p>
-        <div class="mt-4 md:mt-6 flex flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full">
-          <div class="pb-4 md:pb-8 w-full md:w-40">
-            <img class="w-full hidden md:block" src="https://i.ibb.co/84qQR4p/Rectangle-10.png" alt="dress" />
-            <img class="w-full md:hidden" src="https://i.ibb.co/L039qbN/Rectangle-10.png" alt="dress" />
-          </div>
-          <div class="border-b border-gray-200 md:flex-row flex-col flex justify-between items-start w-full pb-8 space-y-4 md:space-y-0">
-            <div class="w-full flex flex-col justify-start items-start space-y-8">
-              <h3 class="text-xl dark:text-white xl:text-2xl font-semibold leading-6 text-gray-800">Premium Quaility Dress</h3>
-              <div class="flex justify-start items-start flex-col space-y-2">
-                <p class="text-sm dark:text-white leading-none text-gray-800"><span class="dark:text-gray-400 text-gray-300">Style: </span> Italic Minimal Design</p>
-                <p class="text-sm dark:text-white leading-none text-gray-800"><span class="dark:text-gray-400 text-gray-300">Size: </span> Small</p>
-                <p class="text-sm dark:text-white leading-none text-gray-800"><span class="dark:text-gray-400 text-gray-300">Color: </span> Light Blue</p>
-              </div>
-            </div>
-            <div class="flex justify-between space-x-8 items-start w-full">
-              <p class="text-base dark:text-white xl:text-lg leading-6">$36.00 <span class="text-red-300 line-through"> $45.00</span></p>
-              <p class="text-base dark:text-white xl:text-lg leading-6 text-gray-800">01</p>
-              <p class="text-base dark:text-white xl:text-lg font-semibold leading-6 text-gray-800">$36.00</p>
-            </div>
-          </div>
+<div class="container mx-auto px-4">
+    <!-- Order Info Section -->
+    <div id="order-info" class="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div>
+            <h2 class="text-2xl font-semibold mb-2">Order Details</h2>
+            <p class="text-gray-700 text-lg">
+                <span class="font-bold">Order Number:</span> <span id="order-number"></span>
+            </p>
+            <p class="text-gray-700 text-lg">
+                <span class="font-bold">Customer Name:</span> <span id="customer-name"></span>
+            </p>
+            <p class="text-gray-700 text-lg">
+                <span class="font-bold">Total Price:</span> $ <span id="total-price"></span>
+            </p>
         </div>
-        <div class="mt-6 md:mt-0 flex justify-start flex-col md:flex-row items-start md:items-center space-y-4 md:space-x-6 xl:space-x-8 w-full">
-          <div class="w-full md:w-40">
-            <img class="w-full hidden md:block" src="https://i.ibb.co/s6snNx0/Rectangle-17.png" alt="dress" />
-            <img class="w-full md:hidden" src="https://i.ibb.co/BwYWJbJ/Rectangle-10.png" alt="dress" />
-          </div>
-          <div class="flex justify-between items-start w-full flex-col md:flex-row space-y-4 md:space-y-0">
-            <div class="w-full flex flex-col justify-start items-start space-y-8">
-              <h3 class="text-xl dark:text-white xl:text-2xl font-semibold leading-6 text-gray-800">High Quaility Italic Dress</h3>
-              <div class="flex justify-start items-start flex-col space-y-2">
-                <p class="text-sm dark:text-white leading-none text-gray-800"><span class="dark:text-gray-400 text-gray-300">Style: </span> Italic Minimal Design</p>
-                <p class="text-sm dark:text-white leading-none text-gray-800"><span class="dark:text-gray-400 text-gray-300">Size: </span> Small</p>
-                <p class="text-sm dark:text-white leading-none text-gray-800"><span class="dark:text-gray-400 text-gray-300">Color: </span> Light Blue</p>
-              </div>
-            </div>
-            <div class="flex justify-between space-x-8 items-start w-full">
-              <p class="text-base dark:text-white xl:text-lg leading-6">$20.00 <span class="text-red-300 line-through"> $30.00</span></p>
-              <p class="text-base dark:text-white xl:text-lg leading-6 text-gray-800">01</p>
-              <p class="text-base dark:text-white xl:text-lg font-semibold leading-6 text-gray-800">$20.00</p>
-            </div>
-          </div>
+        <div>
+            <button id="save-changes" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mr-2">Save Changes</button>
+            <button id="cancel-order" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Cancel Order</button>
         </div>
-      </div>
-      <div class="flex justify-center flex-col md:flex-row flex-col items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
-        <div class="flex flex-col px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-50 dark:bg-gray-800 space-y-6">
-          <h3 class="text-xl dark:text-white font-semibold leading-5 text-gray-800">Summary</h3>
-          <div class="flex justify-center items-center w-full space-y-4 flex-col border-gray-200 border-b pb-4">
-            <div class="flex justify-between w-full">
-              <p class="text-base dark:text-white leading-4 text-gray-800">Subtotal</p>
-              <p class="text-base dark:text-gray-300 leading-4 text-gray-600">$56.00</p>
-            </div>
-            <div class="flex justify-between items-center w-full">
-              <p class="text-base dark:text-white leading-4 text-gray-800">Discount <span class="bg-gray-200 p-1 text-xs font-medium dark:bg-white dark:text-gray-800 leading-3 text-gray-800">STUDENT</span></p>
-              <p class="text-base dark:text-gray-300 leading-4 text-gray-600">-$28.00 (50%)</p>
-            </div>
-            <div class="flex justify-between items-center w-full">
-              <p class="text-base dark:text-white leading-4 text-gray-800">Shipping</p>
-              <p class="text-base dark:text-gray-300 leading-4 text-gray-600">$8.00</p>
-            </div>
-          </div>
-          <div class="flex justify-between items-center w-full">
-            <p class="text-base dark:text-white font-semibold leading-4 text-gray-800">Total</p>
-            <p class="text-base dark:text-gray-300 font-semibold leading-4 text-gray-600">$36.00</p>
-          </div>
-        </div>
-        <div class="flex flex-col justify-center px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-50 dark:bg-gray-800 space-y-6">
-          <h3 class="text-xl dark:text-white font-semibold leading-5 text-gray-800">Shipping</h3>
-          <div class="flex justify-between items-start w-full">
-            <div class="flex justify-center items-center space-x-4">
-              <div class="w-8 h-8">
-                <img class="w-full h-full" alt="logo" src="https://i.ibb.co/L8KSdNQ/image-3.png" />
-              </div>
-              <div class="flex flex-col justify-start items-center">
-                <p class="text-lg leading-6 dark:text-white font-semibold text-gray-800">DPD Delivery<br /><span class="font-normal">Delivery with 24 Hours</span></p>
-              </div>
-            </div>
-            <p class="text-lg font-semibold leading-6 dark:text-white text-gray-800">$8.00</p>
-          </div>
-          <div class="w-full flex justify-center items-center">
-            <button class="hover:bg-black dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 py-5 w-96 md:w-full bg-gray-800 text-base font-medium leading-4 text-white">View Carrier Details</button>
-          </div>
-        </div>
-      </div>
     </div>
-    <div class="bg-gray-50 dark:bg-gray-800 w-full xl:w-96 flex justify-between items-center md:items-start px-4 py-6 md:p-6 xl:p-8 flex-col">
-      <h3 class="text-xl dark:text-white font-semibold leading-5 text-gray-800">Customer</h3>
-      <div class="flex flex-col md:flex-row xl:flex-col justify-start items-stretch h-full w-full md:space-x-6 lg:space-x-8 xl:space-x-0">
-        <div class="flex flex-col justify-start items-start flex-shrink-0">
-          <div class="flex justify-center w-full md:justify-start items-center space-x-4 py-8 border-b border-gray-200">
-            <img src="https://i.ibb.co/5TSg7f6/Rectangle-18.png" alt="avatar" />
-            <div class="flex justify-start items-start flex-col space-y-2">
-              <p class="text-base dark:text-white font-semibold leading-4 text-left text-gray-800">David Kent</p>
-              <p class="text-sm dark:text-gray-300 leading-5 text-gray-600">10 Previous Orders</p>
-            </div>
-          </div>
 
-          <div class="flex justify-center text-gray-800 dark:text-white md:justify-start items-center space-x-4 py-4 border-b border-gray-200 w-full">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M3 7L12 13L21 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <p class="cursor-pointer text-sm leading-5 ">david89@gmail.com</p>
-          </div>
-        </div>
-        <div class="flex justify-between xl:h-full items-stretch w-full flex-col mt-6 md:mt-0">
-          <div class="flex justify-center md:justify-start xl:flex-col flex-col md:space-x-6 lg:space-x-8 xl:space-x-0 space-y-4 xl:space-y-12 md:space-y-0 md:flex-row items-center md:items-start">
-            <div class="flex justify-center md:justify-start items-center md:items-start flex-col space-y-4 xl:mt-8">
-              <p class="text-base dark:text-white font-semibold leading-4 text-center md:text-left text-gray-800">Shipping Address</p>
-              <p class="w-48 lg:w-full dark:text-gray-300 xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">180 North King Street, Northhampton MA 1060</p>
-            </div>
-            <div class="flex justify-center md:justify-start items-center md:items-start flex-col space-y-4">
-              <p class="text-base dark:text-white font-semibold leading-4 text-center md:text-left text-gray-800">Billing Address</p>
-              <p class="w-48 lg:w-full dark:text-gray-300 xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">180 North King Street, Northhampton MA 1060</p>
-            </div>
-          </div>
-          <div class="flex w-full justify-center items-center md:justify-start md:items-start">
-            <button class="mt-6 md:mt-0 dark:border-white dark:hover:bg-gray-900 dark:bg-transparent dark:text-white py-5 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 border border-gray-800 font-medium w-96 2xl:w-full text-base font-medium leading-4 text-gray-800">Edit Details</button>
-          </div>
-        </div>
-      </div>
+    <!-- Items Section -->
+    <div id="items-container" class="space-y-4">
+        <!-- Items will be populated by JavaScript -->
     </div>
-  </div>
+
+    <!-- Shipping Method Section -->
+    <div id="shipping-method" class="bg-white shadow rounded-lg p-4 mt-6">
+        <h3 class="text-xl font-semibold mb-2">Shipping Method</h3>
+        <select id="shipping-select" class="border rounded px-4 py-2">
+            <option value="10">Standard Shipping - $10</option>
+        </select>
+    </div>
 </div>
+<script>
+    let currentPage = 1; // Track the current page
+    const order_id = @json($order_id); // Embed the order_id in the JavaScript context
+    const shippingCost = 10; // Shipping cost
+
+    async function fetchItems(page = 1) {
+        try {
+            const response = await fetch(`/api/orders/myorder/details/${order_id}?page=${page}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+
+            const itemsContainer = document.getElementById('items-container');
+            const orderInfo = data.order_info; // Assuming order info is returned in `data.order_info`
+
+            // Clear existing items
+            itemsContainer.innerHTML = '';
+
+            // Populate order info
+            document.getElementById('order-number').textContent = orderInfo.order_number || 'N/A';
+            document.getElementById('customer-name').textContent = orderInfo.customer_name || 'N/A';
+            document.getElementById('total-price').textContent = (parseFloat(orderInfo.total_amount) + shippingCost).toFixed(2);
+
+            // Populate items
+            data.data.forEach(itemOrder => {
+                const itemCard = `
+<div class="bg-white shadow rounded-lg flex items-center p-4">
+    <div class="w-32 h-32 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
+        <img src="${itemOrder.item.image || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
+    </div>
+    <div class="ml-4 flex-1">
+        <h5 class="font-semibold text-lg">${itemOrder.item.name}</h5>
+        <p class="text-gray-500 text-sm">Quantity: 
+            <input type="number" value="${itemOrder.quantity}" min="1" class="quantity-input border rounded px-2 py-1" data-price="${itemOrder.item.price}">
+        </p>
+        <p class="text-gray-900 font-bold text-xl item-total-price">$${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}</p>
+        <button class="remove-item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 mt-2">Remove</button>
+    </div>
+</div>`;
+                itemsContainer.innerHTML += itemCard;
+            });
+
+            // Add event listeners to quantity inputs
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('input', (event) => {
+                    const quantity = event.target.value;
+                    const price = event.target.getAttribute('data-price');
+                    const totalPriceElement = event.target.closest('.flex-1').querySelector('.item-total-price');
+                    totalPriceElement.textContent = `$${(quantity * price).toFixed(2)}`;
+                    updateTotalPrice();
+                });
+            });
+
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const itemElement = event.target.closest('.bg-white');
+                    itemElement.remove();
+                    updateTotalPrice();
+                });
+            });
+
+            function updateTotalPrice() {
+                let totalPrice = 0;
+                document.querySelectorAll('.quantity-input').forEach(input => {
+                    const quantity = input.value;
+                    const price = input.getAttribute('data-price');
+                    totalPrice += quantity * price;
+                });
+                totalPrice += shippingCost; // Add shipping cost
+                document.getElementById('total-price').textContent = totalPrice.toFixed(2);
+            }
+
+        } catch (error) {
+            console.error('Error fetching items:', error);
+        }
+    }
+
+    // Load items when the page loads
+    document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
+
+    // Cancel order functionality
+    document.getElementById('cancel-order').addEventListener('click', async () => {
+        try {
+            const response = await fetch(`/api/orders/myorder/cancel/${order_id}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            alert('Order has been cancelled successfully.');
+            // Optionally, redirect to another page or update the UI
+        } catch (error) {
+            console.error('Error cancelling order:', error);
+            alert('Failed to cancel the order.');
+        }
+    });
+
+    // Save changes functionality
+    document.getElementById('save-changes').addEventListener('click', async () => {
+        try {
+            const items = [];
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const itemElement = input.closest('.flex-1');
+                const itemName = itemElement.querySelector('h5').textContent;
+                const quantity = input.value;
+                items.push({ name: itemName, quantity: quantity });
+            });
+
+            const response = await fetch(`/api/orders/myorder/update/${order_id}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ items: items })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            alert('Order has been updated successfully.');
+            // Optionally, refresh the page or update the UI
+        } catch (error) {
+            console.error('Error updating order:', error);
+            alert('Failed to update the order.');
+        }
+    });
+</script>
+<script src="https://cdn.tailwindcss.com"></script>

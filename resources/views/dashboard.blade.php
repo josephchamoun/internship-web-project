@@ -49,31 +49,32 @@
             paginationContainer.innerHTML = '';
 
             // Populate items
-                data.data.forEach(item => {
-                const itemCard = `
-                    <div class="bg-white shadow rounded-lg p-4">
-                        <figure>
-                            <img src="https://cdn.flyonui.com/fy-assets/components/card/image-9.png" alt="Watch" class="w-full rounded-lg" />
-                        </figure>
-                        <div class="mt-4">
-                            <h5 class="font-semibold text-lg">${item.name}</h5>
-                            <p class="text-gray-600 mt-2">${item.description}</p>
-                            <p class="text-gray-600 mt-2">${item.price} $</p>
-                            <p class="text-gray-600 mt-2">${item.quantity} left</p>
-                            <div class="mt-4 flex gap-2">
-                                <form action="/cart/add/${item.id}" method="POST">
-                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to cart</button>
-                                </form>
-                                @if (Auth::check() && Auth::user()->role === 'Manager')
-                                    <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                `;
-                itemsContainer.innerHTML += itemCard;
-            });
+            data.data.forEach(item => {
+    const itemCard = `
+        <div class="bg-white shadow rounded-lg p-4">
+            <figure>
+                <img src="https://cdn.flyonui.com/fy-assets/components/card/image-9.png" alt="Watch" class="w-full rounded-lg" />
+            </figure>
+            <div class="mt-4">
+                <h5 class="font-semibold text-lg">${item.name}</h5>
+                <p class="text-gray-600 mt-2">${item.description}</p>
+                <p class="text-gray-600 mt-2">${item.price} $</p>
+                <p class="text-gray-600 mt-2">${item.quantity} left</p>
+                <div class="mt-4 flex gap-2">
+                    <form action="/cart/add/${item.id}" method="POST">
+                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                        <input type="number" name="quantity" min="1" max="${item.quantity}" value="1" class="border rounded px-2 py-1 w-16">
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to cart</button>
+                    </form>
+                    @if (Auth::check() && Auth::user()->role === 'Manager')
+                        <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    `;
+    itemsContainer.innerHTML += itemCard;
+});
 
 
             // Pagination buttons

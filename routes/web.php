@@ -54,6 +54,10 @@ Route::get('/myorders', function () {
     return view('orders.myorders');
 })->name('myorders');
 
+Route::get('/myorder/details/{order_id}', function ($order_id) {
+    return view('orders.orderdetails', ['order_id' => $order_id]);
+});
+
 
 
 Route::middleware(['Manager'])->group(function () {

@@ -19,18 +19,19 @@ class CartController extends Controller
         // Retrieve the cart from the session or initialize it as an empty array
         $cart = session()->get('cart', []);
 
+        // Get the quantity from the request
+        $quantity = $request->input('quantity', 1);
+
         // Add the item to the cart, with the quantity
         if (isset($cart[$itemId])) {
-            $cart[$itemId]['quantity']++;
+            $cart[$itemId]['quantity'] += $quantity;
         } else {
             $cart[$itemId] = [
                 'name' => $item->name,
-                'quantity' => 1,
+                'quantity' => $quantity,
                 'price' => $item->price,
-                
             ];
         }
-        
 
         // Save the updated cart in the session
         session()->put('cart', $cart);

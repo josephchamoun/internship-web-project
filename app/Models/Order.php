@@ -10,7 +10,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'status'];
+    protected $fillable = ['user_id','total_amount', 'status'];
 
     public function items()
     {
@@ -21,6 +21,7 @@ class Order extends Model
         {
             return $this->belongsTo(User::class);
         }
+
         public function getUpdatedAtAttribute($value)
             {
                 return Carbon::parse($value)->format('Y-m-d H:i:s');

@@ -43,8 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
     
 });
 Route::middleware(['Manager'])->group(function () {
+    
+
     Route::post('/users/createmanager', [UserController::class, 'createManager']);
 });
+
 
 
 Route::prefix('itemsupplier')->middleware('Manager')->group(function () {
@@ -67,10 +70,18 @@ Route::prefix('items')->middleware('Manager')->group(function () {
 
 });
 
-Route::prefix('orders')->group(function () {
-    Route::get('/', [OrderController::class, 'index']);
+Route::prefix('orders')->group(function () { //my orders
+    
     Route::get('/myorders', [OrderController::class, 'MyOrdersindex']);
+    Route::get('/myorder/details/{orderId}', [ItemOrderController::class, 'MyOrderDetails']);
     Route::post('/addorder', [OrderController::class, 'saveOrder']);
+    
+    
+
+});
+Route::prefix('orders')->group(function () { //users orders
+    
+    Route::get('/', [OrderController::class, 'index']);
     
 
 });

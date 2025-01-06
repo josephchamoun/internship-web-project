@@ -75,9 +75,20 @@ Route::middleware(['Manager'])->group(function () {
         return view('items.additem');
     })->name('addsupply');
 
+
+
+
+
+
     Route::get('/usersorders', function () {
         return view('orders.usersorders');
     })->name('usersorders');
+
+    Route::get('/userorder/details/{order_id}', function ($order_id) {
+        return view('orders.userordersdetails', ['order_id' => $order_id]);
+    });
+
+
 
 
 

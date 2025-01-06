@@ -6,6 +6,8 @@
         <h1 class="font-semibold text-2xl">Shopping Cart</h1>
         <h2 class="font-semibold text-2xl">{{ $cartCount }} Items</h2>
       </div>
+      
+
 
       <!-- Items Section -->
       @foreach ($cart as $itemId => $item)
@@ -55,11 +57,8 @@
           <option>Standard shipping - $10.00</option>
         </select>
       </div>
-      <div class="py-10">
-        <label for="promo" class="font-semibold inline-block mb-3 text-sm uppercase">Promo Code</label>
-        <input type="text" id="promo" placeholder="Enter your code" class="p-2 text-sm w-full" />
-      </div>
-      <button class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase">Apply</button>
+
+      
       <div class="border-t mt-8">
         <div class="flex font-semibold justify-between py-6 text-sm uppercase">
           <span>Total cost</span>
@@ -75,6 +74,13 @@
           <input type="hidden" name="total_price" id="total_price" value="{{ $totalPrice + 10 }}">
           <button type="submit" class="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">Checkout</button>
         </form>
+        @if (session('error'))
+          <div class="font-semibold text-red-600" >
+              {{ session('error') }}
+          </div>
+        @endif
+
+
       </div>
     </div>
   </div>

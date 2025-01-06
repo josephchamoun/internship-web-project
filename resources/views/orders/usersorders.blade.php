@@ -2,7 +2,7 @@
 <x-slot name="header">
     <div class="flex items-center space-x-2 justify-between">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('My Orders') }}
+            {{ __('Users Orders') }}
         </h2>
 
     </div>
@@ -57,7 +57,7 @@
         <h5 class="font-semibold text-lg">${order.updated_at}</h5>
         
         <div class="mt-4 flex gap-2">
-            <a href="/usersorders" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
+            <a href="/userorder/details/${order.id}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
        
         </div>
     </div>

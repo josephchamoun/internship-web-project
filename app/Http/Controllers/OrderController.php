@@ -9,6 +9,10 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Exception;
+use Illuminate\Support\Facades\Log;
+
 
 class OrderController extends Controller
 {
@@ -57,58 +61,74 @@ class OrderController extends Controller
     // Method for saving the order and its items via API
     public function saveOrder(Request $request)
     {
-        // Validate the incoming data (e.g., cart items)
-        $validator = Validator::make($request->all(), [
-            'cart' => 'required|array',
-            'cart.*.item_id' => 'required|exists:items,id',
-            'cart.*.quantity' => 'required|integer|min:1',
-        ]);
+        try {
+            // Validate the incoming data (e.g., cart items)
+            $validator = Validator::make($request->all(), [
+                'cart' => 'required|array',
+                'cart.*.item_id' => 'required|exists:items,id',
+                'cart.*.quantity' => 'required|integer|min:1',
+            ]);
     
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-    
-        // Get the authenticated user
-        $user = Auth::user();
-    
-        if (!$user) {
-            return redirect()->route('login')->with('error', 'You need to log in to place an order.');
-        }
-    
-        // Calculate the total price of the cart items
-        $totalPrice = array_sum(array_map(function ($item) {
-            return $item['price'] * $item['quantity'];
-        }, $request->cart));
-    
-        // Create a new order for the authenticated user
-        $order = Order::create([
-            'user_id' => $user->id,
-            'status' => 'pending', // Default status
-            'total_amount' => $totalPrice, // Store the total price of the order
-        ]);
-    
-        // Loop through each item in the cart and save it in the itemorder table
-        foreach ($request->cart as $cartItem) {
-            // Reduce the quantity of the item in the items table
-            $item = Item::find($cartItem['item_id']);
-            if ($item) {
-                $item->quantity -= $cartItem['quantity'];
-                $item->save();
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
             }
     
-            // Save the item order
-            ItemOrder::create([
-                'order_id' => $order->id,
-                'item_id' => $cartItem['item_id'], // Item ID from the request
-                'quantity' => $cartItem['quantity'], // Item quantity from the request
+            // Get the authenticated user
+            $user = Auth::user();
+    
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'You need to log in to place an order.');
+            }
+    
+            // Calculate the total price of the cart items
+            $totalPrice = array_sum(array_map(function ($item) {
+                return $item['price'] * $item['quantity'];
+            }, $request->cart));
+    
+            // Begin database transaction
+            DB::beginTransaction();
+    
+            // Create a new order for the authenticated user
+            $order = Order::create([
+                'user_id' => $user->id,
+                'status' => 'pending', // Default status
+                'total_amount' => $totalPrice, // Store the total price of the order
             ]);
+    
+            // Loop through each item in the cart and save it in the itemorder table
+            foreach ($request->cart as $cartItem) {
+                // Reduce the quantity of the item in the items table
+                $item = Item::find($cartItem['item_id']);
+                if ($item) {
+                    if ($item->quantity < $cartItem['quantity']) {
+                        throw new Exception('Insufficient stock for item: ' . $item->name);
+                    }
+    
+                    $item->quantity -= $cartItem['quantity'];
+                    $item->save();
+                }
+    
+                // Save the item order
+                ItemOrder::create([
+                    'order_id' => $order->id,
+                    'item_id' => $cartItem['item_id'], // Item ID from the request
+                    'quantity' => $cartItem['quantity'], // Item quantity from the request
+                ]);
+            }
+    
+            // Commit transaction
+            DB::commit();
+    
+            session()->forget('cart');
+    
+            // Redirect to an order confirmation page or dashboard
+            return redirect()->route('myorders', ['order' => $order->id])
+                             ->with('success', 'Order placed successfully!');
+        }  catch (Exception $e) {
+            // Redirect back with an error message
+            return redirect()->back()->with('error', $e->getMessage());
         }
-    
-        session()->forget('cart');
-    
-        // Redirect to an order confirmation page or dashboard
-        return redirect()->route('myorders', ['order' => $order->id])
-                         ->with('success', 'Order placed successfully!');
     }
+    
     
 }

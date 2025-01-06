@@ -9,7 +9,7 @@ use App\Http\Controllers\ItemSupplierController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ItemOrderController;
-
+use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\CheckManagerRole;
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +80,8 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
+
+
     Route::get('/usersorders', function () {
         return view('orders.usersorders');
     })->name('usersorders');
@@ -97,6 +99,7 @@ Route::middleware(['Manager'])->group(function () {
     })->name('addsupplier');
 
     Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+    Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
 
     Route::get('/suppliers', function () {
         return view('suppliers.suppliers');
@@ -124,6 +127,12 @@ Route::get('/dashboard', function() {
 Route::middleware(['Manager'])->group(function () {
     Route::get('/users', function() {
         return view('users.users'); // The Blade view that contains the API fetch logic
+    });
+});
+
+Route::middleware(['Manager'])->group(function () {
+    Route::get('/categories', function() {
+        return view('categories.categories'); // The Blade view that contains the API fetch logic
     });
 });
 

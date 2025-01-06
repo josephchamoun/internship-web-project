@@ -4,6 +4,10 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
+        <div class="flex items-center space-x-2">
+            <input type="text" id="search-input" class="border rounded px-2 py-1" placeholder="Search items by name">
+            <button onclick="searchItems()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Search</button>
+        </div>
         @if (Auth::check() && Auth::user()->role === 'Manager')
         <x-add-button url="/additem">
             Add New Item
@@ -74,6 +78,8 @@
         </div>
     `;
     itemsContainer.innerHTML += itemCard;
+
+    
 });
 
 
@@ -100,6 +106,7 @@
             console.error('Error fetching items:', error);
         }
     }
+
 
     // Load items when the page loads
     document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));

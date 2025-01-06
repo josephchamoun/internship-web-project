@@ -10,6 +10,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ItemOrderController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CategoryController;
 
 use App\Http\Middleware\CheckManagerRole;
 
@@ -84,6 +85,15 @@ Route::prefix('orders')->group(function () { //users orders
     Route::get('/', [OrderController::class, 'index']);
     Route::get('/userorder/details/{orderId}', [ItemOrderController::class, 'OrderDetails']);
     
+
+});
+
+
+Route::prefix('categories')->middleware('Manager')->group(function () {
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::post('/addcategory', [CategoryController::class, 'store']);
+    Route::put('/edit/{id}', [CategoryController::class, 'update']);
+
 
 });
 

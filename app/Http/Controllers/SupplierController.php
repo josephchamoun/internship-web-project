@@ -9,13 +9,17 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
-        // Paginate items, 20 per page
-        $suppliers = Supplier::simplePaginate(20);
-
-        // Return the paginated items as a JSON response
+        $searchTerm = $request->query('search');
+    
+        if ($searchTerm) {
+            $suppliers = Supplier::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+        } else {
+            $suppliers = Supplier::simplePaginate(20);
+        }
+    
         return response()->json($suppliers);
     }
-
+    
     public function store(Request $request)
     {
         $supplier = new Supplier();

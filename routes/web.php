@@ -99,7 +99,11 @@ Route::middleware(['Manager'])->group(function () {
     })->name('addsupplier');
 
     Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::get('/addcategories', function () {
+        return view('categories.addcategories');
+    })->name('addcategories');
 
     Route::get('/suppliers', function () {
         return view('suppliers.suppliers');

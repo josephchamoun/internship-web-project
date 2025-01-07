@@ -4,48 +4,77 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Users') }}
         </h2>
-        <!-- Button to Add Manager -->
+
         @if (Auth::check() && Auth::user()->role === 'Manager')
         <x-add-button url="/addmanager">
-            Add Manager
+            Add New Manager
         </x-add-button>
         @endif
-
     </div>
 </x-slot>
 
-
-    <div class="container mx-auto px-4">
-        <!-- Responsive Grid -->
-        <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Items will be populated by JavaScript -->
+<div class="container mx-auto px-4">
+    <!-- Search Bar -->
+    <form id="searchForm" class="mb-4 w-full md:w-1/3">
+        <div class="flex items-center space-x-2">
+            <input 
+                type="text" 
+                id="searchInput" 
+                name="search" 
+                placeholder="Search users by name" 
+                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button 
+                type="submit" 
+                class="bg-blue-500 text-white p-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+            >
+                Search
+            </button>
         </div>
+    </form>
 
-        <!-- Pagination -->
-        <div class="mt-6 flex justify-between" id="pagination-container">
-            <!-- Pagination buttons will be inserted here -->
-        </div>
+    <!-- Responsive Grid -->
+    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Items will be populated by JavaScript -->
     </div>
 
-    <script>
-        let currentPage = 1; // Track the current page
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-between" id="pagination-container">
+        <!-- Pagination buttons will be inserted here -->
+    </div>
+</div>
 
-        async function fetchUsers(page = 1) {
-            try {
-                const response = await fetch(`/api/users?page=${page}`);
-                const data = await response.json();
 
-                const itemsContainer = document.getElementById('items-container');
-                const paginationContainer = document.getElementById('pagination-container');
 
-                // Clear existing content
-                itemsContainer.innerHTML = '';
-                paginationContainer.innerHTML = '';
 
-                // Populate user data
-                data.data.forEach(user => {
-                    const itemCard = `
-                        <div class="bg-white shadow rounded-lg p-4">
+<script>
+    let currentPage = 1; // Track the current page
+
+    async function fetchItems(page = 1, query = '') {
+        try {
+            const response = await fetch(`/api/users?page=${page}&search=${query}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            const itemsContainer = document.getElementById('items-container');
+            const paginationContainer = document.getElementById('pagination-container');
+
+            // Clear existing items and pagination
+            itemsContainer.innerHTML = '';
+            paginationContainer.innerHTML = '';
+
+            // Populate items
+            data.data.forEach(user => {
+                const itemCard = `
+                  <div class="bg-white shadow rounded-lg p-4">
                             <div class="flex items-center">
                                 <img src="${user.profile_photo}" alt="${user.name}" class="w-16 h-16 rounded-full mr-4">
                                 <div>
@@ -55,38 +84,44 @@
                                 </div>
                             </div>
                         </div>
-                    `;
-                    itemsContainer.innerHTML += itemCard;
-                });
+                `;
+                itemsContainer.innerHTML += itemCard;
+            });
 
-                // Pagination buttons
-                const createPaginationButton = (text, url, page) => {
-                    const button = document.createElement('button');
-                    button.textContent = text;
-                    button.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
-                    button.disabled = !url;
-                    button.onclick = () => fetchUsers(page);
-                    return button;
-                };
+            // Pagination buttons
+            const createPaginationButton = (text, url, page) => {
+                const button = document.createElement('button');
+                button.textContent = text;
+                button.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
+                button.disabled = !url;
+                button.onclick = () => fetchItems(page, query);
+                return button;
+            };
 
-                // Add "Previous" button
-                const prevButton = createPaginationButton('Previous', data.prev_page_url, data.current_page - 1);
-                // Add "Next" button
-                const nextButton = createPaginationButton('Next', data.next_page_url, data.current_page + 1);
+            // Add "Previous" button
+            const prevButton = createPaginationButton('Previous', data.prev_page_url, data.current_page - 1);
 
-                paginationContainer.appendChild(prevButton);
-                paginationContainer.appendChild(nextButton);
+            // Add "Next" button
+            const nextButton = createPaginationButton('Next', data.next_page_url, data.current_page + 1);
 
-            } catch (error) {
-                console.error('Error fetching users:', error);
-            }
+            paginationContainer.appendChild(prevButton);
+            paginationContainer.appendChild(nextButton);
+
+        } catch (error) {
+            console.error('Error fetching items:', error);
         }
+    }
 
-        // Load users when the page loads
-        document.addEventListener('DOMContentLoaded', () => fetchUsers(currentPage));
-    </script>
+    // Load items when the page loads
+    document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    // Handle search form submission
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value;
+        fetchItems(1, query);
+    });
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
 </x-app-layout>
-
-

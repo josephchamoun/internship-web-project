@@ -7,14 +7,19 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
-    {
-        // Paginate categories, 20 per page
-        $categories = Category::simplePaginate(20);
+   
+public function index(Request $request)
+{
+    $searchTerm = $request->query('search');
 
-        // Return the paginated categories as a JSON response
-        return response()->json($categories);
+    if ($searchTerm) {
+        $categories = Category::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+    } else {
+        $categories = Category::simplePaginate(20);
     }
+
+    return response()->json($categories);
+}
 
     public function edit($id)
     {
@@ -35,4 +40,15 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'category updated successfully', 'category' => $category], 200);
     }
+
+
+
+    public function store(Request $request)
+    {
+        $categories = new Category();
+        $categories->name = $request->input('name');
+        $categories->save();
+        
+    }
+
 }

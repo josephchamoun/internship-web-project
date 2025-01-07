@@ -1,104 +1,132 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center space-x-2 justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Suppliers') }}
-            </h2>
-            <!-- Button to Add Supplier -->
-            @if (Auth::check() && Auth::user()->role === 'Manager')
-            <x-add-button url="/addsupplier">
-                Add Supplier
-            </x-add-button>
-            @endif
-        </div>
-    </x-slot>
+<x-slot name="header">
+    <div class="flex items-center space-x-2 justify-between">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Suppliers') }}
+        </h2>
 
-    <div class="container mx-auto px-4">
-        <!-- Responsive Grid -->
-        <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Items will be populated by JavaScript -->
-        </div>
+        @if (Auth::check() && Auth::user()->role === 'Manager')
+        <x-add-button url="/addsupplier">
+            Add New Supplier
+        </x-add-button>
+        @endif
+    </div>
+</x-slot>
 
-        <!-- Pagination -->
-        <div class="mt-6 flex justify-between" id="pagination-container">
-            <!-- Pagination buttons will be inserted here -->
+<div class="container mx-auto px-4">
+    <!-- Search Bar -->
+    <form id="searchForm" class="mb-4 w-full md:w-1/3">
+        <div class="flex items-center space-x-2">
+            <input 
+                type="text" 
+                id="searchInput" 
+                name="search" 
+                placeholder="Search supplier by name" 
+                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button 
+                type="submit" 
+                class="bg-blue-500 text-white p-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+            >
+                Search
+            </button>
         </div>
+    </form>
+
+    <!-- Responsive Grid -->
+    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Items will be populated by JavaScript -->
     </div>
 
-    <script>
-        let currentPage = 1; // Track the current page
+    <!-- Pagination -->
+    <div class="mt-6 flex justify-between" id="pagination-container">
+        <!-- Pagination buttons will be inserted here -->
+    </div>
+</div>
 
-        async function fetchSuppliers(page = 1) {
-            try {
-                const response = await fetch(`/api/suppliers?page=${page}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token'), // Include token for authenticated requests
-                        'Accept': 'application/json'
-                    }
-                });
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+
+
+<script>
+    let currentPage = 1; // Track the current page
+
+    async function fetchItems(page = 1, query = '') {
+        try {
+            const response = await fetch(`/api/suppliers?page=${page}&search=${query}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
                 }
+            });
 
-                const data = await response.json();
-                const itemsContainer = document.getElementById('items-container');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
 
-                // Clear the existing items (if any)
-                itemsContainer.innerHTML = '';
+            const data = await response.json();
+            const itemsContainer = document.getElementById('items-container');
+            const paginationContainer = document.getElementById('pagination-container');
 
-                // Populate the items
-                data.data.forEach(supplier => { // `data.data` contains the paginated suppliers
-                    const supplierCard = `
-                        <div class="bg-white shadow rounded-lg p-4">
-                            <div class="mt-4">
-                                <h5 class="font-semibold text-lg">${supplier.name}</h5>
-                                <p class="text-gray-600 mt-2">Email: ${supplier.email}</p>
-                                <p class="text-gray-600 mt-2">Phone: ${supplier.phone}</p>
+            // Clear existing items and pagination
+            itemsContainer.innerHTML = '';
+            paginationContainer.innerHTML = '';
+
+            // Populate items
+            data.data.forEach(supplier => {
+                const itemCard = `
+                    <div class="bg-white shadow rounded-lg p-4">
+                       
+                        <div class="mt-4">
+                            <h5 class="font-semibold text-lg">${supplier.name}</h5>
+                            <h5 class="font-semibold text-lg">${supplier.email}</h5>
+                            <h5 class="font-semibold text-lg">${supplier.phone}</h5>
+                          
+                            <div class="mt-4 flex gap-2">
+                             
                                 @if (Auth::check() && Auth::user()->role === 'Manager')
-                                    <a href="/suppliers/${supplier.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                                    <a href="/categories/${supplier.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
                                 @endif
                             </div>
                         </div>
-                    `;
-                    itemsContainer.innerHTML += supplierCard;
-                });
+                    </div>
+                `;
+                itemsContainer.innerHTML += itemCard;
+            });
 
-                // Handle pagination (Next and Previous buttons)
-                const paginationContainer = document.getElementById('pagination-container');
-                paginationContainer.innerHTML = '';
+            // Pagination buttons
+            const createPaginationButton = (text, url, page) => {
+                const button = document.createElement('button');
+                button.textContent = text;
+                button.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
+                button.disabled = !url;
+                button.onclick = () => fetchItems(page, query);
+                return button;
+            };
 
-                if (data.links) {
-                    const prevLink = data.links.find(link => link.label === 'Previous');
-                    const nextLink = data.links.find(link => link.label === 'Next');
+            // Add "Previous" button
+            const prevButton = createPaginationButton('Previous', data.prev_page_url, data.current_page - 1);
 
-                    if (prevLink && prevLink.url) {
-                        const prevPage = new URL(prevLink.url).searchParams.get('page');
-                        const prevButton = document.createElement('button');
-                        prevButton.textContent = 'Previous';
-                        prevButton.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
-                        prevButton.onclick = () => fetchSuppliers(prevPage);
-                        paginationContainer.appendChild(prevButton);
-                    }
+            // Add "Next" button
+            const nextButton = createPaginationButton('Next', data.next_page_url, data.current_page + 1);
 
-                    if (nextLink && nextLink.url) {
-                        const nextPage = new URL(nextLink.url).searchParams.get('page');
-                        const nextButton = document.createElement('button');
-                        nextButton.textContent = 'Next';
-                        nextButton.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
-                        nextButton.onclick = () => fetchSuppliers(nextPage);
-                        paginationContainer.appendChild(nextButton);
-                    }
-                }
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-            }
+            paginationContainer.appendChild(prevButton);
+            paginationContainer.appendChild(nextButton);
+
+        } catch (error) {
+            console.error('Error fetching items:', error);
         }
+    }
 
-        // Initial fetch
-        fetchSuppliers();
-    </script>
+    // Load items when the page loads
+    document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    // Handle search form submission
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value;
+        fetchItems(1, query);
+    });
+</script>
+
+<script src="https://cdn.tailwindcss.com"></script>
 </x-app-layout>

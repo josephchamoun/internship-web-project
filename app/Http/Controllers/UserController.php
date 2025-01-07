@@ -54,16 +54,18 @@ class UserController extends Controller
 
 
 
-
-    public function index() // Get all users
+    public function index(Request $request)
     {
-        // Use simple pagination for 20 users per page
-        $users = User::simplePaginate(20);
-
-        // Return paginated users as JSON
+        $searchTerm = $request->query('search');
+    
+        if ($searchTerm) {
+            $users = User::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+        } else {
+            $users = User::simplePaginate(20);
+        }
+    
         return response()->json($users);
     }
-
 
     public function destroy($id)//delete
     {

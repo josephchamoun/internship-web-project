@@ -4,10 +4,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
-        <div class="flex items-center space-x-2">
-            <input type="text" id="search-input" class="border rounded px-2 py-1" placeholder="Search items by name">
-            <button onclick="searchItems()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Search</button>
-        </div>
+
         @if (Auth::check() && Auth::user()->role === 'Manager')
         <x-add-button url="/additem">
             Add New Item
@@ -17,6 +14,25 @@
 </x-slot>
 
 <div class="container mx-auto px-4">
+    <!-- Search Bar -->
+    <form id="searchForm" class="mb-4 w-full md:w-1/3">
+        <div class="flex items-center space-x-2">
+            <input 
+                type="text" 
+                id="searchInput" 
+                name="search" 
+                placeholder="Search items by name" 
+                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button 
+                type="submit" 
+                class="bg-blue-500 text-white p-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+            >
+                Search
+            </button>
+        </div>
+    </form>
+
     <!-- Responsive Grid -->
     <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <!-- Items will be populated by JavaScript -->
@@ -28,12 +44,15 @@
     </div>
 </div>
 
+
+
+
 <script>
     let currentPage = 1; // Track the current page
 
-    async function fetchItems(page = 1) {
+    async function fetchItems(page = 1, query = '') {
         try {
-            const response = await fetch(`/api/dashboard?page=${page}`, {
+            const response = await fetch(`/api/dashboard?page=${page}&search=${query}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
@@ -54,34 +73,31 @@
 
             // Populate items
             data.data.forEach(item => {
-    const itemCard = `
-        <div class="bg-white shadow rounded-lg p-4">
-            <figure>
-                <img src="https://cdn.flyonui.com/fy-assets/components/card/image-9.png" alt="Watch" class="w-full rounded-lg" />
-            </figure>
-            <div class="mt-4">
-                <h5 class="font-semibold text-lg">${item.name}</h5>
-                <p class="text-gray-600 mt-2">${item.description}</p>
-                <p class="text-gray-600 mt-2">${item.price} $</p>
-                <p class="text-gray-600 mt-2">${item.quantity} left</p>
-                <div class="mt-4 flex gap-2">
-                    <form action="/cart/add/${item.id}" method="POST">
-                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                        <input type="number" name="quantity" min="1" max="${item.quantity}" value="1" class="border rounded px-2 py-1 w-16">
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to cart</button>
-                    </form>
-                    @if (Auth::check() && Auth::user()->role === 'Manager')
-                        <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
-                    @endif
-                </div>
-            </div>
-        </div>
-    `;
-    itemsContainer.innerHTML += itemCard;
-
-    
-});
-
+                const itemCard = `
+                    <div class="bg-white shadow rounded-lg p-4">
+                        <figure>
+                            <img src="${item.image_url}" alt="${item.name}" class="w-full rounded-lg" />
+                        </figure>
+                        <div class="mt-4">
+                            <h5 class="font-semibold text-lg">${item.name}</h5>
+                            <p class="text-gray-600 mt-2">${item.description}</p>
+                            <p class="text-gray-600 mt-2">${item.price} $</p>
+                            <p class="text-gray-600 mt-2">${item.quantity} left</p>
+                            <div class="mt-4 flex gap-2">
+                                <form action="/cart/add/${item.id}" method="POST">
+                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                                    <input type="number" name="quantity" min="1" max="${item.quantity}" value="1" class="border rounded px-2 py-1 w-16">
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to cart</button>
+                                </form>
+                                @if (Auth::check() && Auth::user()->role === 'Manager')
+                                    <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                `;
+                itemsContainer.innerHTML += itemCard;
+            });
 
             // Pagination buttons
             const createPaginationButton = (text, url, page) => {
@@ -89,7 +105,7 @@
                 button.textContent = text;
                 button.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
                 button.disabled = !url;
-                button.onclick = () => fetchItems(page);
+                button.onclick = () => fetchItems(page, query);
                 return button;
             };
 
@@ -107,15 +123,16 @@
         }
     }
 
-
     // Load items when the page loads
     document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
+
+    // Handle search form submission
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value;
+        fetchItems(1, query);
+    });
 </script>
 
 <script src="https://cdn.tailwindcss.com"></script>
 </x-app-layout>
-
-
-
-
-

@@ -7,12 +7,21 @@ use App\Models\Item;
 
 class ItemController extends Controller
 {
-    public function index(Request $request)
-    {
-        // Paginate items, 20 per page
-        $items = Item::simplePaginate(20);
 
-        // Return the paginated items as a JSON response
+
+
+   
+
+public function index(Request $request)
+    {
+        $searchTerm = $request->query('search');
+
+        if ($searchTerm) {
+            $items = Item::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+        } else {
+            $items = Item::simplePaginate(20);
+        }
+
         return response()->json($items);
     }
     public function store(Request $request)

@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->get('/dashboard', [ItemController::class, 'index'])->name('dashboard');
 
 
+
 Route::middleware('auth:sanctum')->group(function () {
     // Existing '/user' route for the authenticated user
     Route::get('/user', function (Request $request) {

@@ -13,66 +13,66 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
-                @if (Auth::check() && Auth::user()->role === 'Manager')
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/categories')" :active="request()->routeIs('categories')" >
-                        {{ __('Categories') }}
-                    </x-nav-link>
-                </div>
-                @endif
+               <!-- filepath: /C:/laragon/www/intershipwebproject/resources/views/layouts/navigation.blade.php -->
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/dashboard')" :active="request()->routeIs('dashboard')">
+        <i class="fas fa-tachometer-alt mr-2"></i> {{ __('Dashboard') }}
+    </x-nav-link>
+</div>
+@if (Auth::check() && Auth::user()->role === 'Manager')
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/categories')" :active="request()->routeIs('categories')">
+        <i class="fas fa-list mr-2"></i> {{ __('Categories') }}
+    </x-nav-link>
+</div>
+@endif
 
-                @if (Auth::check() && Auth::user()->role === 'Manager')
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/itemsupplier')" :active="request()->routeIs('itemsupplier')" >
-                        {{ __('Supplies') }}
-                    </x-nav-link>
-                </div>
-                @endif
-                @if (Auth::check() && Auth::user()->role === 'Manager')
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/users')" :active="request()->routeIs('users')">
-                        {{ __('Users') }}
-                    </x-nav-link>
-                </div>
-                @endif
-                @if (Auth::check() && Auth::user()->role === 'Manager')
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/suppliers')" :active="request()->routeIs('suppliers')">
-                        {{ __('Suppliers') }}
-                    </x-nav-link>
-                </div>
-                @endif
-                @if (Auth::check() && Auth::user()->role === 'Manager')
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/usersorders')" :active="request()->routeIs('usersorders')">
-                        {{ __('Users Orders') }}
-                    </x-nav-link>
-                </div>
-                @endif
-                
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/myorders')" :active="request()->routeIs('myorders')">
-                        {{ __('My Orders') }}
-                    </x-nav-link>
-                </div>
-                
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
-                        {{ __('Contact') }}
-                    </x-nav-link>
-                </div>
+@if (Auth::check() && Auth::user()->role === 'Manager')
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/itemsupplier')" :active="request()->routeIs('itemsupplier')">
+        <i class="fas fa-truck mr-2"></i> {{ __('Supplies') }}
+    </x-nav-link>
+</div>
+@endif
+@if (Auth::check() && Auth::user()->role === 'Manager')
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/users')" :active="request()->routeIs('users')">
+        <i class="fas fa-users mr-2"></i> {{ __('Users') }}
+    </x-nav-link>
+</div>
+@endif
+@if (Auth::check() && Auth::user()->role === 'Manager')
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/suppliers')" :active="request()->routeIs('suppliers')">
+        <i class="fas fa-industry mr-2"></i> {{ __('Suppliers') }}
+    </x-nav-link>
+</div>
+@endif
+@if (Auth::check() && Auth::user()->role === 'Manager')
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/usersorders')" :active="request()->routeIs('usersorders')">
+        <i class="fas fa-shopping-cart mr-2"></i> {{ __('Users Orders') }}
+    </x-nav-link>
+</div>
+@endif
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="url('/about')" :active="request()->routeIs('about')">
-                        {{ __('About') }}
-                    </x-nav-link>
-                </div>
-            </div>
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/myorders')" :active="request()->routeIs('myorders')">
+        <i class="fas fa-receipt mr-2"></i> {{ __('My Orders') }}
+    </x-nav-link>
+</div>
+
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
+        <i class="fas fa-envelope mr-2"></i> {{ __('Contact') }}
+    </x-nav-link>
+</div>
+
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/about')" :active="request()->routeIs('about')">
+        <i class="fas fa-info-circle mr-2"></i> {{ __('About') }}
+    </x-nav-link>
+</div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">

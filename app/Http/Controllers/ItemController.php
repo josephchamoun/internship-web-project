@@ -12,18 +12,38 @@ class ItemController extends Controller
 
    
 
-public function index(Request $request)
+    public function index(Request $request)
     {
         $searchTerm = $request->query('search');
-
+        $age = $request->query('age');
+        $gender = $request->query('gender');
+        $category = $request->query('category');
+    
+        $query = Item::query();
+    
         if ($searchTerm) {
-            $items = Item::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
-        } else {
-            $items = Item::simplePaginate(20);
+            $query->where('name', 'like', '%' . $searchTerm . '%');
         }
-
+    
+        if ($age) {
+            $query->where('age', $age);
+        }
+    
+        if ($gender) {
+            $query->where('gender', $gender);
+        }
+    
+        if ($category) {
+            $query->where('category_id', $category);
+        }
+    
+        $items = $query->simplePaginate(20);
+    
         return response()->json($items);
     }
+
+
+
     public function store(Request $request)
     {
         // Check if an item with the same name already exists

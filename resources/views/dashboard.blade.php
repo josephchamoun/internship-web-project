@@ -43,7 +43,7 @@
 
             @if (Auth::check() && Auth::user()->role === 'Manager')
                 <a href="/additem" class="bg-indigo-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-indigo-600 flex items-center">
-                    <i class="fas fa-plus mr-2"></i> Add New Item
+                    <i class="fas fa-plus mr-2"></i> Add Item
                 </a>
             @endif
         </div>

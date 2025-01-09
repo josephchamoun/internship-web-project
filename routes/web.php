@@ -62,6 +62,18 @@ Route::get('/myorder/details/{order_id}', function ($order_id) {
 
 Route::middleware(['Manager'])->group(function () {
 
+
+    Route::get('/stats', function () {
+        return view('stats');
+    })->name('stats');
+
+
+
+
+
+
+
+
     Route::get('/addmanager', function () {
         return view('users.addmanager');
     })->name('addmanager');

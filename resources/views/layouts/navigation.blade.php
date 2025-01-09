@@ -16,7 +16,7 @@
                <!-- filepath: /C:/laragon/www/intershipwebproject/resources/views/layouts/navigation.blade.php -->
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/dashboard')" :active="request()->routeIs('dashboard')">
-        <i class="fas fa-tachometer-alt mr-2"></i> {{ __('Dashboard') }}
+        <i class="fas fa-tachometer-alt mr-2"></i> 
     </x-nav-link>
 </div>
 @if (Auth::check() && Auth::user()->role === 'Manager')
@@ -37,7 +37,7 @@
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/users')" :active="request()->routeIs('users')">
-        <i class="fas fa-users mr-2"></i> {{ __('Users') }}
+        <i class="fas fa-users mr-2"></i> 
     </x-nav-link>
 </div>
 @endif
@@ -63,14 +63,20 @@
 </div>
 
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/stats')" :active="request()->routeIs('stats')">
+        <i class="fas fa-receipt mr-2"></i> {{ __('Statistics') }}
+    </x-nav-link>
+</div>
+
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
-        <i class="fas fa-envelope mr-2"></i> {{ __('Contact') }}
+        <i class="fas fa-envelope mr-2"></i> 
     </x-nav-link>
 </div>
 
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/about')" :active="request()->routeIs('about')">
-        <i class="fas fa-info-circle mr-2"></i> {{ __('About') }}
+        <i class="fas fa-info-circle mr-2"></i> 
     </x-nav-link>
 </div>
 

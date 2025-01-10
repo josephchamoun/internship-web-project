@@ -7,8 +7,9 @@
         ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'id' => 'name'], 
         ['label' => 'Description', 'name' => 'description', 'type' => 'text', 'id' => 'description'], 
         ['label' => 'Price', 'name' => 'price', 'type' => 'text', 'id' => 'price'],
-         
-         
+        
+['label' => 'Gender', 'name' => 'gender', 'type' => 'select', 'id' => 'gender', 'options' => ['male' => 'Male', 'female' => 'Female', 'both' => 'Both']],
+['label' => 'Age', 'name' => 'age', 'type' => 'select', 'id' => 'age', 'options' => ['0-3' => '0-3', '3-6' => '3-6', '6-9' => '6-9', '9-12' => '9-12','13-17' => '13-17', '18+' => '18+']],
     ]"
 />
 

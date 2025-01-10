@@ -15,7 +15,7 @@
 
 <div class="container mx-auto px-4">
     <!-- Search Bar -->
-    <form id="searchForm" class="mb-4 w-full md:w-1/3">
+    <form id="searchForm" class="mb-4 w-full md:w-1/3 ml-auto">
         <div class="flex items-center space-x-2">
             <input 
                 type="text" 
@@ -80,9 +80,17 @@
                             <h5 class="font-semibold text-lg">${item.name}</h5>
                           
                             <div class="mt-4 flex gap-2">
-                             
                                 @if (Auth::check() && Auth::user()->role === 'Manager')
-                                    <a href="/categories/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
+                                    <a href="/categories/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
+                                        <i class="fas fa-edit mr-2"></i> Edit
+                                    </a>
+                                    <form action="/categories/${item.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center">
+                                            <i class="fas fa-trash-alt mr-2"></i> Delete
+                                        </button>
+                                    </form>
                                 @endif
                             </div>
                         </div>

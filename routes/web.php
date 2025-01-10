@@ -99,7 +99,7 @@ Route::middleware(['Manager'])->group(function () {
     })->name('usersorders');
 
     Route::get('/userorder/details/{order_id}', function ($order_id) {
-        return view('orders.userordersdetails', ['order_id' => $order_id]);
+        return view('orders.usersordersdetails', ['order_id' => $order_id]);
     });
 
 
@@ -149,7 +149,7 @@ Route::middleware(['Manager'])->group(function () {
 Route::middleware(['Manager'])->group(function () {
     Route::get('/categories', function() {
         return view('categories.categories'); // The Blade view that contains the API fetch logic
-    });
+    })->name('categories');
 });
 
 /*

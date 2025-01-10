@@ -18,7 +18,7 @@ class ItemSupplierController extends Controller
     public function index(Request $request)
     {
         // Paginate items, 20 per page
-        $items = ItemSupplier::with(['item', 'supplier'])->paginate(20);
+        $items = ItemSupplier::with(['item', 'supplier'])->simplePaginate(20);
 
         // Return the paginated items as a JSON response
         return response()->json($items);

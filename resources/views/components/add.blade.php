@@ -13,7 +13,17 @@
                     @if ($field['type'] !== 'hidden')
                         <label for="{{ $field['id'] }}" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">{{ $field['label'] }}</label>
                     @endif
-                    @if ($field['name'] === 'role')
+                    @if ($field['type'] === 'select')
+                        <select 
+                            name="{{ $field['name'] }}" 
+                            id="{{ $field['id'] }}" 
+                            class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white text-gray-900 dark:text-gray-900"
+                        >
+                            @foreach ($field['options'] as $value => $label)
+                                <option value="{{ $value }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    @elseif ($field['name'] === 'role')
                         <input 
                             type="text" 
                             name="{{ $field['name'] }}" 

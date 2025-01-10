@@ -48,6 +48,7 @@ public function index(Request $request)
         $categories = new Category();
         $categories->name = $request->input('name');
         $categories->save();
+        return redirect()->route('categories');
         
     }
 

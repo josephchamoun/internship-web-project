@@ -61,7 +61,7 @@ class UserController extends Controller
         if ($searchTerm) {
             $users = User::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
         } else {
-            $users = User::simplePaginate(20);
+            $users = User::simplePaginate(12);
         }
     
         return response()->json($users);

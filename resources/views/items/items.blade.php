@@ -52,20 +52,27 @@
                 data.data.forEach(item => { // `data.data` contains the paginated items
                     const itemCard = `
                         <div class="bg-white shadow rounded-lg p-4">
-                            <figure>
-                                <img src="${item.image_url}" alt="${item.name}" class="w-full rounded-lg" />
-                            </figure>
+
                             <div class="mt-4">
                                 <h5 class="font-semibold text-lg">Item name: ${item.item.name}</h5>
                                 <h5 class="font-semibold text-lg">Supplier name: ${item.supplier.name}</h5>
                                 <p class="text-gray-600 mt-2">Quantity: ${item.quantity}</p>
                                 <p class="text-gray-600 mt-2">Buy Price: ${item.buyprice} $</p>
                                 <p class="text-gray-600 mt-2">Supplied At: ${item.created_at}</p>
-                                <div class="mt-4 flex gap-2">
-                                @if (Auth::check() && Auth::user()->role === 'Manager')
-                                    <a href="/itemsupplier/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</a>
-                                @endif
-                                </div>
+  <div class="mt-4 flex gap-2">
+            @if (Auth::check() && Auth::user()->role === 'Manager')
+                <a href="/itemsupplier/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
+                    <i class="fas fa-edit mr-2"></i> Edit
+                </a>
+                <form action="/itemsupplier/${item.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this supplier?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center">
+                        <i class="fas fa-trash-alt mr-2"></i> Delete
+                    </button>
+                </form>
+            @endif
+        </div>
                             </div>
                         </div>
                     `;

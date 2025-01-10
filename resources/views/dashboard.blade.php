@@ -2,19 +2,23 @@
 <x-app-layout>
 
 <x-slot name="header">
-    <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 justify-between bg-white p-4 rounded-lg shadow-md w-full mx-0">
+    <div class="bg-gradient-to-r from-blue-300 to-pink-300 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 justify-between bg-white p-4 rounded-lg shadow-md w-full mx-0">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
             {{ __('Dashboard') }}
         </h2>
 
-        <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full">
+        <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full bg-gradient-to-r from-blue-300 to-pink-300">
             <!-- Gender Filter -->
             <div class="flex items-center space-x-2 w-full md:w-1/3">
                 <i class="fas fa-venus-mars text-gray-500"></i>
                 <select id="gender_filter" name="gender_filter" class="border-gray-300 rounded-md shadow-sm p-2 md:p-4 w-full focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="">All Genders</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
+                    <option value="male">
+                        <i class="fas fa-mars text-blue-900"></i> Male
+                    </option>
+                    <option value="female">
+                        <i class="fas fa-venus text-pink-900"></i> Female
+                    </option>
                 </select>
             </div>
 
@@ -27,7 +31,7 @@
                     <option value="3-6">3-6</option>
                     <option value="6-9">6-9</option>
                     <option value="9-12">9-12</option>
-                    <option value="13-18">13-18</option>
+                    <option value="13-18">13-17</option>
                     <option value="18+">18+</option>
                 </select>
             </div>
@@ -52,23 +56,23 @@
 
 <div class="container mx-auto px-4">
     <!-- Search Bar -->
-    <form id="searchForm" class="mb-4 w-full md:w-1/3">
-        <div class="flex items-center space-x-2">
-            <input 
-                type="text" 
-                id="searchInput" 
-                name="search" 
-                placeholder="Search items by name" 
-                class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-            <button 
-                type="submit" 
-                class="bg-blue-500 text-white p-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
-            >
-                Search
-            </button>
-        </div>
-    </form>
+    <form id="searchForm" class="mb-4 w-full md:w-1/3 ml-auto">
+    <div class="flex items-center space-x-2">
+        <input 
+            type="text" 
+            id="searchInput" 
+            name="search" 
+            placeholder="Search items by name" 
+            class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+        <button 
+            type="submit" 
+            class="bg-blue-500 text-white p-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200"
+        >
+            Search
+        </button>
+    </div>
+</form>
 
     <!-- Responsive Grid -->
     <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

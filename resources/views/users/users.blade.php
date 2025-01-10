@@ -15,7 +15,7 @@
 
 <div class="container mx-auto px-4">
     <!-- Search Bar -->
-    <form id="searchForm" class="mb-4 w-full md:w-1/3">
+    <form id="searchForm" class="mb-4 w-full md:w-1/3 ml-auto">
         <div class="flex items-center space-x-2">
             <input 
                 type="text" 
@@ -34,7 +34,7 @@
     </form>
 
     <!-- Responsive Grid -->
-    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <!-- Items will be populated by JavaScript -->
     </div>
 
@@ -79,7 +79,7 @@
                                 <img src="${user.profile_photo}" alt="${user.name}" class="w-16 h-16 rounded-full mr-4">
                                 <div>
                                     <h5 class="font-semibold text-lg">${user.name}</h5>
-                                    <p class="text-gray-600">${user.email}</p>
+                                    <p class="text-gray-600">Email: ${user.email}</p>
                                     <p class="text-gray-600">Role: ${user.role}</p>
                                 </div>
                             </div>

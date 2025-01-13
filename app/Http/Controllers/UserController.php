@@ -67,17 +67,19 @@ class UserController extends Controller
         return response()->json($users);
     }
 
-    public function destroy($id)//delete
-    {
-        $user = User::find($id);
+    public function destroy($id)
+{
+    $user = User::findOrFail($id);
 
-        if ($user) {
-            $user->delete(); // Deletes the user
-            return redirect()->route('users.index')->with('success', 'User deleted successfully.');
-        } else {
-            return redirect()->route('users.index')->with('error', 'User not found.');
-        }
+    if (auth()->user()->role !== 'Manager') {
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
+
+    $user->delete();
+
+    return response()->json(['success' => true, 'redirect_url' => route('users.index')]);
+}
+
 
 
 

@@ -31,7 +31,7 @@
                     <option value="3-6">3-6</option>
                     <option value="6-9">6-9</option>
                     <option value="9-12">9-12</option>
-                    <option value="13-18">13-17</option>
+                    <option value="13-17">13-17</option>
                     <option value="18+">18+</option>
                 </select>
             </div>

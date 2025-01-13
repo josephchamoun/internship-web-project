@@ -31,6 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Existing '/user' route for the authenticated user
     Route::get('/user', function (Request $request) {
         return $request->user();
+
+        
+
+
         
     });
 
@@ -94,6 +98,13 @@ Route::prefix('categories')->middleware('Manager')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::post('/addcategory', [CategoryController::class, 'store']);
     Route::put('/edit/{id}', [CategoryController::class, 'update']);
+
+
+});
+
+Route::prefix('users')->middleware('Manager')->group(function () {
+    Route::delete('/{id}', [UserController::class, 'destroy']);
+
 
 
 });

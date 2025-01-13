@@ -61,7 +61,7 @@ class ItemController extends Controller
         $item->price = $request->input('price');
         $item->gender = $request->input('gender');
         $item->age = $request->input('age');
-        $item->category_id = $request->input('category_id');
+        $item->category_id = $request->input('category');
         $item->quantity = 0;
         $item->save();
     

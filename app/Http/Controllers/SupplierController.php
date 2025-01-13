@@ -52,4 +52,12 @@ class SupplierController extends Controller
         return response()->json(['message' => 'Supplier updated successfully', 'supplier' => $supplier], 200);
     }
     
+    public function destroy($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        $supplier->delete();
+    
+        return response()->json(['success' => true, 'redirect_url' => route('itemsupplier')]);
+    }
+    
 }

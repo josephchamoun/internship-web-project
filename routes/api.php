@@ -68,6 +68,7 @@ Route::prefix('suppliers')->middleware('Manager')->group(function () {
     Route::get('/', [SupplierController::class, 'index']);
     Route::post('/addsupplier', [SupplierController::class, 'store']);
     Route::put('/edit/{id}', [SupplierController::class, 'update']);
+    Route::delete('/delete/{id}', [SupplierController::class, 'destroy']);
 });
 
 Route::prefix('items')->middleware('Manager')->group(function () {
@@ -99,7 +100,7 @@ Route::prefix('categories')->middleware('Manager')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::post('/addcategory', [CategoryController::class, 'store']);
     Route::put('/edit/{id}', [CategoryController::class, 'update']);
-
+    Route::delete('/delete/{id}', [CategoryController::class, 'destroy']);
 
 });
 
@@ -109,11 +110,5 @@ Route::prefix('users')->middleware('Manager')->group(function () {
 
 
 });
-
-
-
-
-
-
 
 

@@ -55,7 +55,8 @@ class UserController extends Controller
 
 
     public function index(Request $request)
-    {
+    {   
+        $userCount = User::count();
         $searchTerm = $request->query('search');
     
         if ($searchTerm) {
@@ -64,7 +65,10 @@ class UserController extends Controller
             $users = User::simplePaginate(12);
         }
     
-        return response()->json($users);
+        return response()->json([
+            'users' => $users,
+            'userCount' => $userCount
+        ]);
     }
 
     public function destroy($id)

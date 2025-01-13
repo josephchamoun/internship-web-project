@@ -121,6 +121,25 @@ class ItemSupplierController extends Controller
 
         return response()->json(['message' => 'ItemSupplier updated successfully', 'itemsupplier' => $itemsupplier], 200);
     }
+
+
+
+    
+    public function destroy($id)
+   {
+    $itemsupplier = ItemSupplier::findOrFail($id);
+    $item = Item::where('id', $itemsupplier->item_id)->first();
+    if (!$item) {
+        return response()->json(['message' => 'Item not found'], 404);
+    }
+
+    $item->quantity =$item->quantity - $itemsupplier->quantity;
+    $item->save();
+
+    $itemsupplier->delete();
+
+    return response()->json(['success' => true, 'redirect_url' => route('itemsupplier')]);
+   }
 }
     
 

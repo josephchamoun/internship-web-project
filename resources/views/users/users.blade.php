@@ -94,7 +94,7 @@ async function fetchItems(page = 1, query = '') {
                                 <i class="fas fa-trash-alt mr-2"></i> Delete
                             </button>
                         </form>
-                            @endif
+                    @endif
                         </div>
                     </div>
                 </div>

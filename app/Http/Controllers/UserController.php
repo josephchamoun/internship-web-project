@@ -68,7 +68,7 @@ class UserController extends Controller
     }
 
     public function destroy($id)
-{
+   {
     $user = User::findOrFail($id);
 
     if (auth()->user()->role !== 'Manager') {
@@ -78,7 +78,7 @@ class UserController extends Controller
     $user->delete();
 
     return response()->json(['success' => true, 'redirect_url' => route('users.index')]);
-}
+   }
 
 
 

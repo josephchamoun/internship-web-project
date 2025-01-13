@@ -60,6 +60,7 @@ Route::prefix('itemsupplier')->middleware('Manager')->group(function () {
     Route::get('/', [ItemSupplierController::class, 'index']);
     Route::post('/addsupply', [ItemSupplierController::class, 'store']);
     Route::put('/edit/{id}', [ItemSupplierController::class, 'update']);
+    Route::delete('/delete/{id}', [ItemSupplierController::class, 'destroy']);
 });
 
 

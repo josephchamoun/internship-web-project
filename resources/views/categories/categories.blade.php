@@ -84,7 +84,7 @@
                                     <a href="/categories/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
                                         <i class="fas fa-edit mr-2"></i> Edit
                                     </a>
-                                    <form action="/categories/${item.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <form action="api/categories/delete/${item.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center">

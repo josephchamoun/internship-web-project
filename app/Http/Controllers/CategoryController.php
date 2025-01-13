@@ -52,4 +52,12 @@ public function index(Request $request)
         
     }
 
+    public function destroy($id)
+{
+    $category = Category::findOrFail($id);
+    $category->delete();
+
+    return response()->json(['success' => true, 'redirect_url' => route('categories')]);
+}
+
 }

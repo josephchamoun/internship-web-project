@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ItemOrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\CheckManagerRole;
+use App\Http\Controllers\StatsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -63,9 +64,7 @@ Route::get('/myorder/details/{order_id}', function ($order_id) {
 Route::middleware(['Manager'])->group(function () {
 
 
-    Route::get('/stats', function () {
-        return view('stats');
-    })->name('stats');
+    Route::get('/stats', [StatsController::class, 'index'])->name('stats');
 
 
 

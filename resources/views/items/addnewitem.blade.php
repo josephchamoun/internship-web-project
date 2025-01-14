@@ -7,9 +7,10 @@
         ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'id' => 'name'], 
         ['label' => 'Description', 'name' => 'description', 'type' => 'text', 'id' => 'description'], 
         ['label' => 'Price', 'name' => 'price', 'type' => 'text', 'id' => 'price'],
-        ['label' => 'Category', 'name' => 'category', 'type' => 'select', 'id' => 'category_filter', 'options' => []], // Placeholder for categories
+        ['label' => 'Category', 'name' => 'category', 'type' => 'select', 'id' => 'category_filter', 'options' => []], 
         ['label' => 'Gender', 'name' => 'gender', 'type' => 'select', 'id' => 'gender', 'options' => ['male' => 'Male', 'female' => 'Female', 'both' => 'Both']],
         ['label' => 'Age', 'name' => 'age', 'type' => 'select', 'id' => 'age', 'options' => ['0-3' => '0-3', '3-6' => '3-6', '6-9' => '6-9', '9-12' => '9-12','13-17' => '13-17', '18+' => '18+']],
+        ['label' => 'Image', 'name' => 'image', 'type' => 'file', 'id' => 'image'] // Add file input for image
     ]"
 />
 
@@ -26,20 +27,13 @@ document.querySelector('#itemForm').addEventListener('submit', async (event) => 
     const form = event.target;
     const formData = new FormData(form);
 
-    // Convert form data to JSON object
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
-    });
-
     try {
         const response = await fetch(form.action, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
-            body: JSON.stringify(data),
+            body: formData, // Use formData to handle file uploads
         });
 
         const contentType = response.headers.get('content-type');

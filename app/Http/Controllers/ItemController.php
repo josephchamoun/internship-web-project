@@ -37,37 +37,53 @@ class ItemController extends Controller
             $query->where('category_id', $category);
         }
     
-        $items = $query->simplePaginate(15);
+        $items = $query->simplePaginate(20);
     
         return response()->json($items);
     }
 
-
-
     public function store(Request $request)
     {
-        // Check if an item with the same name already exists
-        $existingItem = Item::where('name', $request->input('name'))->first();
-        
-        if ($existingItem) {
-            // Return an error message or handle it as needed
-            return response()->json(['error' => 'Item name already exists.'], 400);
+        // Validate the request
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'category' => 'required|integer',
+            'gender' => 'required|string',
+            'age' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2048', // Validate image
+        ]);
+    
+        // Initialize the image path variable
+        $imagePath = null;
+    
+        // Store the image if it exists
+        if ($request->hasFile('image')) {
+            // Get the uploaded image file
+            $image = $request->file('image');
+            
+            // Store the image in 'public/uploads/items' folder
+            $imagePath = $image->store('uploads/items', 'public');
         }
     
-        // If the item name doesn't exist, create a new item
-        $item = new Item();
-        $item->name = $request->input('name');
-        $item->description = $request->input('description');
-        $item->price = $request->input('price');
-        $item->gender = $request->input('gender');
-        $item->age = $request->input('age');
-        $item->category_id = $request->input('category');
-        $item->quantity = 0;
-        $item->save();
+        // Create a new item record with the form data
+        $item = Item::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'price' => $validated['price'],
+            'category_id' => $validated['category'],
+            'gender' => $validated['gender'],
+            'age' => $validated['age'],
+            'image_url' => $imagePath,  // Save the image path in the database
+        ]);
     
-        // Return a success response
-        return response()->json(['success' => 'Item added successfully.'], 201);
+        return response()->json([
+            'message' => 'Item added successfully',
+            'item' => $item, // Return the item information as a response
+        ]);
     }
+    
 
     public function edit($id)
     {

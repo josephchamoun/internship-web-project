@@ -4,6 +4,7 @@
             {{ __('Contact') }}
         </h2>
     </x-slot>
+    
 
     <div class="mt-6 max-w-6xl max-lg:max-w-3xl mx-auto bg-gradient-to-r from-blue-500 to-pink-500 rounded-lg">
             <div class="grid lg:grid-cols-2 items-center gap-14 sm:p-8 p-4 font-[sans-serif]">

@@ -75,6 +75,7 @@ Route::prefix('items')->middleware('Manager')->group(function () {
     Route::get('/', [ItemController::class, 'index']);
     Route::post('/addnewitem', [ItemController::class, 'store']);
     Route::put('/edit/{id}', [ItemController::class, 'update']);
+    Route::delete('/delete/{id}', [ItemController::class, 'destroy']);
 
 });
 

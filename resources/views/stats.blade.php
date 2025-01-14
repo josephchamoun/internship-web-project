@@ -23,13 +23,14 @@
                 <h2 class="text-xl font-semibold mb-2">Total Revenue</h2>
                 <p class="text-3xl font-bold">${{ number_format($totalRevenue, 2) }}</p>
             </div>
-            <div class="bg-white shadow-lg rounded-lg p-6 text-center">
-                <h2 class="text-xl font-semibold mb-2">New Customers</h2>
-                <p class="text-3xl font-bold">{{ $newCustomers }}</p>
-            </div>
+            
             <div class="bg-white shadow-lg rounded-lg p-6 text-center">
                 <h2 class="text-xl font-semibold mb-2">Total Expense</h2>
                 <p class="text-3xl font-bold">${{ number_format($totalExpense, 2) }}</p>
+            </div>
+            <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+                <h2 class="text-xl font-semibold mb-2">New Customers</h2>
+                <p class="text-3xl font-bold">{{ $newCustomers }}</p>
             </div>
         </div>
 

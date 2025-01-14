@@ -1,4 +1,3 @@
-<!-- filepath: /c:/laragon/www/intershipwebproject/resources/views/dashboard.blade.php -->
 <x-app-layout>
 
 <x-slot name="header">
@@ -114,8 +113,8 @@
             itemsContainer.innerHTML = '';
             paginationContainer.innerHTML = '';
 
-            // Populate items
-            data.data.forEach(item => {
+           // Populate items
+           data.data.forEach(item => {
                 const itemCard = `
                     <div class="bg-white shadow rounded-lg p-4">
                         <figure>
@@ -126,7 +125,8 @@
                             <p class="text-gray-600 mt-2">${item.description}</p>
                             <p class="text-gray-600 mt-2">${item.price} $</p>
                             <p class="text-gray-600 mt-2">${item.quantity} left</p>
-                            <div class="mt-4 flex gap-2">
+                             ${item.quantity == 0 ? '<p class="text-red-400 font-semibold">Out of stock</p>' : ''}
+                            <div class="mt-4 flex flex-col gap-2">
                                 <form action="/cart/add/${item.id}" method="POST">
                                     <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
                                     <input type="number" name="quantity" min="1" max="${item.quantity}" value="1" class="border rounded px-2 py-1 w-16">
@@ -134,9 +134,16 @@
                                 </form>
                                 
                                     @if (Auth::check() && Auth::user()->role === 'Manager')
-                                        <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
+                                        <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center w-max">
                                             <i class="fas fa-edit mr-2"></i> Edit
                                         </a>
+                                          <form action="api/items/delete/${item.id}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center w-max">
+                                        <i class="fas fa-trash-alt mr-2"></i> Delete
+                                    </button>
+                                </form>
                                     @endif
                             </div>
                         </div>

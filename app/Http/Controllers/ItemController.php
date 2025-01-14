@@ -37,7 +37,7 @@ class ItemController extends Controller
             $query->where('category_id', $category);
         }
     
-        $items = $query->simplePaginate(20);
+        $items = $query->simplePaginate(15);
     
         return response()->json($items);
     }
@@ -90,7 +90,14 @@ class ItemController extends Controller
         return response()->json(['message' => 'Item updated successfully', 'item' => $item], 200);
     }
     
-
+    public function destroy($id)
+    {
+        $item = Item::findOrFail($id);
+        $item->delete();
+    
+        return response()->json(['success' => true, 'redirect_url' => route('dashboard')]);
+    }
+    
 
 
     

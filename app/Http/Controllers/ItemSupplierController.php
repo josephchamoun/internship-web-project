@@ -8,6 +8,11 @@ use App\Models\Item;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Exception;
+use Illuminate\Support\Facades\Log;
+
 
 
 
@@ -18,7 +23,13 @@ class ItemSupplierController extends Controller
     public function index(Request $request)
     {
         // Paginate items, 20 per page
-        $items = ItemSupplier::with(['item', 'supplier'])->simplePaginate(20);
+        $items = ItemSupplier::with(['item', 'supplier'])->simplePaginate(8);
+
+        $items->getCollection()->transform(function ($items) {
+            $items->updated_at = \Carbon\Carbon::parse($items->updated_at)->format('Y-m-d H:i:s');
+            return $items;
+        });
+    
 
         // Return the paginated items as a JSON response
         return response()->json($items);

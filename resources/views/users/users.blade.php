@@ -16,7 +16,7 @@
 
     <!-- Rest of your view content -->
 
-    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <!-- Items will be populated by JavaScript -->
     </div>
 
@@ -51,32 +51,31 @@
                 paginationContainer.innerHTML = '';
 
                 // Populate items
-                data.users.data.forEach(user => {
-                    const itemCard = `
-                        <div class="bg-white shadow rounded-lg p-6 mb-4">
-                            <div class="flex items-center">
-                                <img src="${user.profile_photo}" alt="${user.name}" class="w-16 h-16 rounded-full mr-4">
-                                <div class="flex-1">
-                                    <h5 class="font-semibold text-lg">${user.name}</h5>
-                                    <p class="text-gray-600">Email: ${user.email}</p>
-                                    <p class="text-gray-600">Role: ${user.role}</p>
-                                </div>
-                                <div class="ml-auto mt-4 flex gap-2">
-                                    @if (Auth::check() && Auth::user()->role === 'Manager')
-                                        <form action="api/users/${user.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center">
-                                                <i class="fas fa-trash-alt mr-2"></i> Delete
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    itemsContainer.innerHTML += itemCard;
-                });
+                
+data.users.data.forEach(user => {
+    const itemCard = `
+        <div class="bg-white shadow rounded-lg p-6 mb-4">
+            <div class="flex items-center">
+               
+                <div class="flex-1">
+                    <h5 class="font-semibold text-lg">${user.name}</h5>
+                    <p class="text-gray-600">Email: ${user.email}</p>
+                    <p class="text-gray-600">Role: ${user.role}</p>
+                    @if (Auth::check() && Auth::user()->role === 'Manager')
+                        <form action="api/users/${user.id}" method="POST">
+                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center mt-2">
+                                <i class="fas fa-trash-alt mr-2"></i> Delete
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+        </div>
+    `;
+    itemsContainer.innerHTML += itemCard;
+});
 
                 // Pagination buttons
                 const createPaginationButton = (text, url, page) => {

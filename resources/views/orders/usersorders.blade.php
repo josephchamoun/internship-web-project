@@ -45,26 +45,28 @@
             paginationContainer.innerHTML = '';
 
             // Populate items
-                data.data.forEach(order => {
-                const itemCard = `
-<div class="bg-white shadow rounded-lg p-4">
+            data.data.forEach(order => {
+    const shippedLabel = order.status === "shipped" 
+        ? `<span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Shipped</span>` 
+        : '';
 
+    const itemCard = `
+<div class="bg-white shadow rounded-lg p-4">
     <div class="mt-4">
         <h5 class="font-semibold text-lg">#${order.id}</h5>
         <h5 class="font-semibold text-lg">${order.user.name}</h5>
-       
         <p class="text-gray-600 mt-2">${order.total_amount} $</p>
         <h5 class="font-semibold text-lg">${order.updated_at}</h5>
-        
         <div class="mt-4 flex gap-2">
-            <a href="/userorder/details/${order.id}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
-       
+            <a href="/userorder/details/${order.id}?status=${order.status}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
+            ${shippedLabel}
         </div>
     </div>
 </div>
-                `;
-                itemsContainer.innerHTML += itemCard;
-            });
+    `;
+    itemsContainer.innerHTML += itemCard;
+});
+
 
 
             // Pagination buttons

@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+   
+</head>
+<body>
+
+
 <div class="container mx-auto px-4">
     <!-- Order Info Section -->
     <div id="order-info" class="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
@@ -14,10 +25,14 @@
             </p>
         </div>
         <div>
-            <button id="save-changes" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mr-2">Save Changes</button>
-            <button id="cancel-order" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Cancel Order</button>
+        <div id="btns">
+
         </div>
-    </div>
+
+        <div id="order-status"></div>
+       </div>
+
+</div>
 
     <!-- Items Section -->
     <div id="items-container" class="space-y-4">
@@ -32,7 +47,43 @@
         </select>
     </div>
 </div>
+
+
+
 <script>
+
+
+const params = new URLSearchParams(window.location.search);
+
+// Extract the 'status' parameter
+const status = params.get('status');
+
+// Check if the order is shipped
+if (status === "shipped") {
+    const shippedLabel = `<span class="bg-green-100 text-green-800 text-base font-semibold mr-2 px-4 py-1 rounded">Shipped</span>`;
+
+    // Add the shipped label to the desired element
+    document.getElementById('order-status').innerHTML = shippedLabel;
+
+    const btnsdiv = document.getElementById('btns');
+    if (btnsdiv) {
+        btnsdiv.style.display = "none"; // Hides the element
+    }
+} else {
+    
+
+    const btns='<button id="remove-order" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 mr-2">Remove Order</button><button id="ship-order" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Ship Order</button>';
+    document.getElementById('btns').innerHTML = btns;
+    const orderStatusDiv = document.getElementById('order-status');
+    if (orderStatusDiv) {
+        orderStatusDiv.style.display = "none"; // Hides the element
+    }
+}
+
+
+
+
+
     let currentPage = 1; // Track the current page
     const order_id = @json($order_id); // Embed the order_id in the JavaScript context
     const shippingCost = 10; // Shipping cost
@@ -65,7 +116,7 @@
 
             // Populate items
             data.data.forEach(itemOrder => {
-                const itemCard = `
+    const itemCard = `
 <div class="bg-white shadow rounded-lg flex items-center p-4">
     <div class="w-32 h-32 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
         <img src="${itemOrder.item.image || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
@@ -73,14 +124,14 @@
     <div class="ml-4 flex-1">
         <h5 class="font-semibold text-lg">${itemOrder.item.name}</h5>
         <p class="text-gray-500 text-sm">Quantity: 
-            <input type="number" value="${itemOrder.quantity}" min="1" class="quantity-input border rounded px-2 py-1" data-price="${itemOrder.item.price}">
+            <span class="quantity-display border rounded px-2 py-1">${itemOrder.quantity}</span>
         </p>
         <p class="text-gray-900 font-bold text-xl item-total-price">$${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}</p>
         <button class="remove-item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 mt-2">Remove</button>
     </div>
 </div>`;
-                itemsContainer.innerHTML += itemCard;
-            });
+    itemsContainer.innerHTML += itemCard;
+});
 
             // Add event listeners to quantity inputs
             document.querySelectorAll('.quantity-input').forEach(input => {
@@ -121,10 +172,15 @@
     // Load items when the page loads
     document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
 
+
+
+
+    
+
     // Cancel order functionality
-    document.getElementById('cancel-order').addEventListener('click', async () => {
+    document.getElementById('remove-order').addEventListener('click', async () => {
         try {
-            const response = await fetch(`/api/orders/myorder/cancel/${order_id}`, {
+            const response = await fetch(`/api/orders/delete/${order_id}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token'),
@@ -144,36 +200,41 @@
         }
     });
 
-    // Save changes functionality
-    document.getElementById('save-changes').addEventListener('click', async () => {
-        try {
-            const items = [];
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                const itemElement = input.closest('.flex-1');
-                const itemName = itemElement.querySelector('h5').textContent;
-                const quantity = input.value;
-                items.push({ name: itemName, quantity: quantity });
-            });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            const response = await fetch(`/api/orders/myorder/update/${order_id}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ items: items })
-            });
+document.getElementById('ship-order').addEventListener('click', async () => {
+    // Check if the order is already shipped
+    const status = params.get('status');
+    if (status === "shipped") {
+        alert('This order has already been shipped and cannot be updated.');
+        return; // Prevent further execution if the order is shipped
+    }
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    try {
+        const response = await fetch(`/api/orders/userorder/update/${order_id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken // Add CSRF token to the request headers
             }
+        });
 
-            alert('Order has been updated successfully.');
-            // Optionally, refresh the page or update the UI
-        } catch (error) {
-            console.error('Error updating order:', error);
-            alert('Failed to update the order.');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-    });
+
+        alert('Order has been updated successfully.');
+    } catch (error) {
+        console.error('Error updating order:', error);
+        alert('Failed to update the order.');
+    }
+});
+
+
+
+
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>

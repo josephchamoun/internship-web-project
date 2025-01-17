@@ -84,15 +84,18 @@ Route::prefix('orders')->group(function () { //my orders
     Route::get('/myorders', [OrderController::class, 'MyOrdersindex']);
     Route::get('/myorder/details/{orderId}', [ItemOrderController::class, 'MyOrderDetails']);
     Route::post('/addorder', [OrderController::class, 'saveOrder']);
+    Route::put('/update/{id}', [ItemOrderController::class, 'update']);
+    Route::delete('/delete/{id}', [OrderController::class, 'destroy']);
     
     
 
 });
-Route::prefix('orders')->group(function () { //users orders
+Route::prefix('orders')->middleware('Manager')->group(function () { //users orders
     
     Route::get('/', [OrderController::class, 'index']);
     Route::get('/userorder/details/{orderId}', [ItemOrderController::class, 'OrderDetails']);
-    
+    Route::put('/userorder/update/{id}', [OrderController::class, 'updatePending']);
+
 
 });
 

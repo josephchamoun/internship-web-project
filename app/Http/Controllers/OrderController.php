@@ -129,6 +129,21 @@ class OrderController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function updatePending(Request $request, $id)
+    {
+        // Fetch the order record
+        $order = Order::findOrFail($id);
+    
+        // Update the order status to 'pending'
+        $order->status = 'shipped';
+        $order->save();
+    
+        // Return a success response
+        return response()->json(['message' => 'Order status updated to shipped']);
+    }
+ 
+
     
     
 }

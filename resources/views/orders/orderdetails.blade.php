@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+  
+</head>
+<body>
+
 <div class="container mx-auto px-4">
     <!-- Order Info Section -->
     <div id="order-info" class="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
@@ -68,13 +78,15 @@
                 const itemCard = `
 <div class="bg-white shadow rounded-lg flex items-center p-4">
     <div class="w-32 h-32 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
-        <img src="${itemOrder.item.image || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
+        <img src="${itemOrder.item.image_url || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
     </div>
     <div class="ml-4 flex-1">
         <h5 class="font-semibold text-lg">${itemOrder.item.name}</h5>
-        <p class="text-gray-500 text-sm">Quantity: 
-            <input type="number" value="${itemOrder.quantity}" min="1" class="quantity-input border rounded px-2 py-1" data-price="${itemOrder.item.price}">
-        </p>
+<p class="text-gray-500 text-sm">Quantity: 
+    <input type="number" value="${itemOrder.quantity}" min="1" class="quantity-input border rounded px-2 py-1" 
+           data-id="${itemOrder.item.id}" data-price="${itemOrder.item.price}">
+</p>
+
         <p class="text-gray-900 font-bold text-xl item-total-price">$${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}</p>
         <button class="remove-item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 mt-2">Remove</button>
     </div>
@@ -124,7 +136,7 @@
     // Cancel order functionality
     document.getElementById('cancel-order').addEventListener('click', async () => {
         try {
-            const response = await fetch(`/api/orders/myorder/cancel/${order_id}`, {
+            const response = await fetch(`/api/orders/delete/${order_id}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token'),
@@ -144,36 +156,51 @@
         }
     });
 
-    // Save changes functionality
-    document.getElementById('save-changes').addEventListener('click', async () => {
-        try {
-            const items = [];
-            document.querySelectorAll('.quantity-input').forEach(input => {
-                const itemElement = input.closest('.flex-1');
-                const itemName = itemElement.querySelector('h5').textContent;
-                const quantity = input.value;
-                items.push({ name: itemName, quantity: quantity });
-            });
-
-            const response = await fetch(`/api/orders/myorder/update/${order_id}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ items: items })
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+// Save changes functionality
+document.getElementById('save-changes').addEventListener('click', async () => {
+    try {
+        const items = []; // Array to store items to update
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            const quantity = input.value; // Get quantity
+            const itemId = input.getAttribute('data-id'); // Get item ID
+            if (itemId && quantity > 0) {
+                items.push({ id: itemId, quantity: parseInt(quantity, 10) });
             }
+        });
 
-            alert('Order has been updated successfully.');
-            // Optionally, refresh the page or update the UI
-        } catch (error) {
-            console.error('Error updating order:', error);
-            alert('Failed to update the order.');
+        if (items.length === 0) {
+            alert('No items to update.');
+            return;
         }
-    });
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Get CSRF token
+
+        const response = await fetch(`/api/orders/update/${order_id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken // Include CSRF token
+            },
+            body: JSON.stringify({ items }) // Send items array as JSON
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update order. Please try again.');
+        }
+
+        const responseData = await response.json();
+        alert(responseData.message || 'Order updated successfully.');
+    } catch (error) {
+        console.error('Error updating order:', error);
+        alert('Failed to update the order. Please try again later.');
+    }
+});
+
+
+
+
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>

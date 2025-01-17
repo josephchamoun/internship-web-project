@@ -7,42 +7,37 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    /*
-    public function storeManager(Request $request)
-    {
-        // Validate the incoming data
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        // Create a new manager user
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => 'Manager', // Set the role to Manager
-        ]);
-
-        // Respond with success or the created user data
-        return response()->json([
-            'message' => 'Manager created successfully!',
-            'user' => $user,
-        ], 201); // 201 HTTP code indicates resource creation
-    }
-        */
+  
         
     public function createManager(Request $request)
     {
+        // Validate the input data
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+    
+        // Create the user
         $user = new User();
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->password = bcrypt($request->input('password'));
-        $user->role = $request->input('role', 'Manager'); // Default to Manager if missing
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->password = bcrypt($validated['password']);
+        $user->role = $request->input('role', 'Manager'); // Default to 'Manager' if not provided
         $user->save();
-        
+    
+        // Generate a token (if applicable)
+        $token = $user->createToken('authToken')->accessToken->plainTextToken;
+    
+        // Return a JSON response
+        return response()->json([
+            'success' => true,
+            'message' => 'Manager created successfully!',
+            'user' => $user,
+            'token' => $token,
+        ], 201);
     }
+    
     
 
     

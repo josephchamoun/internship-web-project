@@ -81,24 +81,55 @@
                     <p class="text-sm font-semibold text-gray-800">Ask us anything</p>
 
                     
-                    <form class="mt-8 space-y-4">
-                       
-                        <input type='text' placeholder='Subject'
-                            class="w-full rounded-lg py-3 px-4 text-gray-800 text-sm outline-gray-900" />
-                        <textarea placeholder='Message' rows="6"
-                            class="w-full rounded-lg px-4 text-gray-800 text-sm pt-3 outline-gray-900"></textarea>
-                        <button type='button'
-                            class="text-white bg-gradient-to-r from-blue-500 to-pink-500 hover:bg-gray-700 tracking-wide rounded-lg text-sm px-4 py-3 flex items-center justify-center w-full !mt-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill='#fff' class="mr-2" viewBox="0 0 548.244 548.244">
-                                <path fill-rule="evenodd" d="M392.19 156.054 211.268 281.667 22.032 218.58C8.823 214.168-.076 201.775 0 187.852c.077-13.923 9.078-26.24 22.338-30.498L506.15 1.549c11.5-3.697 24.123-.663 32.666 7.88 8.542 8.543 11.577 21.165 7.879 32.666L390.89 525.906c-4.258 13.26-16.575 22.261-30.498 22.338-13.923.076-26.316-8.823-30.728-22.032l-63.393-190.153z" clip-rule="evenodd" data-original="#000000" />
-                            </svg>
-                            Send Message
-                        </button>
-                    </form>
+                    <form id="messageForm" class="mt-8 space-y-4">
+    @csrf <!-- CSRF token for protection -->
+    <input type="text" name="subject" id="subject" placeholder="Subject"
+        class="w-full rounded-lg py-3 px-4 text-gray-800 text-sm outline-gray-900" />
+    <textarea name="message" id="message" placeholder="Message" rows="6"
+        class="w-full rounded-lg px-4 text-gray-800 text-sm pt-3 outline-gray-900"></textarea>
+    <button type="submit"
+        class="text-white bg-gradient-to-r from-blue-500 to-pink-500 hover:bg-gray-700 tracking-wide rounded-lg text-sm px-4 py-3 flex items-center justify-center w-full !mt-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#fff" class="mr-2"
+            viewBox="0 0 548.244 548.244">
+            <path fill-rule="evenodd" d="M392.19 156.054 211.268 281.667 22.032 218.58C8.823 214.168-.076 201.775 0 187.852c.077-13.923 9.078-26.24 22.338-30.498L506.15 1.549c11.5-3.697 24.123-.663 32.666 7.88 8.542 8.543 11.577 21.165 7.879 32.666L390.89 525.906c-4.258 13.26-16.575 22.261-30.498 22.338-13.923.076-26.316-8.823-30.728-22.032l-63.393-190.153z" clip-rule="evenodd"
+                data-original="#000000" />
+        </svg>
+        Send Message
+    </button>
+</form>
+
                 </div>
             </div>
         </div>
 
     <script src="https://cdn.tailwindcss.com"></script><!--heda daroure ta ye5od l design-->
+
+    <script>
+    // Handle form submission via AJAX
+    document.getElementById('messageForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent normal form submission
+
+        var formData = new FormData(this);
+        formData.append('_token', '{{ csrf_token() }}'); // Add CSRF token if not already included
+
+        fetch('{{ route("messages.store") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+               
+                window.location.href = data.redirect_url;  // Redirect to the contact page
+            } else {
+                alert('Something went wrong! Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error occurred while sending the message');
+        });
+    });
+</script>
 
 </x-app-layout>

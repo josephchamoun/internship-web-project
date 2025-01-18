@@ -149,6 +149,16 @@ Route::middleware(['Manager'])->group(function () {
     Route::get('/categories', function() {
         return view('categories.categories'); // The Blade view that contains the API fetch logic
     })->name('categories');
+
+
+
+
+
+
+
+    Route::get('/messages', function() {
+        return view('messages.messages'); // The Blade view that contains the API fetch logic
+    });
 });
 
 /*

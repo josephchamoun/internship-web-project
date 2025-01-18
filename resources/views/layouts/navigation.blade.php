@@ -61,19 +61,25 @@
         <i class="fas fa-receipt mr-2"></i> {{ __('My Orders') }}
     </x-nav-link>
 </div>
-
+@if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/stats')" :active="request()->routeIs('stats')">
         <i class="fas fa-receipt mr-2"></i> {{ __('Statistics') }}
     </x-nav-link>
 </div>
-
+@endif
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
         <i class="fas fa-envelope mr-2"></i> 
     </x-nav-link>
 </div>
-
+@if (Auth::check() && Auth::user()->role === 'Manager')
+<div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+    <x-nav-link :href="url('/messages')" :active="request()->routeIs('messages')">
+        <i class="fas fa-envelope mr-2"></i> 
+    </x-nav-link>
+</div>
+@endif
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/about')" :active="request()->routeIs('about')">
         <i class="fas fa-info-circle mr-2"></i> 

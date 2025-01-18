@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ItemOrderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\MessageController;
 
 use App\Http\Middleware\CheckManagerRole;
 
@@ -110,6 +111,15 @@ Route::prefix('categories')->middleware('Manager')->group(function () {
 
 Route::prefix('users')->middleware('Manager')->group(function () {
     Route::delete('/{id}', [UserController::class, 'destroy']);
+
+
+
+});
+
+Route::prefix('messages')->group(function () {
+    Route::get('/', [MessageController::class, 'index']);
+    Route::post('/postmessage', [MessageController::class, 'store'])->name('messages.store');
+
 
 
 

@@ -56,7 +56,7 @@
         <h5 class="font-semibold text-lg">#${order.id}</h5>
         <h5 class="font-semibold text-lg">${order.user.name}</h5>
         <p class="text-gray-600 mt-2">${order.total_amount} $</p>
-        <h5 class="font-semibold text-lg">${order.updated_at}</h5>
+        <h5 class="font-semibold text-lg">${order.created_at}</h5>
         <div class="mt-4 flex gap-2">
             <a href="/userorder/details/${order.id}?status=${order.status}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
             ${shippedLabel}

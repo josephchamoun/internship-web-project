@@ -15,13 +15,13 @@ class CartController extends Controller
         if (!$item) {
             return redirect()->back()->with('error', 'Item not found');
         }
-
+    
         // Retrieve the cart from the session or initialize it as an empty array
         $cart = session()->get('cart', []);
-
+    
         // Get the quantity from the request
         $quantity = $request->input('quantity', 1);
-
+    
         // Add the item to the cart, with the quantity
         if (isset($cart[$itemId])) {
             $cart[$itemId]['quantity'] += $quantity;
@@ -30,14 +30,16 @@ class CartController extends Controller
                 'name' => $item->name,
                 'quantity' => $quantity,
                 'price' => $item->price,
+                'image_url' => $item->image_url, // Add image_url to the cart
             ];
         }
-
+    
         // Save the updated cart in the session
         session()->put('cart', $cart);
-
+    
         return redirect()->back()->with('success', 'Item added to cart');
     }
+    
 
     public function viewCart()
     {

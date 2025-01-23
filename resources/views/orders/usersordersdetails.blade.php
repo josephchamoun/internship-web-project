@@ -119,7 +119,7 @@ if (status === "shipped") {
     const itemCard = `
 <div class="bg-white shadow rounded-lg flex items-center p-4">
     <div class="w-32 h-32 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
-        <img src="${itemOrder.item.image || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
+        <img src="${itemOrder.item.image_url || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
     </div>
     <div class="ml-4 flex-1">
         <h5 class="font-semibold text-lg">${itemOrder.item.name}</h5>
@@ -127,7 +127,7 @@ if (status === "shipped") {
             <span class="quantity-display border rounded px-2 py-1">${itemOrder.quantity}</span>
         </p>
         <p class="text-gray-900 font-bold text-xl item-total-price">$${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}</p>
-        <button class="remove-item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 mt-2">Remove</button>
+       
     </div>
 </div>`;
     itemsContainer.innerHTML += itemCard;

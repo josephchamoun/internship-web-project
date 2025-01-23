@@ -18,6 +18,7 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gradient-to-r from-blue-300 to-pink-300"><!--l background li wara l items aw users-->
+          
             @include('layouts.navigation')
 
             <!-- Page Heading -->

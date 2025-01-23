@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\ItemOrder;
 use App\Models\Order;
 use App\Models\Item;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class ItemOrderController extends Controller
 {
@@ -24,7 +26,7 @@ class ItemOrderController extends Controller
             }
 
           
-            $order = Order::with('user:id,name')->findOrFail($orderId);
+            $order = Order::with('user:id,name')->where('user_id', auth()->id())->findOrFail($orderId);
 
           
             $response = [
@@ -54,7 +56,7 @@ class ItemOrderController extends Controller
             }
 
           
-            $order = Order::with('user:id,name')->findOrFail($orderId);
+            $order = Order::with('user:id,name')->where('user_id', auth()->id())->findOrFail($orderId);
 
           
             $response = [
@@ -72,11 +74,16 @@ class ItemOrderController extends Controller
             return response()->json($response);
         }
 
-
         public function update(Request $request, $id)
         {
             // Fetch the order record
-            $order = Order::findOrFail($id);
+            $order = Order::where('id', $id)
+              ->where('user_id', Auth::id())
+              ->firstOrFail();
+
+
+
+
         
             // Check if the order has already been shipped
             if ($order->status === 'shipped') {
@@ -86,7 +93,29 @@ class ItemOrderController extends Controller
             // Log the request data to check what is being received
             Log::info('Update Order Request:', ['order_id' => $id, 'items' => $request->items]);
         
-            // Loop through the items to update the quantities and total_amount
+            // Collect item IDs from the request
+            $requestedItemIds = collect($request->items)->pluck('id')->toArray();
+        
+            // Find all existing ItemOrder rows for this order
+            $existingOrderItems = ItemOrder::where('order_id', $id)->get();
+        
+            // Loop through the existing ItemOrder rows
+            foreach ($existingOrderItems as $existingOrderItem) {
+                // Check if the item's ID exists in the request
+                if (!in_array($existingOrderItem->item_id, $requestedItemIds)) {
+                    // Adjust the item's quantity back in the items table
+                    $itemRecord = Item::find($existingOrderItem->item_id);
+                    if ($itemRecord) {
+                        $itemRecord->quantity += $existingOrderItem->quantity;
+                        $itemRecord->save();
+                    }
+        
+                    // Delete the ItemOrder row
+                    $existingOrderItem->delete();
+                }
+            }
+        
+            // Loop through the items in the request to update the quantities and total_amount
             foreach ($request->items as $item) {
                 // Find the corresponding ItemOrder
                 $orderItem = ItemOrder::where('order_id', $id)

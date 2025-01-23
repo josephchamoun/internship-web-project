@@ -135,26 +135,37 @@
 
     // Cancel order functionality
     document.getElementById('cancel-order').addEventListener('click', async () => {
-        try {
-            const response = await fetch(`/api/orders/delete/${order_id}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                    'Content-Type': 'application/json'
-                }
-            });
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const token = localStorage.getItem('token');
+        const order_id = @json($order_id); // Replace this with your dynamic value
+        
+        console.log('Order ID:', order_id);
+        console.log('CSRF Token:', csrfToken);
+        console.log('Token:', token);
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        const response = await fetch(`/api/orders/delete/${order_id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             }
+        });
 
-            alert('Order has been cancelled successfully.');
-            // Optionally, redirect to another page or update the UI
-        } catch (error) {
-            console.error('Error cancelling order:', error);
-            alert('Failed to cancel the order.');
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Response error:', errorText);
+            throw new Error('Network response was not ok');
         }
-    });
+
+        alert('Order has been cancelled successfully.');
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        alert('Failed to cancel the order.');
+    }
+});
+
 
 // Save changes functionality
 document.getElementById('save-changes').addEventListener('click', async () => {

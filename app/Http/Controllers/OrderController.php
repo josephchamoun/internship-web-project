@@ -23,7 +23,7 @@ class OrderController extends Controller
     
         // Format the `updated_at` field for each order
         $orders->getCollection()->transform(function ($order) {
-            $order->updated_at = \Carbon\Carbon::parse($order->updated_at)->format('Y-m-d H:i:s');
+            $order->created_at = \Carbon\Carbon::parse($order->created_at)->format('Y-m-d H:i:s');
             return $order;
         });
     
@@ -43,7 +43,7 @@ class OrderController extends Controller
     
         // Format the `updated_at` field for each order
         $orders->getCollection()->transform(function ($order) {
-            $order->updated_at = \Carbon\Carbon::parse($order->updated_at)->format('Y-m-d H:i:s');
+            $order->created_at = \Carbon\Carbon::parse($order->created_at)->format('Y-m-d H:i:s');
             return $order;
         });
        
@@ -142,6 +142,35 @@ class OrderController extends Controller
         // Return a success response
         return response()->json(['message' => 'Order status updated to shipped']);
     }
+
+    public function destroy($id)
+{
+    // Find the order by ID or fail
+    $order = Order::findOrFail($id);
+
+    // Check if the order status is 'pending'
+    if ($order->status !== 'pending') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Order cannot be deleted because it is not in a pending status.'
+        ], 400); // 400 Bad Request
+    }
+
+    // Detach all associated items from the order (deletes from the itemorder table)
+    $order->items()->detach();
+
+    // Delete the order itself
+    $order->delete();
+
+    return response()->json([
+        'success' => true,
+        'redirect_url' => url('/orders') // Adjust as needed
+    ]);
+}
+
+    
+    
+    
  
 
     

@@ -22,7 +22,7 @@
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/categories')" :active="request()->routeIs('categories')">
-        <i class="fas fa-list mr-2"></i> {{ __('Categories') }}
+        <i class="fas fa-list mr-2"></i> 
     </x-nav-link>
 </div>
 @endif
@@ -30,7 +30,7 @@
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/itemsupplier')" :active="request()->routeIs('itemsupplier')">
-        <i class="fas fa-truck mr-2"></i> {{ __('Supplies') }}
+        <i class="fas fa-truck mr-2"></i> 
     </x-nav-link>
 </div>
 @endif
@@ -44,27 +44,27 @@
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/suppliers')" :active="request()->routeIs('suppliers')">
-        <i class="fas fa-industry mr-2"></i> {{ __('Suppliers') }}
+        <i class="fas fa-industry mr-2"></i> 
     </x-nav-link>
 </div>
 @endif
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/usersorders')" :active="request()->routeIs('usersorders')">
-        <i class="fas fa-shopping-cart mr-2"></i> {{ __('Users Orders') }}
+        <i class="fas fa-shopping-cart mr-2"></i> 
     </x-nav-link>
 </div>
 @endif
 
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/myorders')" :active="request()->routeIs('myorders')">
-        <i class="fas fa-receipt mr-2"></i> {{ __('My Orders') }}
+        <i class="fas fa-receipt mr-2"></i> 
     </x-nav-link>
 </div>
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/stats')" :active="request()->routeIs('stats')">
-        <i class="fas fa-receipt mr-2"></i> {{ __('Statistics') }}
+        <i class="fas fa-receipt mr-2"></i> 
     </x-nav-link>
 </div>
 @endif

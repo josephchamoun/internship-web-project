@@ -10,33 +10,34 @@ class UserController extends Controller
   
         
     public function createManager(Request $request)
-    {
-        // Validate the input data
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-    
-        // Create the user
-        $user = new User();
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->password = bcrypt($validated['password']);
-        $user->role = $request->input('role', 'Manager'); // Default to 'Manager' if not provided
-        $user->save();
-    
-        // Generate a token (if applicable)
-        $token = $user->createToken('authToken')->accessToken->plainTextToken;
-    
-        // Return a JSON response
-        return response()->json([
-            'success' => true,
-            'message' => 'Manager created successfully!',
-            'user' => $user,
-            'token' => $token,
-        ], 201);
-    }
+{
+    // Validate the input data
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6',
+    ]);
+
+    // Create the user
+    $user = new User();
+    $user->name = $validated['name'];
+    $user->email = $validated['email'];
+    $user->password = bcrypt($validated['password']);
+    $user->role = $request->input('role', 'Manager'); // Default to 'Manager' if not provided
+    $user->save();
+
+    // Generate a token (if applicable)
+    $token = $user->createToken('authToken')->plainTextToken; // Direct access to plainTextToken
+
+    // Return a JSON response
+    return response()->json([
+        'success' => true,
+        'message' => 'Manager created successfully!',
+        'user' => $user,
+        'token' => $token,
+    ], 201);
+}
+
     
     
 

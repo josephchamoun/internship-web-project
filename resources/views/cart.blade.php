@@ -12,9 +12,10 @@
       <!-- Items Section -->
       @foreach ($cart as $itemId => $item)
       <div class="md:flex items-stretch py-8 md:py-10 lg:py-8 border-t border-gray-50">
-        <div class="md:w-4/12 2xl:w-1/4 w-full">
-          <!-- Item Image -->
-        </div>
+      <div class="md:w-4/12 2xl:w-1/4 w-full">
+      <!-- Item Image -->
+      <img src="{{ $item['image_url'] ?? 'path/to/default-image.jpg' }}" alt="{{ $item['name'] }}" class="w-full h-auto object-cover">
+    </div>
         <div class="md:pl-3 md:w-8/12 2xl:w-3/4 flex flex-col justify-center">
           <div class="flex items-center justify-between w-full">
             <p class="text-base font-black leading-none text-gray-800">{{ $item['name'] }}</p>

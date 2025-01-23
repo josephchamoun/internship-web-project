@@ -1,5 +1,7 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <form id="registerForm" method="POST" action="{{ route('register') }}">
         @csrf
 
         <!-- Name -->
@@ -19,23 +21,14 @@
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
+            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
         <div class="mt-4">
             <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
+            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
@@ -44,9 +37,43 @@
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <x-primary-button class="ms-4" id="registerButton">
                 {{ __('Register') }}
             </x-primary-button>
         </div>
     </form>
+
+    <script>
+        // Handle the form submission via AJAX
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            let formData = new FormData(this);
+
+            fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json', // Ensure the response is expected as JSON
+            }
+        })
+
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect the user if the backend provides a redirect_url
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;  // Redirect to login
+                    }
+                } else {
+                    // Handle validation errors or other failure cases
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Request failed:', error);
+            });
+        });
+    </script>
 </x-guest-layout>

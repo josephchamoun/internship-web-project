@@ -12,7 +12,7 @@ use App\Http\Controllers\ItemOrderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MessageController;
-
+use App\Http\Controllers\RegistrationloginController;
 use App\Http\Middleware\CheckManagerRole;
 
 Route::post('login', [LoginController::class, 'login']);
@@ -121,5 +121,12 @@ Route::prefix('messages')->group(function () {
 
 
 });
+
+Route::prefix('register')->group(function () {
+   
+    Route::post('/apiregister', [RegistrationloginController::class, 'register']);
+
+});
+Route::post('/login/apilogin', [RegistrationloginController::class, 'login']);
 
 

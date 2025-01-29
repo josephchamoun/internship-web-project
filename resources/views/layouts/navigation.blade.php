@@ -125,9 +125,9 @@
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
+          
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-900 hover:text-white hover:bg-black focus:outline-none focus:bg-white focus:text-black transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -144,28 +144,67 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
         </div>
+        @if (Auth::check() && Auth::user()->role === 'Manager')
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link >
-                {{ __('Items') }}
+            <x-responsive-nav-link :href="url('/categories')" :active="request()->routeIs('categories')">
+                {{ __('Categories') }}
             </x-responsive-nav-link>
         </div>
+        @endif
+        @if (Auth::check() && Auth::user()->role === 'Manager')
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link >
+            <x-responsive-nav-link :href="url('/itemsupplier')" :active="request()->routeIs('itemsupplier')"> 
+                {{ __('Supplies') }}
+            </x-responsive-nav-link>
+        </div>
+        @endif
+        @if (Auth::check() && Auth::user()->role === 'Manager')
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="url('/users')" :active="request()->routeIs('users')">
                 {{ __('Users') }}
             </x-responsive-nav-link>
         </div>
+        @endif
+        @if (Auth::check() && Auth::user()->role === 'Manager')
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link >
+            <x-responsive-nav-link :href="url('/suppliers')" :active="request()->routeIs('suppliers')">
                 {{ __('Suppliers') }}
             </x-responsive-nav-link>
         </div>
+        @endif
+        @if (Auth::check() && Auth::user()->role === 'Manager')
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link>
+            <x-responsive-nav-link :href="url('/usersorders')" :active="request()->routeIs('usersorders')">
+                {{ __('Users Orders') }}
+            </x-responsive-nav-link>
+        </div>
+        @endif
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="url('/myorders')" :active="request()->routeIs('my orders')">
+                {{ __('My Orders') }}
+            </x-responsive-nav-link>
+        </div>
+        @if (Auth::check() && Auth::user()->role === 'Manager')
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="url('/stats')" :active="request()->routeIs('stats')">
+                {{ __('Stats') }}
+            </x-responsive-nav-link>
+        </div>
+        @endif
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="url('/contact')" :active="request()->routeIs('contact')">
                 {{ __('Contact') }}
             </x-responsive-nav-link>
         </div>
+        @if (Auth::check() && Auth::user()->role === 'Manager')
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link>
+            <x-responsive-nav-link :href="url('/messages')" :active="request()->routeIs('messages')">
+                {{ __('Messages') }}
+            </x-responsive-nav-link>
+        </div>
+        @endif
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="url('/about')" :active="request()->routeIs('about')">
                 {{ __('About') }}
             </x-responsive-nav-link>
         </div>
@@ -182,10 +221,10 @@
     </div>
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-4 pb-1 border-t border-white">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="font-medium text-base text-black">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-sm text-black">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

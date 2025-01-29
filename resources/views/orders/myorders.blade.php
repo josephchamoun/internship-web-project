@@ -61,7 +61,7 @@
         <h5 class="font-semibold text-lg">${order.updated_at}</h5>
         
         <div class="mt-4 flex gap-2">
-            <a href="/myorder/details/${order.id}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
+            <a href="/myorder/details/${order.id}?status=${order.status}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
        ${shippedLabel}
         </div>
     </div>

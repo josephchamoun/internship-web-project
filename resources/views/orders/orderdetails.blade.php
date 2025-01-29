@@ -23,9 +23,11 @@
                 <span class="font-bold">Total Price:</span> $ <span id="total-price"></span>
             </p>
         </div>
-        <div>
-            <button id="save-changes" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mr-2">Save Changes</button>
-            <button id="cancel-order" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Cancel Order</button>
+        <div id="btns">
+            
+        </div>
+        <div id="order-status">
+            <!-- Order status will be populated by JavaScript -->
         </div>
     </div>
 
@@ -43,6 +45,36 @@
     </div>
 </div>
 <script>
+
+const params = new URLSearchParams(window.location.search);
+
+// Extract the 'status' parameter
+const status = params.get('status');
+
+// Check if the order is shipped
+if (status === "shipped") {
+    const shippedLabel = `<span class="bg-green-100 text-green-800 text-base font-semibold mr-2 px-4 py-1 rounded">Shipped</span>`;
+
+    // Add the shipped label to the desired element
+    document.getElementById('order-status').innerHTML = shippedLabel;
+
+    const btnsdiv = document.getElementById('btns');
+    if (btnsdiv) {
+        btnsdiv.style.display = "none"; // Hides the element
+    }
+} else {
+    
+
+    const btns='<button id="cancel-order" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 mr-2">Cancel Order</button><button id="save-order" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Save Order</button>';
+    document.getElementById('btns').innerHTML = btns;
+    const orderStatusDiv = document.getElementById('order-status');
+    if (orderStatusDiv) {
+        orderStatusDiv.style.display = "none"; // Hides the element
+    }
+}
+
+
+
     let currentPage = 1; // Track the current page
     const order_id = @json($order_id); // Embed the order_id in the JavaScript context
     const shippingCost = 10; // Shipping cost
@@ -88,7 +120,9 @@
 </p>
 
         <p class="text-gray-900 font-bold text-xl item-total-price">$${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}</p>
+        
         <button class="remove-item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 mt-2">Remove</button>
+            
     </div>
 </div>`;
                 itemsContainer.innerHTML += itemCard;

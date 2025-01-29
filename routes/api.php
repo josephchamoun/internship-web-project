@@ -97,9 +97,9 @@ Route::prefix('orders')->middleware('Manager')->group(function () { //users orde
 
 });
 
-
+Route::get('/categories', [CategoryController::class, 'index']);
 Route::prefix('categories')->middleware('Manager')->group(function () {
-    Route::get('/', [CategoryController::class, 'index']);
+    
     Route::post('/addcategory', [CategoryController::class, 'store']);
     Route::put('/edit/{id}', [CategoryController::class, 'update']);
     Route::delete('/delete/{id}', [CategoryController::class, 'destroy']);

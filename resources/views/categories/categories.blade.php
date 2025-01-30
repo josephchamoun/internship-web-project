@@ -1,3 +1,4 @@
+<!-- filepath: /C:/laragon/www/intershipwebproject/resources/views/categories/categories.blade.php -->
 <x-app-layout>
 <x-slot name="header">
     <div class="flex items-center space-x-2 justify-between">
@@ -44,9 +45,6 @@
     </div>
 </div>
 
-
-
-
 <script>
     let currentPage = 1; // Track the current page
 
@@ -75,18 +73,16 @@
             data.data.forEach(item => {
                 const itemCard = `
                     <div class="bg-white shadow rounded-lg p-4">
-                       
                         <div class="mt-4">
                             <h5 class="font-semibold text-lg">${item.name}</h5>
-                          
                             <div class="mt-4 flex gap-2">
                                 @if (Auth::check() && Auth::user()->role === 'Manager')
                                     <a href="/categories/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
                                         <i class="fas fa-edit mr-2"></i> Edit
                                     </a>
-                                    <form action="api/categories/delete/${item.id}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                        @csrf
-                                        @method('DELETE')
+                                    <form class="delete-form" data-id="${item.id}">
+                                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                                        <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center">
                                             <i class="fas fa-trash-alt mr-2"></i> Delete
                                         </button>
@@ -117,6 +113,35 @@
 
             paginationContainer.appendChild(prevButton);
             paginationContainer.appendChild(nextButton);
+
+            // Add event listeners to delete forms
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    const categoryId = form.getAttribute('data-id');
+                    const token = form.querySelector('input[name="_token"]').value;
+
+                    try {
+                        const response = await fetch(`/api/categories/delete/${categoryId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': token,
+                                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+
+                        // Redirect to the categories page after successful deletion
+                        window.location.href = '/categories';
+                    } catch (error) {
+                        console.error('Error deleting category:', error);
+                    }
+                });
+            });
 
         } catch (error) {
             console.error('Error fetching items:', error);

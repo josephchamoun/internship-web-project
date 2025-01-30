@@ -1,3 +1,4 @@
+<!-- filepath: /C:/laragon/www/intershipwebproject/resources/views/cart.blade.php -->
 <script src="https://cdn.tailwindcss.com"></script>
 <div class="container mx-auto mt-10">
   <div class="sm:flex shadow-md my-10">
@@ -7,15 +8,13 @@
         <h2 class="font-semibold text-2xl">{{ $cartCount }} Items</h2>
       </div>
       
-
-
       <!-- Items Section -->
       @foreach ($cart as $itemId => $item)
       <div class="md:flex items-stretch py-8 md:py-10 lg:py-8 border-t border-gray-50">
-      <div class="md:w-4/12 2xl:w-1/4 w-full">
-      <!-- Item Image -->
-      <img src="{{ $item['image_url'] ?? 'path/to/default-image.jpg' }}" alt="{{ $item['name'] }}" class="w-full h-auto object-cover">
-    </div>
+        <div class="md:w-4/12 2xl:w-1/4 w-full">
+          <!-- Item Image -->
+          <img src="{{ $item['image_url'] ?? 'uploads/items/No_Image_Available.jpg' }}" alt="{{ $item['name'] }}" class="w-full h-auto object-cover">
+        </div>
         <div class="md:pl-3 md:w-8/12 2xl:w-3/4 flex flex-col justify-center">
           <div class="flex items-center justify-between w-full">
             <p class="text-base font-black leading-none text-gray-800">{{ $item['name'] }}</p>
@@ -59,7 +58,6 @@
         </select>
       </div>
 
-      
       <div class="border-t mt-8">
         <div class="flex font-semibold justify-between py-6 text-sm uppercase">
           <span>Total cost</span>
@@ -80,8 +78,6 @@
               {{ session('error') }}
           </div>
         @endif
-
-
       </div>
     </div>
   </div>

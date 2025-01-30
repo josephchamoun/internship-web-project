@@ -51,31 +51,29 @@
                 paginationContainer.innerHTML = '';
 
                 // Populate items
-                
-data.users.data.forEach(user => {
-    const itemCard = `
-        <div class="bg-white shadow rounded-lg p-6 mb-4">
-            <div class="flex items-center">
-               
-                <div class="flex-1">
-                    <h5 class="font-semibold text-lg">${user.name}</h5>
-                    <p class="text-gray-600">Email: ${user.email}</p>
-                    <p class="text-gray-600">Role: ${user.role}</p>
-                    @if (Auth::check() && Auth::user()->role === 'Manager')
-                        <form action="api/users/${user.id}" method="POST">
-                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center mt-2">
-                                <i class="fas fa-trash-alt mr-2"></i> Delete
-                            </button>
-                        </form>
-                    @endif
-                </div>
-            </div>
-        </div>
-    `;
-    itemsContainer.innerHTML += itemCard;
-});
+                data.users.data.forEach(user => {
+                    const itemCard = `
+                        <div class="bg-white shadow rounded-lg p-6 mb-4">
+                            <div class="flex items-center">
+                                <div class="flex-1">
+                                    <h5 class="font-semibold text-lg">${user.name}</h5>
+                                    <p class="text-gray-600">Email: ${user.email}</p>
+                                    <p class="text-gray-600">Role: ${user.role}</p>
+                                    @if (Auth::check() && Auth::user()->role === 'Manager')
+                                        <form class="delete-form" data-id="${user.id}">
+                                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center mt-2">
+                                                <i class="fas fa-trash-alt mr-2"></i> Delete
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    itemsContainer.innerHTML += itemCard;
+                });
 
                 // Pagination buttons
                 const createPaginationButton = (text, url, page) => {
@@ -95,6 +93,35 @@ data.users.data.forEach(user => {
 
                 paginationContainer.appendChild(prevButton);
                 paginationContainer.appendChild(nextButton);
+
+                // Add event listeners to delete forms
+                document.querySelectorAll('.delete-form').forEach(form => {
+                    form.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                        const userId = form.getAttribute('data-id');
+                        const token = form.querySelector('input[name="_token"]').value;
+
+                        try {
+                            const response = await fetch(`/api/users/${userId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': token,
+                                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                                }
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+
+                            // Redirect to the users page after successful deletion
+                            window.location.href = '/users';
+                        } catch (error) {
+                            console.error('Error deleting user:', error);
+                        }
+                    });
+                });
 
             } catch (error) {
                 console.error('Error fetching items:', error);

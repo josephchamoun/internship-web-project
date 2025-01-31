@@ -20,18 +20,28 @@ class ItemSupplierController extends Controller
 {
 
 
+    
+    
     public function index(Request $request)
     {
-        // Paginate items, 20 per page
-        $items = ItemSupplier::with(['item', 'supplier'])->simplePaginate(8);
-
-        $items->getCollection()->transform(function ($items) {
-            $items->updated_at = \Carbon\Carbon::parse($items->updated_at)->format('Y-m-d H:i:s');
-            return $items;
+        $searchTerm = $request->query('search');
+    
+        $query = ItemSupplier::with(['item', 'supplier'])
+            ->orderBy('created_at', 'desc');
+    
+        if ($searchTerm) {
+            $query->whereHas('item', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%');
+            });
+        }
+    
+        $items = $query->simplePaginate(8);
+    
+        $items->getCollection()->transform(function ($item) {
+            $item->created_at = \Carbon\Carbon::parse($item->created_at)->format('Y-m-d H:i:s');
+            return $item;
         });
     
-
-        // Return the paginated items as a JSON response
         return response()->json($items);
     }
 

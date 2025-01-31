@@ -5,61 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body>
+<body class="bg-gradient-to-r from-blue-300 to-pink-300 min-h-screen">
 
-<div class="container mx-auto px-4">
+<div class="container mx-auto px-4 py-8">
+     <!-- Back Button -->
+     <div class="mb-6">
+        <a href="/myorders" class="bg-white/90 text-blue-600 px-6 py-2 rounded-xl shadow-md hover:bg-white transition-all duration-200 flex items-center w-fit">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+            Back to My Orders
+        </a>
+    </div>
     <!-- Order Info Section -->
-    <div id="order-info" class="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
-        <div>
-            <h2 class="text-2xl font-semibold mb-2">Order Details</h2>
-            <p class="text-gray-700 text-lg">
-                <span class="font-bold">Order Number:</span> <span id="order-number"></span>
+    <div id="order-info" class="bg-gradient-to-r from-blue-200 to-pink-200 shadow-lg rounded-2xl p-8 mb-8 flex justify-between items-center">
+        <div class="space-y-2">
+            <h2 class="text-3xl font-bold text-blue-600 mb-3">Order Details</h2>
+            <p class="text-blue-800 text-lg">
+                <span class="font-semibold">Order Number:</span> 
+                <span id="order-number" class="text-pink-600 font-medium">N/A</span>
             </p>
-            <p class="text-gray-700 text-lg">
-                <span class="font-bold">Customer Name:</span> <span id="customer-name"></span>
+            <p class="text-blue-800 text-lg">
+                <span class="font-semibold">Customer Name:</span> 
+                <span id="customer-name" class="text-pink-600 font-medium">N/A</span>
             </p>
-            <p class="text-gray-700 text-lg">
-                <span class="font-bold">Total Price:</span> $ <span id="total-price"></span>
+            <p class="text-blue-800 text-lg">
+                <span class="font-semibold">Total Price:</span> 
+                $<span id="total-price" class="text-pink-600 font-medium">0.00</span>
             </p>
         </div>
-        <div id="btns"></div>
-        <div id="order-status">
-            <!-- Order status will be populated by JavaScript -->
-        </div>
+        <div id="btns" class="space-x-4"></div>
+        <div id="order-status"></div>
     </div>
 
     <!-- Items Section -->
-    <div id="items-container" class="space-y-4">
+    <div id="items-container" class="space-y-6">
         <!-- Items will be populated by JavaScript -->
     </div>
 
     <!-- Shipping Method Section -->
-    <div id="shipping-method" class="bg-white shadow rounded-lg p-4 mt-6">
-        <h3 class="text-xl font-semibold mb-2">Shipping Method</h3>
-        <select id="shipping-select" class="border rounded px-4 py-2">
-            <option value="10">Standard Shipping - $10</option>
-        </select>
+    <div id="shipping-method" class="bg-gradient-to-r from-blue-100 to-pink-100 shadow-lg rounded-2xl p-6 mt-8">
+        <h3 class="text-2xl font-bold text-blue-600 mb-4">Shipping</h3>
+        <p id="shipping-select" class="w-full p-3 border-2 border-pink-300 rounded-xl focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-blue-800 bg-white">
+            
+        Shipping Cost: Free ($0.00)
+        </p>
     </div>
 </div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const status = params.get('status');
-const order_id = @json($order_id); // Embed the order_id in the JavaScript context
-const shippingCost = 10; // Shipping cost
-let currentPage = 1; // Track the current page
+const order_id = @json($order_id);
+const shippingCost = 0;
+let currentPage = 1;
 
 if (status === "shipped") {
-    const shippedLabel = `<span class="bg-green-100 text-green-800 text-base font-semibold mr-2 px-4 py-1 rounded">Shipped</span>`;
+    const shippedLabel = `<span class="bg-green-100 text-green-800 text-lg font-semibold px-4 py-2 rounded-xl">Shipped</span>`;
     document.getElementById('order-status').innerHTML = shippedLabel;
-    document.getElementById('btns').style.display = "none"; // Hides the element
+    document.getElementById('btns').style.display = "none";
 } else {
     const btns = `
-        <button id="cancel-order" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 mr-2">Cancel Order</button>
-        <button id="save-changes" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Save Changes</button>
+        <button id="cancel-order" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-xl transition-colors duration-200 shadow-md">
+            Cancel Order
+        </button>
+        <button id="save-changes" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl transition-colors duration-200 shadow-md">
+            Save Changes
+        </button>
     `;
     document.getElementById('btns').innerHTML = btns;
-    document.getElementById('order-status').style.display = "none"; // Hides the element
+    document.getElementById('order-status').style.display = "none";
 }
 
 async function fetchItems(page = 1) {
@@ -67,64 +82,72 @@ async function fetchItems(page = 1) {
         const response = await fetch(`/api/orders/myorder/details/${order_id}?page=${page}`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
         });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        console.log('Fetched data:', data); // Debugging statement
 
         const itemsContainer = document.getElementById('items-container');
-        const orderInfo = data.order_info; // Assuming order info is returned in `data.order_info`
+        const orderInfo = data.order_info;
 
-        // Clear existing items
-        itemsContainer.innerHTML = '';
-
-        // Populate order info
+        // Update order info
         document.getElementById('order-number').textContent = orderInfo.order_number || 'N/A';
         document.getElementById('customer-name').textContent = orderInfo.customer_name || 'N/A';
         document.getElementById('total-price').textContent = (parseFloat(orderInfo.total_amount) + shippingCost).toFixed(2);
 
         // Populate items
+        itemsContainer.innerHTML = '';
         data.data.forEach(itemOrder => {
             const itemCard = `
-<div class="bg-white shadow rounded-lg flex items-center p-4">
-    <div class="w-32 h-32 bg-gray-100 flex items-center justify-center rounded-lg overflow-hidden">
-        <img src="${itemOrder.item.image_url || 'https://via.placeholder.com/150'}" alt="${itemOrder.item.name}" class="h-full w-auto object-cover">
-    </div>
-    <div class="ml-4 flex-1">
-        <h5 class="font-semibold text-lg">${itemOrder.item.name}</h5>
-        <p class="text-gray-500 text-sm">Quantity: 
-            ${status === "shipped" ? `<span class="quantity-display border rounded px-2 py-1">${itemOrder.quantity}</span>` : `<input type="number" value="${itemOrder.quantity}" min="1" class="quantity-input border rounded px-2 py-1" data-id="${itemOrder.item.id}" data-price="${itemOrder.item.price}">`}
-        </p>
-        <p class="text-gray-900 font-bold text-xl item-total-price">$${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}</p>
-        ${status !== "shipped" ? `<button class="remove-item bg-red-500 text-white px-2 py-1 rounded-lg hover:bg-red-600 mt-2">Remove</button>` : ''}
+<div class="bg-white shadow-lg rounded-xl p-6 border-2 border-blue-100">
+    <div class="flex items-center gap-6">
+        <div class="w-32 h-32 bg-blue-50 rounded-xl overflow-hidden border-2 border-pink-100">
+            <img src="${itemOrder.item.image_url || 'https://via.placeholder.com/150'}" 
+                 alt="${itemOrder.item.name}" 
+                 class="w-full h-full object-cover">
+        </div>
+        <div class="flex-1">
+            <h5 class="text-xl font-bold text-blue-800 mb-2">${itemOrder.item.name}</h5>
+            <div class="flex items-center gap-4 mb-3">
+                <span class="text-pink-600 font-medium">Quantity:</span>
+                ${status === "shipped" ? 
+                    `<span class="px-3 py-1 border-2 border-pink-200 rounded-lg text-blue-800">${itemOrder.quantity}</span>` : 
+                    `<input type="number" 
+                           value="${itemOrder.quantity}" 
+                           min="1" 
+                           class="quantity-input w-20 px-3 py-1 border-2 border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-blue-800"
+                           data-id="${itemOrder.item.id}" 
+                           data-price="${itemOrder.item.price}">`}
+            </div>
+            <p class="text-pink-600 text-xl font-bold">
+                $${(itemOrder.quantity * itemOrder.item.price).toFixed(2)}
+            </p>
+            ${status !== "shipped" ? `
+            <button class="remove-item mt-3 bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                Remove Item
+            </button>` : ''}
+        </div>
     </div>
 </div>`;
             itemsContainer.innerHTML += itemCard;
         });
 
         if (status !== "shipped") {
-            // Add event listeners to quantity inputs
             document.querySelectorAll('.quantity-input').forEach(input => {
                 input.addEventListener('input', (event) => {
                     const quantity = event.target.value;
                     const price = event.target.getAttribute('data-price');
-                    const totalPriceElement = event.target.closest('.flex-1').querySelector('.item-total-price');
+                    const totalPriceElement = event.target.closest('.flex-1').querySelector('.text-xl');
                     totalPriceElement.textContent = `$${(quantity * price).toFixed(2)}`;
                     updateTotalPrice();
                 });
             });
 
-            // Add event listeners to remove buttons
             document.querySelectorAll('.remove-item').forEach(button => {
                 button.addEventListener('click', (event) => {
-                    const itemElement = event.target.closest('.bg-white');
-                    itemElement.remove();
+                    event.target.closest('.bg-white').remove();
                     updateTotalPrice();
                 });
             });
@@ -133,12 +156,9 @@ async function fetchItems(page = 1) {
         function updateTotalPrice() {
             let totalPrice = 0;
             document.querySelectorAll('.quantity-input').forEach(input => {
-                const quantity = input.value;
-                const price = input.getAttribute('data-price');
-                totalPrice += quantity * price;
+                totalPrice += input.value * input.getAttribute('data-price');
             });
-            totalPrice += shippingCost; // Add shipping cost
-            document.getElementById('total-price').textContent = totalPrice.toFixed(2);
+            document.getElementById('total-price').textContent = (totalPrice + shippingCost).toFixed(2);
         }
 
     } catch (error) {
@@ -146,85 +166,56 @@ async function fetchItems(page = 1) {
     }
 }
 
-// Load items when the page loads
 document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
 
-// Cancel order functionality
 document.addEventListener('click', async (event) => {
     if (event.target.id === 'cancel-order') {
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            const token = localStorage.getItem('token');
-
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             const response = await fetch(`/api/orders/delete/${order_id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
                     'X-CSRF-TOKEN': csrfToken
                 }
             });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Response error:', errorText);
-                throw new Error('Network response was not ok');
-            }
-
-            window.location.href = '/myorders'; // Redirect to myorders page
+            if (!response.ok) throw new Error('Cancellation failed');
+            window.location.href = '/myorders';
         } catch (error) {
             console.error('Error cancelling order:', error);
-            alert('Failed to cancel the order.');
+            alert('Failed to cancel order');
         }
     }
 });
 
-// Save changes functionality
 document.addEventListener('click', async (event) => {
     if (event.target.id === 'save-changes') {
-        const status = params.get('status');
-        if (status === "shipped") {
-            alert('This order has already been shipped and cannot be updated.');
-            return; // Prevent further execution if the order is shipped
-        }
-        
         try {
-            const items = []; // Array to store items to update
+            const items = [];
             document.querySelectorAll('.quantity-input').forEach(input => {
-                const quantity = input.value; // Get quantity
-                const itemId = input.getAttribute('data-id'); // Get item ID
-                if (itemId && quantity > 0) {
-                    items.push({ id: itemId, quantity: parseInt(quantity, 10) });
-                }
+                items.push({
+                    id: input.getAttribute('data-id'),
+                    quantity: parseInt(input.value)
+                });
             });
 
-            if (items.length === 0) {
-                alert('No items to update.');
-                return;
-            }
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Get CSRF token
-
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
             const response = await fetch(`/api/orders/update/${order_id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token'),
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken // Include CSRF token
+                    'X-CSRF-TOKEN': csrfToken
                 },
-                body: JSON.stringify({ items }) // Send items array as JSON
+                body: JSON.stringify({ items })
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to update order. Please try again.');
-            }
-
-            const responseData = await response.json();
-            alert(responseData.message || 'Order updated successfully.');
-            window.location.href = '/myorders'; // Redirect to myorders page
+            if (!response.ok) throw new Error('Update failed');
+            alert('Order updated successfully!');
+            window.location.href = '/myorders';
         } catch (error) {
             console.error('Error updating order:', error);
-            alert('Failed to update the order. Please try again later.');
+            alert('Failed to update order');
         }
     }
 });

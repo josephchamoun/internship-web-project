@@ -19,7 +19,7 @@ class OrderController extends Controller
 
     public function index()//Gets all orders with their users
     {
-        $orders = Order::with('user')->simplePaginate(24);
+        $orders = Order::with('user')->orderBy('created_at', 'desc')->simplePaginate(24);
     
         // Format the `updated_at` field for each order
         $orders->getCollection()->transform(function ($order) {
@@ -38,6 +38,7 @@ class OrderController extends Controller
     
         // Get all orders belonging to the authenticated user, with pagination
         $orders = Order::where('user_id', $user->id)
+        ->orderBy('created_at', 'desc')
             ->with('user') // Load the user relationship (optional, since you already have the user)
             ->simplePaginate(24);
     

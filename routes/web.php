@@ -12,17 +12,10 @@ use App\Http\Controllers\ItemOrderController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\CheckManagerRole;
 use App\Http\Controllers\StatsController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\ContactController;
 
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'update'])->name('contact.update');
 Route::get('/', function () {
     return view('welcome');
 });
@@ -121,7 +114,7 @@ Route::middleware(['Manager'])->group(function () {
 
     Route::get('/suppliers', function () {
         return view('suppliers.suppliers');
-    })->name('itemsupplier');
+    })->name('suppliers');
 
 
 
@@ -141,11 +134,11 @@ Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 
 Route::get('/dashboard', function() {
     return view('dashboard'); // The Blade view that contains the API fetch logic
-});
+})->name('dashboard');
 Route::middleware(['Manager'])->group(function () {
     Route::get('/users', function() {
         return view('users.users'); // The Blade view that contains the API fetch logic
-    });
+    })->name('users');
 });
 
 Route::middleware(['Manager'])->group(function () {
@@ -161,7 +154,7 @@ Route::middleware(['Manager'])->group(function () {
 
     Route::get('/messages', function() {
         return view('messages.messages'); // The Blade view that contains the API fetch logic
-    });
+    })->name('messages');
 });
 
 

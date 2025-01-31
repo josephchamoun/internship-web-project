@@ -16,7 +16,7 @@
                <!-- filepath: /C:/laragon/www/intershipwebproject/resources/views/layouts/navigation.blade.php -->
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/dashboard')" :active="request()->routeIs('dashboard')">
-        <i class="fas fa-tachometer-alt mr-2"></i> 
+        <i class="fas fa-store mr-2"></i> 
     </x-nav-link>
 </div>
 @if (Auth::check() && Auth::user()->role === 'Manager')
@@ -55,7 +55,6 @@
     </x-nav-link>
 </div>
 @endif
-
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/myorders')" :active="request()->routeIs('myorders')">
         <i class="fas fa-receipt mr-2"></i> 
@@ -64,7 +63,7 @@
 @if (Auth::check() && Auth::user()->role === 'Manager')
 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
     <x-nav-link :href="url('/stats')" :active="request()->routeIs('stats')">
-        <i class="fas fa-receipt mr-2"></i> 
+    <i class="fas fa-chart-line mr-2"></i>
     </x-nav-link>
 </div>
 @endif

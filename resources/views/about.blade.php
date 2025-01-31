@@ -23,14 +23,14 @@
                     <!-- Developer 1 -->
                     <div class="flex flex-col items-center text-center">
                         <div class="w-32 h-32 rounded-full overflow-hidden mb-4">
-                            <img src="https://via.placeholder.com/150" alt="Developer 1" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/images/joseph.jpg') }}" alt="Developer 1" class="w-full h-full object-cover">
                         </div>
                         <h4 class="text-lg font-semibold text-white">Joseph Chamoun</h4>
                     </div>
                     <!-- Developer 2 -->
                     <div class="flex flex-col items-center text-center">
                         <div class="w-32 h-32 rounded-full overflow-hidden mb-4">
-                            <img src="https://via.placeholder.com/150" alt="Developer 2" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/images/rodrique.jpg') }}" alt="Developer 2" class="w-full h-full object-cover">
                         </div>
                         <h4 class="text-lg font-semibold text-white">Rodrique Khoury</h4>
                     </div>

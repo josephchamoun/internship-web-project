@@ -19,7 +19,7 @@ class ItemOrderController extends Controller
         
             $itemOrderDetails = ItemOrder::with(['item:id,name,price']) 
                 ->where('order_id', $orderId)
-                ->paginate(10); 
+                ->paginate(100); 
 
             if ($itemOrderDetails->isEmpty()) {
                 return response()->json(['message' => 'Item orders not found'], 404);
@@ -49,14 +49,14 @@ class ItemOrderController extends Controller
         
             $itemOrderDetails = ItemOrder::with(['item:id,name,price']) 
                 ->where('order_id', $orderId)
-                ->paginate(10); 
+                ->paginate(100); 
 
             if ($itemOrderDetails->isEmpty()) {
                 return response()->json(['message' => 'Item orders not found'], 404);
             }
 
           
-            $order = Order::with('user:id,name')->where('user_id', auth()->id())->findOrFail($orderId);
+            $order = Order::with('user:id,name')->findOrFail($orderId);
 
           
             $response = [

@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
 document.getElementById('remove-order').addEventListener('click', async () => {
     try {
         const response = await fetch(`/api/orders/delete/${order_id}`, {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ document.getElementById('remove-order').addEventListener('click', async () => {
         });
 
         if (!response.ok) throw new Error('Network response was not ok');
-        alert('Order has been cancelled successfully.');
+     
         window.location.href = '/usersorders';
     } catch (error) {
         console.error('Error cancelling order:', error);

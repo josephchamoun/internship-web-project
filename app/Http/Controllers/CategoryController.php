@@ -15,7 +15,7 @@ public function index(Request $request)
     if ($searchTerm) {
         $categories = Category::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
     } else {
-        $categories = Category::simplePaginate(20);
+        $categories = Category::simplePaginate(16);
     }
 
     return response()->json($categories);
@@ -43,13 +43,17 @@ public function index(Request $request)
 
 
 
+  
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
+    
         $categories = new Category();
         $categories->name = $request->input('name');
         $categories->save();
         return redirect()->route('categories');
-        
     }
 
     public function destroy($id)

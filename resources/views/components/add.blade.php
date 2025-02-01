@@ -39,6 +39,10 @@
                             id="{{ $field['id'] }}" 
                             value="{{ $field['value'] ?? '' }}" 
                             class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white text-gray-900 dark:text-gray-900" 
+                            @if (in_array($field['name'], ['price', 'quantity']))
+                                min="0"
+                                oninput="validity.valid||(value='');"
+                            @endif
                         >
                     @endif
                 </div>
@@ -49,3 +53,15 @@
         </div>
     </div>
 </div>
+
+<script>
+document.querySelector('#{{ $formId }}').addEventListener('submit', function(event) {
+    const price = parseFloat(document.querySelector('#price').value);
+    const quantity = parseInt(document.querySelector('#quantity').value);
+
+    if (price < 0 || quantity < 0) {
+        alert('Price and Quantity must be positive values.');
+        event.preventDefault();
+    }
+});
+</script>

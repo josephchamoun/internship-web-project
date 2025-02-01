@@ -168,7 +168,7 @@ document.getElementById('ship-order').addEventListener('click', async () => {
         });
 
         if (!response.ok) throw new Error('Network response was not ok');
-        alert('Order has been shipped successfully.');
+       
         window.location.href = '/usersorders';
     } catch (error) {
         console.error('Error shipping order:', error);

@@ -14,7 +14,7 @@ class SupplierController extends Controller
         if ($searchTerm) {
             $suppliers = Supplier::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
         } else {
-            $suppliers = Supplier::simplePaginate(20);
+            $suppliers = Supplier::simplePaginate(15);
         }
     
         return response()->json($suppliers);

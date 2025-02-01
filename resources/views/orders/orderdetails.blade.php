@@ -211,7 +211,7 @@ document.addEventListener('click', async (event) => {
             });
 
             if (!response.ok) throw new Error('Update failed');
-            alert('Order updated successfully!');
+      
             window.location.href = '/myorders';
         } catch (error) {
             console.error('Error updating order:', error);

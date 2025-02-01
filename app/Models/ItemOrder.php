@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use DateTimeInterface;
 class ItemOrder extends Model
 {
     use HasFactory;
@@ -28,5 +28,9 @@ class ItemOrder extends Model
     public function item()
     {
         return $this->belongsTo(Item::class);
+    }
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s'); // Customize the date format
     }
 }

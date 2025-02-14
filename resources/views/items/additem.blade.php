@@ -15,6 +15,7 @@
             <h1 class="text-center text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Add New Supply</h1>
             <form id="itemsupplierForm" action="/api/itemsupplier/addsupply" method="POST">
                 @csrf
+                <div id="error-container"></div>
                 <div class="my-2">
                     <label for="itemname" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">Item Name</label>
                     <input type="text" name="itemname" id="itemname" class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white text-gray-900 dark:text-gray-900">
@@ -25,7 +26,7 @@
                 </div>
                 <div class="my-2">
                     <label for="buyprice" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">Buy Price</label>
-                    <input type="number" name="buyprice" id="buyprice" min="0" oninput="validity.valid||(value='');" class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white text-gray-900 dark:text-gray-900">
+                    <input type="number" name="buyprice" id="buyprice" step="0.01" min="0" oninput="validity.valid||(value='');" class="block w-full border border-emerald-500 outline-emerald-800 px-2 py-2 text-sm sm:text-md rounded-md my-2 bg-white text-gray-900 dark:text-gray-900">
                 </div>
                 <div class="my-2">
                     <label for="quantity" class="text-sm sm:text-md font-bold text-gray-700 dark:text-gray-300">Quantity</label>
@@ -48,6 +49,15 @@
             formData.forEach((value, key) => {
                 data[key] = value;
             });
+
+            // Validate buyprice and quantity fields
+            if (!data.buyprice || !data.quantity) {
+                displayErrors({
+                    buyprice: !data.buyprice ? ['Buy price is required.'] : [],
+                    quantity: !data.quantity ? ['Quantity is required.'] : []
+                });
+                return;
+            }
 
             try {
                 const response = await fetch(form.action, {

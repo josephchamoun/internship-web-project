@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->get('/dashboard', [ItemController::class, 'index'])->name('dashboard');
+Route::get('/dashboard2', [ItemController::class, 'index2']);//kermel api
 
 
 
@@ -80,7 +81,7 @@ Route::prefix('items')->middleware('Manager')->group(function () {
 
 });
 
-Route::prefix('orders')->middleware('auth')->group(function () { //my orders
+Route::prefix('orders')->middleware('auth:sanctum')->group(function () { //my orders
     Route::get('/myorders', [OrderController::class, 'MyOrdersindex']);
     Route::get('/myorder/details/{orderId}', [ItemOrderController::class, 'MyOrderDetails']);
     Route::post('/addorder', [OrderController::class, 'saveOrder']);

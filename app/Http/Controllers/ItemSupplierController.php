@@ -47,47 +47,38 @@ class ItemSupplierController extends Controller
 
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'itemname' => 'required|string|max:255',
-            'suppliername' => 'required|string|max:255',
-            'buyprice' => 'required|numeric',
-            'quantity' => 'required|integer|min:1',
+{
+    $request->validate([
+        'itemname' => 'required|string|max:255',
+        'suppliername' => 'required|string|max:255',
+        'buyprice' => 'required|numeric',
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    return DB::transaction(function () use ($request) {
+        $item = Item::where('name', $request->itemname)->first();
+        if (!$item) {
+            return response()->json(['errors' => ['itemname' => ['Item does not exist.']]], 400);
+        }
+
+        $supplier = Supplier::where('name', $request->suppliername)->first();
+        if (!$supplier) {
+            return response()->json(['errors' => ['suppliername' => ['Supplier does not exist.']]], 400);
+        }
+
+        $item->quantity += $request->quantity;
+        $item->save();
+
+        ItemSupplier::create([
+            'item_id' => $item->id,
+            'supplier_id' => $supplier->id,
+            'buyprice' => $request->buyprice,
+            'quantity' => $request->quantity,
         ]);
-    
-        DB::transaction(function () use ($request) {
-           
-            $item = Item::where('name', $request->itemname)->first();
-    
-         
-            if (!$item) {
-              
-                return response()->json(['error' => 'Item does not exist.'], 400);
-            }
-    
-          
-            $item->quantity += $request->quantity;
-            $item->save();
-    
-            
-            $supplier = Supplier::where('name', $request->suppliername)->first();
-    
-          
-            if (!$supplier) {
-                return response()->json(['error' => 'Supplier does not exist.'], 400);
-            }
-    
-           
-            ItemSupplier::create([
-                'item_id' => $item->id,
-                'supplier_id' => $supplier->id,
-                'buyprice' => $request->buyprice,
-                'quantity' => $request->quantity,
-            ]);
-        });
-    
+
         return response()->json(['message' => 'Supply added successfully'], 201);
-    }
+    });
+}
     
     
     

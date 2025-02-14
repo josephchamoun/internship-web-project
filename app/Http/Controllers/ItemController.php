@@ -13,32 +13,44 @@ class ItemController extends Controller
    
 
     public function index(Request $request)
+{
+    $searchTerm = $request->query('search');
+    $age = $request->query('age');
+    $gender = $request->query('gender');
+    $category = $request->query('category');
+
+    $query = Item::query();
+
+    if ($searchTerm) {
+        $query->where('name', 'like', '%' . $searchTerm . '%');
+    }
+
+    if ($age) {
+        $query->where('age', $age);
+    }
+
+    if ($gender) {
+        $query->where('gender', $gender);
+    }
+
+    if ($category) {
+        $query->where('category_id', $category);
+    }
+
+    $items = $query->simplePaginate(20);
+
+    // Convert each item to include full image URL
+    $items->getCollection()->transform(function ($item) {
+        $item->image_url = $item->image_url ? asset("storage/{$item->image_url}") : null;
+        return $item;
+    });
+
+    return response()->json($items);
+}
+
+    public function index2(Request $request)
     {
-        $searchTerm = $request->query('search');
-        $age = $request->query('age');
-        $gender = $request->query('gender');
-        $category = $request->query('category');
-    
-        $query = Item::query();
-    
-        if ($searchTerm) {
-            $query->where('name', 'like', '%' . $searchTerm . '%');
-        }
-    
-        if ($age) {
-            $query->where('age', $age);
-        }
-    
-        if ($gender) {
-            $query->where('gender', $gender);
-        }
-    
-        if ($category) {
-            $query->where('category_id', $category);
-        }
-    
-        $items = $query->simplePaginate(20);
-    
+        $items = Item::all();
         return response()->json($items);
     }
 

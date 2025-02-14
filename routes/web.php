@@ -13,6 +13,12 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Middleware\CheckManagerRole;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ForgetPasswordController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgetPassword;
+use App\Http\Controllers\ForgetPassController;
+use App\Http\Controllers\PasswordResetLinkController;
+
 
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'update'])->name('contact.update');
@@ -159,6 +165,22 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
+Route::get('/forgetpassword', function(){
+    try {
+        \Illuminate\Support\Facades\Mail::to('chamounjoseph78@gmail.com')->send(new App\Mail\ForgetPassword());
+        return 'Email was sent';
+    } catch (\Exception $e) {
+        return 'Failed to send email: ' . $e->getMessage();
+    }
+});
+
+
+
+
+Route::post('/send-forget-password-email', [ForgetPassController::class, 'sendForgetPasswordEmail'])->name('send.forget.password.email');
+
+Route::get('/reset-password/{token}', [ForgetPassController::class, 'showResetForm'])->name('password.reset');
+Route::put('/reset-password', [ForgetPassController::class, 'resetPassword'])->name('password.update2');
 
 
 

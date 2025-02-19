@@ -138,7 +138,7 @@ Route::delete('cart/remove/{itemId}', [CartController::class, 'removeFromCart'])
 Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 
 
-Route::get('/dashboard', function() {
+Route::middleware('auth:sanctum')->get('/dashboard', function() {
     return view('dashboard'); // The Blade view that contains the API fetch logic
 })->name('dashboard');
 Route::middleware(['Manager'])->group(function () {

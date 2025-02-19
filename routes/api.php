@@ -66,7 +66,7 @@ Route::prefix('itemsupplier')->middleware('Manager')->group(function () {
 });
 
 
-Route::prefix('suppliers')->middleware('Manager')->group(function () {
+Route::prefix('suppliers')->middleware(['auth:sanctum', 'Manager'])->group(function () {
     Route::get('/', [SupplierController::class, 'index']);
     Route::post('/addsupplier', [SupplierController::class, 'store']);
     Route::put('/edit/{id}', [SupplierController::class, 'update']);

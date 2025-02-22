@@ -61,75 +61,82 @@ class OrderController extends Controller
 
     // Method for saving the order and its items via API
     public function saveOrder(Request $request)
-    {
-        try {
-            // Validate the incoming data (e.g., cart items)
-            $validator = Validator::make($request->all(), [
-                'cart' => 'required|array',
-                'cart.*.item_id' => 'required|exists:items,id',
-                'cart.*.quantity' => 'required|integer|min:1',
-            ]);
-    
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
+{
+    try {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'cart' => 'required|array',
+            'cart.*.item_id' => 'required|exists:items,id',
+            'cart.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json(['error' => $validator->errors()], 422);
             }
-    
-            // Get the authenticated user
-            $user = Auth::user();
-    
-            if (!$user) {
-                return redirect()->route('login')->with('error', 'You need to log in to place an order.');
-            }
-    
-            // Calculate the total price of the cart items
-            $totalPrice = array_sum(array_map(function ($item) {
-                return $item['price'] * $item['quantity'];
-            }, $request->cart));
-    
-            // Begin database transaction
-            DB::beginTransaction();
-    
-            // Create a new order for the authenticated user
-            $order = Order::create([
-                'user_id' => $user->id,
-                'status' => 'pending', // Default status
-                'total_amount' => $totalPrice, // Store the total price of the order
-            ]);
-    
-            // Loop through each item in the cart and save it in the itemorder table
-            foreach ($request->cart as $cartItem) {
-                // Reduce the quantity of the item in the items table
-                $item = Item::find($cartItem['item_id']);
-                if ($item) {
-                    if ($item->quantity < $cartItem['quantity']) {
-                        throw new Exception('Insufficient stock for item: ' . $item->name);
-                    }
-    
-                    $item->quantity -= $cartItem['quantity'];
-                    $item->save();
-                }
-    
-                // Save the item order
-                ItemOrder::create([
-                    'order_id' => $order->id,
-                    'item_id' => $cartItem['item_id'], // Item ID from the request
-                    'quantity' => $cartItem['quantity'], // Item quantity from the request
-                ]);
-            }
-    
-            // Commit transaction
-            DB::commit();
-    
-            session()->forget('cart');
-    
-            // Redirect to an order confirmation page or dashboard
-            return redirect()->route('myorders', ['order' => $order->id])
-                             ->with('success', 'Order placed successfully!');
-        }  catch (Exception $e) {
-            // Redirect back with an error message
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        // Get authenticated user
+        $user = Auth::user() ?? User::find($request->user_id); // API may send user_id
+
+        if (!$user) {
+            if ($request->wantsJson()) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+            return redirect()->route('login')->with('error', 'You need to log in.');
+        }
+
+        // Calculate total price
+        $totalPrice = collect($request->cart)->sum(fn($item) => Item::find($item['item_id'])->price * $item['quantity']);
+
+        // Begin transaction
+        DB::beginTransaction();
+
+        // Create order
+        $order = Order::create([
+            'user_id' => $user->id,
+            'status' => 'pending',
+            'total_amount' => $totalPrice,
+        ]);
+
+        // Save each item in the order
+        foreach ($request->cart as $cartItem) {
+            $item = Item::find($cartItem['item_id']);
+            if ($item->quantity < $cartItem['quantity']) {
+                throw new Exception("Insufficient stock for {$item->name}");
+            }
+
+            $item->decrement('quantity', $cartItem['quantity']);
+
+            ItemOrder::create([
+                'order_id' => $order->id,
+                'item_id' => $cartItem['item_id'],
+                'quantity' => $cartItem['quantity'],
+            ]);
+        }
+
+        DB::commit();
+
+        // Clear session cart (for Laravel view)
+        session()->forget('cart');
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'order' => $order], 201);
+        }
+
+        return redirect()->route('myorders', ['order' => $order->id])->with('success', 'Order placed successfully!');
+    } catch (Exception $e) {
+        DB::rollBack();
+
+        if ($request->wantsJson()) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return redirect()->back()->with('error', $e->getMessage());
     }
+}
+
 
     public function updatePending(Request $request, $id)
     {
@@ -171,7 +178,7 @@ class OrderController extends Controller
 
     
     
-    
+
  
 
     

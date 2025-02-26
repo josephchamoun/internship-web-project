@@ -128,17 +128,17 @@
                             <p class="text-gray-600 mt-2">${item.quantity} left</p>
                              ${item.quantity == 0 ? '<p class="text-red-400 font-semibold">Out of stock</p>' : ''}
                             <div class="mt-4 flex flex-col gap-2">
-                                <form action="/cart/add/${item.id}" method="POST">
-                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                                    <input type="number" name="quantity" min="1" max="${item.quantity}" value="1" class="border rounded px-2 py-1 w-16">
-                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to cart</button>
-                                </form>
+                                <div class="flex items-center space-x-2">
+                                <input type="number" id="quantity_${item.id}" min="1" max="${item.quantity}" value="1" class="border rounded px-2 py-1 w-16">
+                                <button onclick="addToCart(${item.id}, '${item.name}', ${item.price}, ${item.quantity})" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
+                            </div>
+
                                 
                                     @if (Auth::check() && Auth::user()->role === 'Manager')
                                         <a href="/items/${item.id}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center w-max">
                                             <i class="fas fa-edit mr-2"></i> Edit
                                         </a>
-                                          <form class="delete-form" data-id="${item.id}">
+                                <form class="delete-form" data-id="${item.id}">
                                     <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
                                     <input type="hidden" name="_method" value="DELETE">
                                     <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center w-max">
@@ -205,6 +205,38 @@
             console.error('Error fetching items:', error);
         }
     }
+
+    function addToCart(id, name, price, maxQuantity) {
+        let quantityInput = document.getElementById(`quantity_${id}`);
+        let quantity = parseInt(quantityInput.value);
+
+        if (quantity < 1 || quantity > maxQuantity) {
+            alert("Invalid quantity!");
+            return;
+        }
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        let existingItem = cart.find(item => item.id === id);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+            if (existingItem.quantity > maxQuantity) {
+                existingItem.quantity = maxQuantity;
+            }
+        } else {
+            cart.push({ id, name, price, quantity });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        alert(`${name} added to cart!`);
+    }
+
+    function loadCart() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        console.log("Cart:", cart);
+    }
+
+    document.addEventListener("DOMContentLoaded", loadCart);
 
     async function fetchCategories() {
         try {

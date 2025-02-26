@@ -136,13 +136,14 @@ async function fetchItems(page = 1) {
 
         if (status !== "shipped") {
             document.querySelectorAll('.quantity-input').forEach(input => {
-                input.addEventListener('input', (event) => {
-                    const quantity = event.target.value;
-                    const price = event.target.getAttribute('data-price');
-                    const totalPriceElement = event.target.closest('.flex-1').querySelector('.text-xl');
-                    totalPriceElement.textContent = `$${(quantity * price).toFixed(2)}`;
-                    updateTotalPrice();
-                });
+    input.addEventListener('input', (event) => {
+        const quantity = event.target.value;
+        const price = event.target.getAttribute('data-price');
+        const totalPriceElement = event.target.closest('.flex-1').querySelector('.text-pink-600.text-xl.font-bold');
+        totalPriceElement.textContent = `$${(quantity * price).toFixed(2)}`;
+        updateTotalPrice();
+    });
+
             });
 
             document.querySelectorAll('.remove-item').forEach(button => {

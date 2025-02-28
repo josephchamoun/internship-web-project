@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Item;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 class ItemController extends Controller
 {
 
@@ -55,47 +56,47 @@ class ItemController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Validate the request
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-            'category' => 'required|integer',
-            'gender' => 'required|string',
-            'age' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2048', // Validate image
-        ]);
-    
-        // Initialize the image path variable
-        $imagePath = null;
-    
-        // Store the image if it exists
-        if ($request->hasFile('image')) {
-            // Get the uploaded image file
-            $image = $request->file('image');
-            
-            // Store the image in 'public/uploads/items' folder
-            $imagePath = $image->store('uploads/items', 'public');
-        }
-    
-        // Create a new item record with the form data
-        $item = Item::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'price' => $validated['price'],
-            'category_id' => $validated['category'],
-            'gender' => $validated['gender'],
-            'age' => $validated['age'],
-            'image_url' => $imagePath,  // Save the image path in the database
-        ]);
-    
+{
+    // Validate the request manually to return JSON errors instead of redirecting
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|unique:items,name|string',
+        'description' => 'required|string',
+        'price' => 'required|numeric',
+        'category' => 'required|integer',
+        'gender' => 'required|string',
+        'age' => 'required|string',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2048',
+    ]);
+
+    if ($validator->fails()) {
         return response()->json([
-            'message' => 'Item added successfully',
-            'item' => $item, // Return the item information as a response
-        ]);
+            'errors' => $validator->errors()
+        ], 422); // 422 Unprocessable Entity for validation errors
     }
-    
+
+    // Store image if exists
+    $imagePath = null;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('uploads/items', 'public');
+    }
+
+    // Create item
+    $item = Item::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'category_id' => $request->category,
+        'gender' => $request->gender,
+        'age' => $request->age,
+        'image_url' => $imagePath,
+    ]);
+
+    return response()->json([
+        'message' => 'Item added successfully',
+        'item' => $item,
+    ]);
+}
+
 
     public function edit($id)
     {

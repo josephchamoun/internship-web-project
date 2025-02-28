@@ -133,68 +133,67 @@
 
         // Form Submission Handler
         document.querySelector('#itemForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
+    event.preventDefault();
 
-            const form = event.target;
-            const formData = new FormData(form);
+    const form = event.target;
+    const formData = new FormData(form);
 
-            // Validate price (if applicable)
-            const price = parseFloat(document.querySelector('#price').value);
-            if (price < 0) {
-                alert('Price must be a positive value.');
-                return;
-            }
+    // Validate price (if applicable)
+    const price = parseFloat(document.querySelector('#price').value);
+    if (price < 0 || isNaN(price)) {
+        alert('Price must be a positive value.');
+        return;
+    }
 
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    },
-                    body: formData,
-                });
-
-                const contentType = response.headers.get('content-type');
-                let result;
-                if (response.ok) {
-                    if (contentType && contentType.indexOf('application/json') !== -1) {
-                        result = await response.json();
-                    } else {
-                        result = await response.text();
-                    }
-                    console.log('Form submission successful:', result);
-                    window.location.href = '/dashboard';
-                } else {
-                    if (contentType && contentType.indexOf('application/json') !== -1) {
-                        result = await response.json();
-                        console.log('Form submission failed:', result.errors);
-                        displayErrors(result.errors);
-                    } else {
-                        result = await response.text();
-                        alert("An error occurred: " + result);
-                    }
-                }
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-                alert("There was a problem with the fetch operation");
-            }
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: formData,
         });
 
-        // Display Validation Errors
-        function displayErrors(errors) {
-            const errorContainer = document.querySelector('#error-container');
-            errorContainer.innerHTML = ''; // Clear any existing errors
-
-            for (const field in errors) {
-                const errorList = errors[field];
-                errorList.forEach(error => {
-                    const errorMessage = document.createElement('div');
-                    errorMessage.classList.add('text-red-500');
-                    errorMessage.textContent = `${field}: ${error}`;
-                    errorContainer.appendChild(errorMessage);
-                });
+        const contentType = response.headers.get('content-type');
+        let result;
+        if (response.ok) {
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                result = await response.json();
+            } else {
+                result = await response.text();
             }
+            console.log('Form submission successful:', result);
+            window.location.href = '/dashboard';
+        } else if (response.status === 422) {  // Validation error handling
+            result = await response.json();
+            console.log('Form submission failed:', result.errors);
+            displayErrors(result.errors);
+        } else {
+            result = await response.text();
+            alert("An error occurred: " + result);
         }
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        alert("There was a problem with the fetch operation");
+    }
+});
+
+// Display Validation Errors
+function displayErrors(errors) {
+    const errorContainer = document.querySelector('#error-container');
+    errorContainer.innerHTML = ''; // Clear any existing errors
+
+    for (const field in errors) {
+        const errorList = errors[field];
+        errorList.forEach(error => {
+            const errorMessage = document.createElement('div');
+            errorMessage.classList.add('text-red-500');
+            errorMessage.textContent = `${field}: ${error}`;
+            errorContainer.appendChild(errorMessage);
+        });
+    }
+}
+
 
         // Fetch Categories from API
         async function fetchCategories() {

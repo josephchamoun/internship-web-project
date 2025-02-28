@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
-
+use Illuminate\Support\Facades\Validator;
 class CategoryController extends Controller
 {
    
@@ -45,16 +45,26 @@ public function index(Request $request)
 
   
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-        ]);
-    
-        $categories = new Category();
-        $categories->name = $request->input('name');
-        $categories->save();
-        return redirect()->route('categories');
+{
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|unique:categories,name|string|max:255',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'errors' => $validator->errors()
+        ], 422); // 422 Unprocessable Entity for validation errors
     }
+
+    $category = new Category();
+    $category->name = $request->input('name');
+    $category->save();
+
+    return response()->json([
+        'message' => 'Category added successfully',
+        'category' => $category,
+    ]);
+}
 
     public function destroy($id)
 {

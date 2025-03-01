@@ -12,6 +12,12 @@ class ContactController extends Controller
         $contact = Contact::first();
         return view('contact', compact('contact'));
     }
+    public function index()
+    {
+        $contact = Contact::first();
+        return response()->json(['message' => 'Success', 'contact' => $contact]);
+
+    }
 
     public function update(Request $request)
     {

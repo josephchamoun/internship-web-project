@@ -14,6 +14,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\RegistrationloginController;
 use App\Http\Middleware\CheckManagerRole;
+use App\Http\Controllers\ContactController;
+use App\Models\User;
 
 Route::post('login', [LoginController::class, 'login']);
 
@@ -114,13 +116,9 @@ Route::prefix('users')->middleware('Manager')->group(function () {
 
 });
 
-Route::prefix('messages')->group(function () {
-    Route::get('/', [MessageController::class, 'index']);
+Route::prefix('messages')->middleware('auth:sanctum')->group(function () {
+    Route::middleware('Manager')->get('/', [MessageController::class, 'index']);
     Route::post('/postmessage', [MessageController::class, 'store'])->name('messages.store');
-
-
-
-
 });
 
 Route::prefix('register')->group(function () {
@@ -129,5 +127,7 @@ Route::prefix('register')->group(function () {
 
 });
 Route::post('/login/apilogin', [RegistrationloginController::class, 'login']);
+
+Route::middleware('auth:sanctum')->get('/contact/info', [ContactController::class, 'index']);
 
 

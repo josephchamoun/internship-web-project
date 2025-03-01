@@ -16,6 +16,7 @@ use App\Http\Controllers\RegistrationloginController;
 use App\Http\Middleware\CheckManagerRole;
 use App\Http\Controllers\ContactController;
 use App\Models\User;
+use App\Http\Controllers\PersonController;
 
 Route::post('login', [LoginController::class, 'login']);
 
@@ -129,5 +130,11 @@ Route::prefix('register')->group(function () {
 Route::post('/login/apilogin', [RegistrationloginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->get('/contact/info', [ContactController::class, 'index']);
+
+Route::prefix('person')->middleware('auth:sanctum')->group(function () {
+    Route::put('/update', [PersonController::class, 'updatePerson']);
+    Route::put('/updatepassword', [PersonController::class, 'updateUserPassword']);
+    Route::delete('/delete', [PersonController::class, 'deleteUser']);
+});
 
 

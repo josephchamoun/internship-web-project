@@ -52,7 +52,7 @@ class PersonController extends Controller
             'password' => Hash::make($request->newpassword),
         ]);
     
-        return response()->json(['message' => 'Password updated successfully']);
+        return response()->json(['message' => 'Success', 'user' => $user]);
     }
 
     public function deleteUser(Request $request)

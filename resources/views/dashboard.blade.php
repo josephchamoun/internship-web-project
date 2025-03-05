@@ -118,9 +118,7 @@
            data.data.forEach(item => {
                 const itemCard = `
                     <div class="bg-white shadow rounded-lg p-4">
-                                   <figure>
-                                        <img src="${item.image_url ? '/storage/' + item.image_url : '/path/to/default-image.jpg'}" alt="${item.name}" class="w-full rounded-lg" />
-                                    </figure>
+                                  
                         <div class="mt-4">
                             <h5 class="font-semibold text-lg">${item.name}</h5>
                             <p class="text-gray-600 mt-2">${item.description}</p>

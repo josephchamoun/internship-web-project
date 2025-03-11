@@ -220,8 +220,18 @@ document.addEventListener('click', async (event) => {
         }
     }
 });
+
+
+//iza l order details 2a2al mn 1 lezim ma y5ali ychilo w bas e3mel edit la quantity aw chil item lezim yen2as l total amount
 </script>
 
 <script src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>
+
+
+
+
+
+
+

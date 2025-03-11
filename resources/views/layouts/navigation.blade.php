@@ -211,12 +211,12 @@
             </x-responsive-nav-link>
             @endif
 
-            <x-responsive-nav-link :href="url('/about')" :active="request()->routeIs('about')" class="text-white hover:bg-white/20 block px-3 py-2 rounded-md text-sm font-medium transition duration-150">
-                <div class="flex items-center">
-                    <i class="fas fa-info-circle w-6 text-center"></i>
-                    <span class="ml-2">About</span>
-                </div>
-            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="url('/about')" :active="request()->routeIs('about')" class="text-white hover:bg-gray-700 block px-3 py-2 rounded-md text-sm font-medium transition duration-150">
+    <div class="flex items-center">
+        <i class="fas fa-info-circle w-6 text-center"></i>
+        <span class="ml-2">About</span>
+    </div>
+</x-responsive-nav-link>
             
             <!-- Rest of the mobile menu items remain the same -->
         </div>

@@ -105,9 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         totalPrice += item.price * item.quantity;
         cartItemsContainer.innerHTML += `
           <div class="md:flex items-stretch py-8 border-t-2 border-blue-50">
-            <div class="md:w-4/12 w-full">
-              <img src="${item.image_url || 'uploads/items/No_Image_Available.jpg'}" alt="${item.name}" class="w-full h-auto object-cover border-4 border-pink-100 rounded-lg shadow-sm">
-            </div>
+            
             <div class="md:pl-6 md:w-8/12 flex flex-col justify-center">
               <div class="flex items-center justify-between w-full">
                 <p class="text-lg font-bold text-blue-800">${item.name}</p>

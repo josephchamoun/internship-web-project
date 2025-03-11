@@ -20,8 +20,8 @@ use App\Http\Controllers\ForgetPassController;
 use App\Http\Controllers\PasswordResetLinkController;
 
 
-Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-Route::post('/contact', [ContactController::class, 'update'])->name('contact.update');
+Route::middleware('auth:sanctum')->get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::middleware('auth:sanctum')->post('/contact', [ContactController::class, 'update'])->name('contact.update');
 Route::get('/', function () {
     return view('welcome');
 });
@@ -31,7 +31,7 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');*/
 //Route::get('/dashboard', [ItemController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -42,23 +42,23 @@ require __DIR__.'/auth.php';
 
 //mn hon ana
 
-Route::get('/contact', function () {
+Route::middleware('auth:sanctum')->get('/contact', function () {
     return view('contact');
 })->name('contact');
 
-Route::get('/about', function () {
+Route::middleware('auth:sanctum')->get('/about', function () {
     return view('about');
 })->name('about');
 
-Route::middleware('auth-sanctum')->group(function () {
-    Route::get('/myorders', function () {
+
+    Route::middleware('auth:sanctum')->get('/myorders', function () {
         return view('orders.myorders');
     })->name('myorders');
 
-    Route::get('/myorder/details/{order_id}', function ($order_id) {
+    Route::middleware('auth:sanctum')->get('/myorder/details/{order_id}', function ($order_id) {
         return view('orders.orderdetails', ['order_id' => $order_id]);
     });
-});
+
 
 
 
@@ -79,12 +79,12 @@ Route::middleware(['Manager'])->group(function () {
         return view('users.addmanager');
     })->name('addmanager');
 
-    Route::get('/additem', function () {
+    Route::middleware('auth:sanctum')->get('/additem', function () {
         return view('items.addnewitem');
     })->name('additem');
-    Route::get('/items/{id}/edit', [ItemController::class, 'edit'])->name('items.edit');
+    Route::middleware('auth:sanctum')->get('/items/{id}/edit', [ItemController::class, 'edit'])->name('items.edit');
 
-    Route::get('/addsupply', function () {
+    Route::middleware('auth:sanctum')->get('/addsupply', function () {
         return view('items.additem');
     })->name('addsupply');
 
@@ -95,11 +95,11 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
-    Route::get('/usersorders', function () {
+    Route::middleware('auth:sanctum')->get('/usersorders', function () {
         return view('orders.usersorders');
     })->name('usersorders');
 
-    Route::get('/userorder/details/{order_id}', function ($order_id) {
+    Route::middleware('auth:sanctum')->get('/userorder/details/{order_id}', function ($order_id) {
         return view('orders.usersordersdetails', ['order_id' => $order_id]);
     });
 
@@ -114,7 +114,7 @@ Route::middleware(['Manager'])->group(function () {
     Route::middleware('auth:sanctum')->get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
 
     Route::middleware('auth:sanctum')->get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-    Route::get('/addcategories', function () {
+    Route::middleware('auth:sanctum')->get('/addcategories', function () {
         return view('categories.addcategories');
     })->name('addcategories');
 

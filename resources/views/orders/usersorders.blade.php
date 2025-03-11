@@ -1,22 +1,108 @@
 <x-app-layout>
 <x-slot name="header">
-    <div class="flex items-center space-x-2 justify-between">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <div class="flex items-center justify-between">
+        <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
             {{ __('Users Orders') }}
         </h2>
-
+        <div class="flex items-center space-x-2">
+            <span class="text-sm text-white">Quick status filter:</span>
+            <button class="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 transition">All</button>
+            <button class="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 transition">Pending</button>
+            <button class="px-3 py-1 text-sm rounded-full bg-green-100 hover:bg-green-200 transition">Shipped</button>
+        </div>
     </div>
 </x-slot>
 
-<div class="container mx-auto px-4">
-    <!-- Responsive Grid -->
-    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-6">
+<div class="container mx-auto px-4 py-6">
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Orders</p>
+                    <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Pending Orders</p>
+                    <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                </div>
+                <div class="bg-yellow-100 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Shipped Orders</p>
+                    <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                </div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Sort Controls -->
+    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input type="search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by order ID or customer name">
+        </div>
+        <!--
+        <div class="flex flex-wrap gap-2">
+            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                <option selected>Sort by</option>
+                <option value="date_desc">Date (newest)</option>
+                <option value="date_asc">Date (oldest)</option>
+                <option value="amount_desc">Amount (high to low)</option>
+                <option value="amount_asc">Amount (low to high)</option>
+            </select>
+            
+            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                <option selected>Items per page</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>-->
+    </div>
+
+    <!-- Orders Grid -->
+    <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
         <!-- Items will be populated by JavaScript -->
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-6 flex justify-between" id="pagination-container">
-        <!-- Pagination buttons will be inserted here -->
+    <!-- Empty State (will be hidden when there are items) -->
+    <div id="empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center bg-white rounded-lg shadow mt-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900">No orders found</h3>
+        <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+    </div>
+
+    <!-- Pagination with page numbers -->
+    <div class="mt-8 flex justify-between items-center" id="pagination-container">
+        <!-- Pagination will be populated by JavaScript -->
     </div>
 </div>
 
@@ -39,57 +125,172 @@
             const data = await response.json();
             const itemsContainer = document.getElementById('items-container');
             const paginationContainer = document.getElementById('pagination-container');
+            const emptyState = document.getElementById('empty-state');
 
             // Clear existing items and pagination
             itemsContainer.innerHTML = '';
             paginationContainer.innerHTML = '';
 
+            // Show/hide empty state
+            if (data.data.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
             // Populate items
             data.data.forEach(order => {
-    const shippedLabel = order.status === "shipped" 
-        ? `<span class="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Shipped</span>` 
-        : '';
+                // Format date to be more readable
+                const orderDate = new Date(order.created_at);
+                const formattedDate = orderDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
 
-    const itemCard = `
-<div class="bg-white shadow rounded-lg p-4">
-    <div class="mt-4">
-        <h5 class="font-semibold text-lg">#${order.id}</h5>
-        <h5 class="font-semibold text-lg">${order.user.name}</h5>
-        <p class="text-gray-600 mt-2">${order.total_amount} $</p>
-        <h5 class="font-semibold text-lg">${order.created_at}</h5>
-        <div class="mt-4 flex gap-2">
-            <a href="/userorder/details/${order.id}?status=${order.status}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">View Details</a>
-            ${shippedLabel}
-        </div>
-    </div>
-</div>
-    `;
-    itemsContainer.innerHTML += itemCard;
-});
+                const statusClasses = {
+                    'shipped': 'bg-green-100 text-green-800',
+                    'pending': 'bg-yellow-100 text-yellow-800',
+                    'cancelled': 'bg-red-100 text-red-800',
+                    'default': 'bg-gray-100 text-gray-800'
+                };
 
+                const statusClass = statusClasses[order.status] || statusClasses.default;
+                const statusLabel = `<span class="${statusClass} text-xs font-semibold px-2.5 py-0.5 rounded capitalize">${order.status}</span>`;
 
+                const itemCard = `
+                <div class="bg-white shadow rounded-lg overflow-hidden transition-all hover:shadow-md">
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <h5 class="font-bold text-lg text-gray-900">#${order.id}</h5>
+                            ${statusLabel}
+                        </div>
+                        <div class="mb-3">
+                            <div class="flex items-center gap-1 text-gray-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <span class="font-medium">${order.user.name}</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-gray-700 mt-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="text-sm">${formattedDate}</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="bg-blue-50 px-3 py-1 rounded-full">
+                                <span class="text-blue-800 font-semibold">$${parseFloat(order.total_amount).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="/userorder/details/${order.id}?status=${order.status}" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                `;
+                
+                itemsContainer.innerHTML += itemCard;
+            });
 
-            // Pagination buttons
-            const createPaginationButton = (text, url, page) => {
-                const button = document.createElement('button');
-                button.textContent = text;
-                button.className = 'bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600';
-                button.disabled = !url;
-                button.onclick = () => fetchItems(page);
-                return button;
-            };
-
-            // Add "Previous" button
-            const prevButton = createPaginationButton('Previous', data.prev_page_url, data.current_page - 1);
-
-            // Add "Next" button
-            const nextButton = createPaginationButton('Next', data.next_page_url, data.current_page + 1);
-
-            paginationContainer.appendChild(prevButton);
-            paginationContainer.appendChild(nextButton);
+            // Enhanced pagination
+            const paginationWrapper = document.createElement('div');
+            paginationWrapper.className = 'flex items-center space-x-2';
+            
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>';
+            prevButton.className = data.prev_page_url 
+                ? 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50' 
+                : 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed';
+            prevButton.disabled = !data.prev_page_url;
+            prevButton.onclick = () => fetchItems(data.current_page - 1);
+            paginationWrapper.appendChild(prevButton);
+            
+            // Page numbers
+            const totalPages = data.last_page;
+            let startPage = Math.max(1, data.current_page - 2);
+            let endPage = Math.min(totalPages, data.current_page + 2);
+            
+            // Always show at least 5 pages if available
+            if (endPage - startPage + 1 < 5 && totalPages > 4) {
+                if (data.current_page < 3) {
+                    endPage = Math.min(5, totalPages);
+                } else if (data.current_page > totalPages - 2) {
+                    startPage = Math.max(1, totalPages - 4);
+                }
+            }
+            
+            // First page
+            if (startPage > 1) {
+                const firstPageBtn = document.createElement('button');
+                firstPageBtn.textContent = '1';
+                firstPageBtn.className = 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
+                firstPageBtn.onclick = () => fetchItems(1);
+                paginationWrapper.appendChild(firstPageBtn);
+                
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.className = 'flex items-center justify-center w-10 h-10';
+                    paginationWrapper.appendChild(ellipsis);
+                }
+            }
+            
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i.toString();
+                pageBtn.className = i === data.current_page
+                    ? 'flex items-center justify-center w-10 h-10 rounded-md border border-blue-500 bg-blue-500 text-white'
+                    : 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
+                pageBtn.onclick = () => fetchItems(i);
+                paginationWrapper.appendChild(pageBtn);
+            }
+            
+            // Last page
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.className = 'flex items-center justify-center w-10 h-10';
+                    paginationWrapper.appendChild(ellipsis);
+                }
+                
+                const lastPageBtn = document.createElement('button');
+                lastPageBtn.textContent = totalPages.toString();
+                lastPageBtn.className = 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
+                lastPageBtn.onclick = () => fetchItems(totalPages);
+                paginationWrapper.appendChild(lastPageBtn);
+            }
+            
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
+            nextButton.className = data.next_page_url 
+                ? 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50' 
+                : 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed';
+            nextButton.disabled = !data.next_page_url;
+            nextButton.onclick = () => fetchItems(data.current_page + 1);
+            paginationWrapper.appendChild(nextButton);
+            
+            // Page info
+            const pageInfo = document.createElement('div');
+            pageInfo.className = 'text-sm text-gray-500';
+            pageInfo.textContent = `Showing page ${data.current_page} of ${totalPages}`;
+            
+            paginationContainer.appendChild(paginationWrapper);
+            paginationContainer.appendChild(pageInfo);
 
         } catch (error) {
             console.error('Error fetching items:', error);
+            document.getElementById('items-container').innerHTML = `
+            <div class="col-span-full py-8 text-center">
+                <p class="text-red-500">An error occurred while loading orders. Please try again.</p>
+            </div>`;
         }
     }
 

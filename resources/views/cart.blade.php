@@ -36,36 +36,91 @@
               <span class="text-pink-600" id="total-cost">$0.00</span>
             </div>
             <form id="checkout-form" action="{{ url('/api/orders/addorder') }}" method="POST" class="space-y-4">
-    @csrf
-    <div id="cart-items-inputs"></div> <!-- This will hold hidden inputs dynamically -->
-
-    <input type="hidden" name="total_price" id="total_price" value="0">
-
-    <button type="submit" class="w-full bg-gradient-to-r from-pink-400 to-blue-400 hover:from-pink-500 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg">
-        Checkout Now
-    </button>
-</form>
-
-
-
+              @csrf
+              <div id="cart-items-inputs"></div> <!-- This will hold hidden inputs dynamically -->
+              <input type="hidden" name="total_price" id="total_price" value="0">
+              <button type="submit" class="w-full bg-gradient-to-r from-pink-400 to-blue-400 hover:from-pink-500 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg">
+                Checkout Now
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartItemsInputs = document.getElementById("cart-items-inputs");
-    const totalPriceInput = document.getElementById("total_price");
+    document.addEventListener("DOMContentLoaded", function () {
+        loadCart();
+        updateFormInputs();
+
+        document.getElementById("checkout-form").addEventListener("submit", function (event) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                event.preventDefault(); // Stop form submission if cart is empty
+            } else {
+                localStorage.removeItem("cart"); // Clear cart after successful checkout
+            }
+        });
+    });
+
+    function loadCart() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let cartItemsContainer = document.getElementById('cart-items');
+        let cartCount = document.getElementById('cart-count');
+        let summaryCount = document.getElementById('summary-count');
+        let summaryTotalPrice = document.getElementById('summary-total-price');
+        let totalCost = document.getElementById('total-cost');
+        let totalPrice = 0;
+        
+        cartItemsContainer.innerHTML = '';
+        cart.forEach((item, index) => {
+            totalPrice += item.price * item.quantity;
+            cartItemsContainer.innerHTML += `
+              <div class="md:flex items-stretch py-8 border-t-2 border-blue-50">
+                <div class="md:pl-6 md:w-8/12 flex flex-col justify-center">
+                  <div class="flex items-center justify-between w-full">
+                    <p class="text-lg font-bold text-blue-800">${item.name}</p>
+                    <input type="number" value="${item.quantity}" min="1" class="border-2 border-pink-300 text-center w-16 text-blue-800 font-bold rounded-md" readonly>
+                  </div>
+                  <p class="text-sm text-pink-600 pt-2">Price: $${item.price.toFixed(2)}</p>
+                  <div class="flex items-center justify-between pt-5">
+                    <button onclick="removeItem(${index})" class="text-sm text-pink-600 hover:text-pink-800 transition-colors">
+                      <i class="fas fa-trash-alt mr-1"></i>Remove
+                    </button>
+                    <p class="text-lg font-bold text-blue-800">$${(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
+                </div>
+              </div>`;
+        });
+        
+        cartCount.textContent = `${cart.length} Items`;
+        summaryCount.textContent = `${cart.length} Items`;
+        summaryTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+        totalCost.textContent = `$${totalPrice.toFixed(2)}`;
+
+        updateFormInputs(); // Update form inputs after reloading the cart
+    }
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCart(); // Reload cart display
+        updateFormInputs(); // Update hidden form inputs for checkout
+    }
 
     function updateFormInputs() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartItemsInputs = document.getElementById("cart-items-inputs");
+        const totalPriceInput = document.getElementById("total_price");
+
         cartItemsInputs.innerHTML = ""; // Clear previous inputs
         let total = 0;
 
         cart.forEach((item, index) => {
             total += item.price * item.quantity;
-
             cartItemsInputs.innerHTML += `
                 <input type="hidden" name="cart[${index}][item_id]" value="${item.id}">
                 <input type="hidden" name="cart[${index}][quantity]" value="${item.quantity}">
@@ -75,67 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         totalPriceInput.value = total.toFixed(2); // Update total price
     }
-
-    updateFormInputs(); // Call function when the page loads
-
-    document.getElementById("checkout-form").addEventListener("submit", function (event) {
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-            event.preventDefault(); // Stop form submission if cart is empty
-        }
-        else{
-            localStorage.removeItem("cart"); // Clear cart after successful checkout
-        }
-
-    });
-});
-
-
-    function loadCart() {
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      let cartItemsContainer = document.getElementById('cart-items');
-      let cartCount = document.getElementById('cart-count');
-      let summaryCount = document.getElementById('summary-count');
-      let summaryTotalPrice = document.getElementById('summary-total-price');
-      let totalCost = document.getElementById('total-cost');
-      let totalPrice = 0;
-      
-      cartItemsContainer.innerHTML = '';
-      cart.forEach((item, index) => {
-        totalPrice += item.price * item.quantity;
-        cartItemsContainer.innerHTML += `
-          <div class="md:flex items-stretch py-8 border-t-2 border-blue-50">
-            
-            <div class="md:pl-6 md:w-8/12 flex flex-col justify-center">
-              <div class="flex items-center justify-between w-full">
-                <p class="text-lg font-bold text-blue-800">${item.name}</p>
-                <input type="number" value="${item.quantity}" min="1" class="border-2 border-pink-300 text-center w-16 text-blue-800 font-bold rounded-md" readonly>
-              </div>
-              <p class="text-sm text-pink-600 pt-2">Price: $${item.price.toFixed(2)}</p>
-              <div class="flex items-center justify-between pt-5">
-                <button onclick="removeItem(${index})" class="text-sm text-pink-600 hover:text-pink-800 transition-colors">
-                  <i class="fas fa-trash-alt mr-1"></i>Remove
-                </button>
-                <p class="text-lg font-bold text-blue-800">$${(item.price * item.quantity).toFixed(2)}</p>
-              </div>
-            </div>
-          </div>`;
-      });
-      
-      cartCount.textContent = `${cart.length} Items`;
-      summaryCount.textContent = `${cart.length} Items`;
-      summaryTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
-      totalCost.textContent = `$${totalPrice.toFixed(2)}`;
-    }
-    
-    function removeItem(index) {
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      loadCart();
-    }
-    
-    document.addEventListener('DOMContentLoaded', loadCart);
   </script>
 </body>
 </html>

@@ -6,9 +6,9 @@
         </h2>
         <div class="flex items-center space-x-2">
             <span class="text-sm text-white">Quick status filter:</span>
-            <button class="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 transition">All</button>
-            <button class="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 transition">Pending</button>
-            <button class="px-3 py-1 text-sm rounded-full bg-green-100 hover:bg-green-200 transition">Shipped</button>
+            <button onclick="fetchItems(1, 'all')" class="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 transition">All</button>
+            <button onclick="fetchItems(1, 'pending')" class="px-3 py-1 text-sm rounded-full bg-gray-200 hover:bg-gray-300 transition">Pending</button>
+            <button onclick="fetchItems(1, 'shipped')" class="px-3 py-1 text-sm rounded-full bg-green-100 hover:bg-green-200 transition">Shipped</button>
         </div>
     </div>
 </x-slot>
@@ -20,7 +20,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-gray-500 text-sm">Total Orders</p>
-                    <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                    <h3 id="total-orders" class="text-2xl font-bold text-gray-800">--</h3>
                 </div>
                 <div class="bg-blue-100 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,7 +33,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-gray-500 text-sm">Pending Orders</p>
-                    <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                    <h3 id="pending-orders" class="text-2xl font-bold text-gray-800">--</h3>
                 </div>
                 <div class="bg-yellow-100 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,7 +46,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <p class="text-gray-500 text-sm">Shipped Orders</p>
-                    <h3 class="text-2xl font-bold text-gray-800">--</h3>
+                    <h3 id="shipped-orders" class="text-2xl font-bold text-gray-800">--</h3>
                 </div>
                 <div class="bg-green-100 p-3 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,35 +55,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Search & Sort Controls -->
-    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </div>
-            <input type="search" class="block w-full p-2.5 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search by order ID or customer name">
-        </div>
-        <!--
-        <div class="flex flex-wrap gap-2">
-            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
-                <option selected>Sort by</option>
-                <option value="date_desc">Date (newest)</option>
-                <option value="date_asc">Date (oldest)</option>
-                <option value="amount_desc">Amount (high to low)</option>
-                <option value="amount_asc">Amount (low to high)</option>
-            </select>
-            
-            <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
-                <option selected>Items per page</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
-        </div>-->
     </div>
 
     <!-- Orders Grid -->
@@ -108,10 +79,14 @@
 
 <script>
     let currentPage = 1; // Track the current page
+    let currentStatus = 'all'; // Track the current status filter
 
-    async function fetchItems(page = 1) {
+    async function fetchItems(page = 1, status = 'all') {
+        currentPage = page;
+        currentStatus = status;
+
         try {
-            const response = await fetch(`/api/orders?page=${page}`, {
+            const response = await fetch(`/api/orders?page=${page}&status=${status}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
@@ -127,19 +102,24 @@
             const paginationContainer = document.getElementById('pagination-container');
             const emptyState = document.getElementById('empty-state');
 
+            // Update stats overview
+            document.getElementById('total-orders').textContent = data.totalOrders;
+            document.getElementById('pending-orders').textContent = data.pendingOrders;
+            document.getElementById('shipped-orders').textContent = data.shippedOrders;
+
             // Clear existing items and pagination
             itemsContainer.innerHTML = '';
             paginationContainer.innerHTML = '';
 
             // Show/hide empty state
-            if (data.data.length === 0) {
+            if (data.orders.data.length === 0) {
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
             }
 
             // Populate items
-            data.data.forEach(order => {
+            data.orders.data.forEach(order => {
                 // Format date to be more readable
                 const orderDate = new Date(order.created_at);
                 const formattedDate = orderDate.toLocaleDateString('en-US', { 
@@ -203,23 +183,23 @@
             // Previous button
             const prevButton = document.createElement('button');
             prevButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>';
-            prevButton.className = data.prev_page_url 
+            prevButton.className = data.orders.prev_page_url 
                 ? 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50' 
                 : 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed';
-            prevButton.disabled = !data.prev_page_url;
-            prevButton.onclick = () => fetchItems(data.current_page - 1);
+            prevButton.disabled = !data.orders.prev_page_url;
+            prevButton.onclick = () => fetchItems(data.orders.current_page - 1, currentStatus);
             paginationWrapper.appendChild(prevButton);
             
             // Page numbers
-            const totalPages = data.last_page;
-            let startPage = Math.max(1, data.current_page - 2);
-            let endPage = Math.min(totalPages, data.current_page + 2);
+            const totalPages = data.orders.last_page;
+            let startPage = Math.max(1, data.orders.current_page - 2);
+            let endPage = Math.min(totalPages, data.orders.current_page + 2);
             
             // Always show at least 5 pages if available
             if (endPage - startPage + 1 < 5 && totalPages > 4) {
-                if (data.current_page < 3) {
+                if (data.orders.current_page < 3) {
                     endPage = Math.min(5, totalPages);
-                } else if (data.current_page > totalPages - 2) {
+                } else if (data.orders.current_page > totalPages - 2) {
                     startPage = Math.max(1, totalPages - 4);
                 }
             }
@@ -229,7 +209,7 @@
                 const firstPageBtn = document.createElement('button');
                 firstPageBtn.textContent = '1';
                 firstPageBtn.className = 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
-                firstPageBtn.onclick = () => fetchItems(1);
+                firstPageBtn.onclick = () => fetchItems(1, currentStatus);
                 paginationWrapper.appendChild(firstPageBtn);
                 
                 if (startPage > 2) {
@@ -244,10 +224,10 @@
             for (let i = startPage; i <= endPage; i++) {
                 const pageBtn = document.createElement('button');
                 pageBtn.textContent = i.toString();
-                pageBtn.className = i === data.current_page
+                pageBtn.className = i === data.orders.current_page
                     ? 'flex items-center justify-center w-10 h-10 rounded-md border border-blue-500 bg-blue-500 text-white'
                     : 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
-                pageBtn.onclick = () => fetchItems(i);
+                pageBtn.onclick = () => fetchItems(i, currentStatus);
                 paginationWrapper.appendChild(pageBtn);
             }
             
@@ -263,24 +243,24 @@
                 const lastPageBtn = document.createElement('button');
                 lastPageBtn.textContent = totalPages.toString();
                 lastPageBtn.className = 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
-                lastPageBtn.onclick = () => fetchItems(totalPages);
+                lastPageBtn.onclick = () => fetchItems(totalPages, currentStatus);
                 paginationWrapper.appendChild(lastPageBtn);
             }
             
             // Next button
             const nextButton = document.createElement('button');
             nextButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
-            nextButton.className = data.next_page_url 
+            nextButton.className = data.orders.next_page_url 
                 ? 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50' 
                 : 'flex items-center justify-center w-10 h-10 rounded-md border border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed';
-            nextButton.disabled = !data.next_page_url;
-            nextButton.onclick = () => fetchItems(data.current_page + 1);
+            nextButton.disabled = !data.orders.next_page_url;
+            nextButton.onclick = () => fetchItems(data.orders.current_page + 1, currentStatus);
             paginationWrapper.appendChild(nextButton);
             
             // Page info
             const pageInfo = document.createElement('div');
             pageInfo.className = 'text-sm text-gray-500';
-            pageInfo.textContent = `Showing page ${data.current_page} of ${totalPages}`;
+            pageInfo.textContent = `Showing page ${data.orders.current_page} of ${totalPages}`;
             
             paginationContainer.appendChild(paginationWrapper);
             paginationContainer.appendChild(pageInfo);
@@ -295,7 +275,7 @@
     }
 
     // Load items when the page loads
-    document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage));
+    document.addEventListener('DOMContentLoaded', () => fetchItems(currentPage, currentStatus));
 </script>
 
 <script src="https://cdn.tailwindcss.com"></script>

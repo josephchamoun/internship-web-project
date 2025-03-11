@@ -17,18 +17,26 @@ use Illuminate\Support\Facades\Log;
 class OrderController extends Controller
 {
 
-    public function index()//Gets all orders with their users
-    {
-        $orders = Order::with('user')->orderBy('created_at', 'desc')->simplePaginate(24);
     
-        // Format the `updated_at` field for each order
-        $orders->getCollection()->transform(function ($order) {
-            $order->created_at = \Carbon\Carbon::parse($order->created_at)->format('Y-m-d H:i:s');
-            return $order;
-        });
-    
-        return response()->json($orders);
+   
+public function index(Request $request)
+{
+    $status = $request->query('status', 'all');
+    $query = Order::with('user')->orderBy('created_at', 'desc');
+
+    if ($status !== 'all') {
+        $query->where('status', $status);
     }
+
+    $orders = $query->paginate(12); // Adjust the pagination size as needed
+
+    return response()->json([
+        'orders' => $orders,
+        'totalOrders' => Order::count(),
+        'pendingOrders' => Order::where('status', 'pending')->count(),
+        'shippedOrders' => Order::where('status', 'shipped')->count(),
+    ]);
+}
 
 
     public function MyOrdersindex() // Gets all orders for the authenticated user
@@ -164,6 +172,11 @@ class OrderController extends Controller
         ], 400); // 400 Bad Request
     }
 
+    // Return the item quantities
+    foreach ($order->items as $item) {
+        $item->increment('quantity', $item->pivot->quantity);
+    }
+
     // Detach all associated items from the order (deletes from the itemorder table)
     $order->items()->detach();
 
@@ -175,6 +188,8 @@ class OrderController extends Controller
         'redirect_url' => url('/orders') // Adjust as needed
     ]);
 }
+
+
 
     
     

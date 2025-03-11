@@ -50,7 +50,7 @@ Route::get('/about', function () {
     return view('about');
 })->name('about');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth-sanctum')->group(function () {
     Route::get('/myorders', function () {
         return view('orders.myorders');
     })->name('myorders');
@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['Manager'])->group(function () {
 
 
-    Route::get('/stats', [StatsController::class, 'index'])->name('stats');
+    Route::middleware('auth:sanctum')->get('/stats', [StatsController::class, 'index'])->name('stats');
 
 
 
@@ -75,7 +75,7 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
-    Route::get('/addmanager', function () {
+    Route::middleware('auth:sanctum')->get('/addmanager', function () {
         return view('users.addmanager');
     })->name('addmanager');
 
@@ -107,18 +107,18 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
-    Route::get('/addsupplier', function () {
+    Route::middleware('auth:sanctum')->get('/addsupplier', function () {
         return view('suppliers.addsupplier');
     })->name('addsupplier');
 
-    Route::get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
+    Route::middleware('auth:sanctum')->get('/suppliers/{id}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
 
-    Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::middleware('auth:sanctum')->get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::get('/addcategories', function () {
         return view('categories.addcategories');
     })->name('addcategories');
 
-    Route::get('/suppliers', function () {
+    Route::middleware('auth:sanctum')->get('/suppliers', function () {
         return view('suppliers.suppliers');
     })->name('suppliers');
 
@@ -126,28 +126,28 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
-    Route::get('/itemsupplier', function () {
+    Route::middleware('auth:sanctum')->get('/itemsupplier', function () {
         return view('items.items');
     })->name('itemsupplier');
-    Route::get('/itemsupplier/{id}/edit', [ItemSupplierController::class, 'edit']);
+    Route::middleware('auth:sanctum')->get('/itemsupplier/{id}/edit', [ItemSupplierController::class, 'edit']);
 });
 
 //Cart Routes
 
-Route::get('cart', [CartController::class, 'viewCart'])->name('cart.view');
+Route::middleware('auth:sanctum')->get('cart', [CartController::class, 'viewCart'])->name('cart.view');
 
 
 Route::middleware('auth:sanctum')->get('/dashboard', function() {
     return view('dashboard'); // The Blade view that contains the API fetch logic
 })->name('dashboard');
 Route::middleware(['Manager'])->group(function () {
-    Route::get('/users', function() {
+    Route::middleware('auth:sanctum')->get('/users', function() {
         return view('users.users'); // The Blade view that contains the API fetch logic
     })->name('users');
 });
 
 Route::middleware(['Manager'])->group(function () {
-    Route::get('/categories', function() {
+    Route::middleware('auth:sanctum')->get('/categories', function() {
         return view('categories.categories'); // The Blade view that contains the API fetch logic
     })->name('categories');
 
@@ -157,7 +157,7 @@ Route::middleware(['Manager'])->group(function () {
 
 
 
-    Route::get('/messages', function() {
+    Route::middleware('auth:sanctum')->get('/messages', function() {
         return view('messages.messages'); // The Blade view that contains the API fetch logic
     })->name('messages');
 });

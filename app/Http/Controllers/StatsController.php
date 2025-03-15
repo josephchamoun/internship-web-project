@@ -22,7 +22,7 @@ class StatsController extends Controller
     // Check if startDate and endDate are valid
     if ($startDate && $endDate) {
         // Fetch Best-Selling Items
-        $bestSellingItems = DB::table('itemorder')
+        $bestSellingItems = DB::table('item_orders')
             ->select('items.name', DB::raw('SUM(itemorder.quantity) as total_sold'))
             ->join('items', 'itemorder.item_id', '=', 'items.id')
             ->whereBetween('itemorder.created_at', [$startDate, $endDate]) // Apply the date filter here
@@ -60,9 +60,9 @@ class StatsController extends Controller
             ->toArray();
     } else {
         // If no date filter is applied, fetch all data
-        $bestSellingItems = DB::table('itemorder')
-            ->select('items.name', DB::raw('SUM(itemorder.quantity) as total_sold'))
-            ->join('items', 'itemorder.item_id', '=', 'items.id')
+        $bestSellingItems = DB::table('item_orders')
+            ->select('items.name', DB::raw('SUM(item_orders.quantity) as total_sold'))
+            ->join('items', 'item_orders.item_id', '=', 'items.id')
             ->groupBy('items.name')
             ->orderBy('total_sold', 'desc')
             ->get();
@@ -77,7 +77,7 @@ class StatsController extends Controller
         $newCustomers = DB::table('users')->count();
 
         // Fetch Total Expense (all-time)
-        $totalExpense = DB::table('item_supplier')->sum('buyprice');
+        $totalExpense = DB::table('item_supplier')->sum('price');
 
         // Fetch Monthly Revenue for Charts (all-time)
         $monthlyRevenue = DB::table('orders')

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('items', function (Blueprint $table) {
             $table->enum('gender', ['female', 'male', 'both'])->default('both');
-            $table->integer('age')->nullable();
+            $table->enum('age', ['0-3', '3-6', '6-9', '9-12', '13-17', '18+'])->nullable();
            
         });
     }

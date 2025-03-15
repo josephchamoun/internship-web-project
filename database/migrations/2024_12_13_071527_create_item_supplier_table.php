@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('item_id')->constrained()->cascadeOnDelete(); // Foreign key to items
             $table->foreignId('supplier_id')->constrained()->cascadeOnDelete(); // Foreign key to suppliers    
             $table->unsignedInteger('quantity');
-            $table->decimal('price', 8, 2)->unsigned();
+            $table->decimal('buyprice', 8, 2)->unsigned();
 
             $table->timestamps();
         });

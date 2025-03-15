@@ -20,18 +20,21 @@ class ContactController extends Controller
     }
 
     public function update(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'phone' => 'required',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'phone' => 'required',
+    ]);
 
-        $contact = Contact::first();
-        $contact->update([
+    Contact::updateOrCreate(
+        ['id' => 1], // Condition to check if a record exists
+        [
             'email' => $request->email,
             'phone' => $request->phone,
-        ]);
+        ]
+    );
 
-        return redirect()->route('contact')->with('success', 'Contact information updated successfully.');
-    }
+    return redirect()->route('contact')->with('success', 'Contact information saved successfully.');
+}
+
 }

@@ -87,6 +87,7 @@ class ItemController extends Controller
         'price' => $request->price,
         'category_id' => $request->category,
         'gender' => $request->gender,
+        'quantity'=> 0,
         'age' => $request->age,
         'image_url' => $imagePath,
     ]);
@@ -110,7 +111,7 @@ class ItemController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'quantity' => 'required|integer',
+            'quantity' => 'required|numeric',
         ]);
 
         $item = Item::findOrFail($id);

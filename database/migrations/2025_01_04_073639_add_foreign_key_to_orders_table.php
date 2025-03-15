@@ -12,16 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            // Only add the 'user_id' column if it does not already exist
+            if (!Schema::hasColumn('orders', 'user_id')) {
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            }
         });
     }
     
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
+            // Drop foreign key constraint and column
             $table->dropForeign(['user_id']);
             $table->dropColumn('user_id');
         });
     }
-    
 };

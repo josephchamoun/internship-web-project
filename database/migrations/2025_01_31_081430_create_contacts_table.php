@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('email');
             $table->string('phone');
-            $table->string('instagram');
-            $table->string('facebook');
+            $table->string('instagram')->nullable();
+            $table->string('facebook')->nullable();
             $table->timestamps();
         });
     }

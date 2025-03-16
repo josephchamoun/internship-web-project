@@ -6,6 +6,11 @@
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
             {{ __('Epic Toy Store') }}
         </h2>
+        @if (session('token'))
+            <script>
+                localStorage.setItem('token', '{{ session('token') }}');
+            </script>
+        @endif
 
         <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 w-full bg-gradient-to-r from-blue-300 to-pink-300">
             <!-- Gender Filter -->

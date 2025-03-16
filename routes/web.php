@@ -18,6 +18,13 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ForgetPassword;
 use App\Http\Controllers\ForgetPassController;
 use App\Http\Controllers\PasswordResetLinkController;
+use Laravel\Socialite\Facades\Socialite;
+
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+
 
 
 Route::middleware('auth:sanctum')->get('/contact', [ContactController::class, 'show'])->name('contact.show');
@@ -183,3 +190,40 @@ Route::put('/reset-password', [ForgetPassController::class, 'resetPassword'])->n
 
 
 
+//Login with Google
+
+Route::get('/auth/google', function () {
+    return Socialite::driver('google')->redirect();
+})->name('google.login');
+
+Route::get('/auth/google/callback', function (Request $request) {
+    try {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        if (!$googleUser || !$googleUser->getEmail()) {
+            return response()->json(['error' => 'Google authentication failed'], 401);
+        }
+
+        $user = User::updateOrCreate([
+            'email' => $googleUser->getEmail(),
+        ], [
+            'name' => $googleUser->getName(),
+            'google_id' => $googleUser->getId(),
+            'password' => bcrypt(uniqid()),
+        ]);
+
+        Auth::login($user);
+
+        // Generate token
+        $token = $user->createToken('GoogleLoginToken')->plainTextToken;
+
+        // Debugging: Log the token and user information
+        \Log::info('User logged in with Google:', ['user' => $user, 'token' => $token]);
+
+        // Redirect to dashboard with token
+        return redirect()->route('dashboard')->with('token', $token);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});

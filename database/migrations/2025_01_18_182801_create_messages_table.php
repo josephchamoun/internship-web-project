@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id(); // Primary key
             $table->foreignId('sender_id')->constrained('users')->onDelete('cascade'); // Sender (foreign key to users table)
-            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade'); // Receiver (foreign key to users table)
+            $table->foreignId('receiver_id')->nullable()->constrained('users')->onDelete('cascade'); // Receiver (foreign key to users table)
             $table->text('message'); // Message content
             $table->timestamps(); // Created at and updated at
         });

@@ -103,7 +103,9 @@
             const response = await fetch(`/api/dashboard?page=${page}&search=${query}&age=${age}&gender=${gender}&category=${category}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token') // Include token for authenticated requests
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'), // Include token for authenticated requests
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                 }
             });
 

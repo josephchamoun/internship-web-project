@@ -52,7 +52,7 @@ class ItemSupplierController extends Controller
         'itemname' => 'required|string|max:255',
         'suppliername' => 'required|string|max:255',
         'buyprice' => 'required|numeric',
-        'quantity' => 'required|integer|min:1',
+        'quantity' => 'required|numeric|min:1',
     ]);
 
     return DB::transaction(function () use ($request) {

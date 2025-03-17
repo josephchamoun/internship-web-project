@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\Rule;
+
+
 
 class CategoryController extends Controller
 {
@@ -44,9 +47,20 @@ class CategoryController extends Controller
 
 public function update(Request $request, $id)
 {
-    $request->validate([
-        'name' => 'required|string|max:255',
+    // Create a validator instance
+    $validator = Validator::make($request->all(), [
+        'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('categories')->ignore($id),
+        ],
     ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
 
     $category = Category::findOrFail($id);
     $category->update($request->all());
@@ -57,7 +71,6 @@ public function update(Request $request, $id)
 
     return response()->json(['message' => 'Category updated successfully', 'category' => $category], 200);
 }
-
 
 
   

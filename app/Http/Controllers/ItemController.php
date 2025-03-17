@@ -105,14 +105,22 @@ class ItemController extends Controller
         return view('items.edititem', compact('item'));
     }
 
+    
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
+        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:items,name,' . $id . '|string',
             'description' => 'required|string|max:255',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422); 
+        }
 
         $item = Item::findOrFail($id);
         $item->update($request->all());

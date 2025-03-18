@@ -90,52 +90,83 @@ class ItemSupplierController extends Controller
         return view('items.editsupply', compact('itemsupplier'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'itemname' => 'required|string|max:255',
-            'suppliername' => 'required|string|max:255',
-            'buyprice' => 'required|numeric|min:1',
-            'quantity' => 'required|numeric|min:1',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-    
-        $itemsupplier = ItemSupplier::findOrFail($id);
-    
-        // Fetch the item and supplier by their names
-        $item = Item::where('name', $request->itemname)->first();
-        $supplier = Supplier::where('name', $request->suppliername)->first();
-    
-        if (!$item) {
-            return response()->json(['errors' => ['itemname' => ['Item not found']]], 404);
-        }
-    
-        if (!$supplier) {
-            return response()->json(['errors' => ['suppliername' => ['Supplier not found']]], 404);
-        }
-    
-        $oldquantity = $item->quantity;
-        $quantitytoremove = $itemsupplier->quantity;
-        $newoldquantity = $oldquantity - $quantitytoremove;
-        $quantitytoadd = $request->quantity;
-    
-        $finalquantity = $newoldquantity + $quantitytoadd;
-        $item->quantity = $finalquantity;
-        $item->save();
-        
-        // Update the ItemSupplier record with the item_id and supplier_id
-        $itemsupplier->item_id = $item->id;
-        $itemsupplier->supplier_id = $supplier->id;
-        $itemsupplier->buyprice = $request->buyprice;
-        $itemsupplier->quantity = $request->quantity;
-        $itemsupplier->save();
-    
-        return response()->json(['message' => 'ItemSupplier updated successfully', 'itemsupplier' => $itemsupplier], 200);
+public function update(Request $request, $id)
+{
+    $IsSameItem=true;
+    $validator = Validator::make($request->all(), [
+        'itemname' => 'required|string|max:255',
+        'suppliername' => 'required|string|max:255',
+        'buyprice' => 'required|numeric|min:1',
+        'quantity' => 'required|numeric|min:1',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
     }
 
+    $itemsupplier = ItemSupplier::findOrFail($id);
+    if ($itemsupplier->item->name == $request->itemname) {
+        $IsSameItem=true;
+    } else {
+        $IsSameItem=false;
+    }
+
+
+    // Fetch the old item and supplier by their IDs
+    if(!$IsSameItem){
+    $oldItem = Item::where('id', $itemsupplier->item_id)->first();
+    $supplier = Supplier::where('name', $request->suppliername)->first();
+
+    if (!$oldItem) {
+        return response()->json(['errors' => ['itemname' => ['Old item not found']]], 404);
+    }
+
+    if (!$supplier) {
+        return response()->json(['errors' => ['suppliername' => ['Supplier not found']]], 404);
+    }
+
+    // Fetch the new item by its name
+    $newItem = Item::where('name', $request->itemname)->first();
+
+    if (!$newItem) {
+        return response()->json(['errors' => ['itemname' => ['New item not found']]], 404);
+    }
+
+    // Adjust the quantities
+    $oldItem->quantity -= $itemsupplier->quantity;
+    $oldItem->save();
+
+    $newItem->quantity += $request->quantity;
+    $newItem->save();
+
+    // Update the ItemSupplier record with the new item_id and supplier_id
+    $itemsupplier->item_id = $newItem->id;
+    $itemsupplier->supplier_id = $supplier->id;
+    $itemsupplier->buyprice = $request->buyprice;
+    $itemsupplier->quantity = $request->quantity;
+    $itemsupplier->save();
+
+    return response()->json(['message' => 'ItemSupplier updated successfully', 'itemsupplier' => $itemsupplier], 200);
+}
+else{
+    $supplier = Supplier::where('name', $request->suppliername)->first();
+
+    if (!$supplier) {
+        return response()->json(['errors' => ['suppliername' => ['Supplier not found']]], 404);
+    }
+
+    $oldItem = Item::where('id', $itemsupplier->item_id)->first();
+    $oldItem->quantity = $oldItem->quantity - $itemsupplier->quantity + $request->quantity;
+    $oldItem->save();
+
+    $itemsupplier->supplier_id = $supplier->id;
+    $itemsupplier->buyprice = $request->buyprice;
+    $itemsupplier->quantity = $request->quantity;
+    $itemsupplier->save();
+
+    return response()->json(['message' => 'ItemSupplier updated successfully', 'itemsupplier' => $itemsupplier], 200);
+}
+}
 
     
     public function destroy($id)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -11,32 +12,56 @@ class UserController extends Controller
         
     public function createManager(Request $request)
 {
-    // Validate the input data
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:6',
-    ]);
+    try {
+        // Manually validate and handle validation errors properly
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+            'role'=> 'required|string|in:Manager,Employee'
+        ]);
 
-    // Create the user
-    $user = new User();
-    $user->name = $validated['name'];
-    $user->email = $validated['email'];
-    $user->password = bcrypt($validated['password']);
-    $user->role = $request->input('role', 'Manager'); // Default to 'Manager' if not provided
-    $user->save();
+        // Check if email exists manually (redundant because of `unique:users`)
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json([
+                'success' => false,
+                'errors' => ['email' => ['Email already exists.']]
+            ], 400);
+        }
 
-    // Generate a token (if applicable)
-    $token = $user->createToken('authToken')->plainTextToken; // Direct access to plainTextToken
+        // Create the user
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+            'role' => 'Manager'
+        ]);
 
-    // Return a JSON response
-    return response()->json([
-        'success' => true,
-        'message' => 'Manager created successfully!',
-        'user' => $user,
-        'token' => $token,
-    ], 201);
+        // Generate token (optional)
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Manager created successfully!',
+            'user' => $user,
+            'token' => $token,
+        ], 201);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'errors' => $e->errors(),
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
 }
+
+    
 
     
     

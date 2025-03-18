@@ -92,48 +92,49 @@ class ItemSupplierController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'itemname' => 'required|string|max:255',
             'suppliername' => 'required|string|max:255',
-            'buyprice' => 'required|numeric',
-            'quantity' => 'required|integer|min:1',
+            'buyprice' => 'required|numeric|min:1',
+            'quantity' => 'required|numeric|min:1',
         ]);
-
+    
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    
         $itemsupplier = ItemSupplier::findOrFail($id);
-
+    
         // Fetch the item and supplier by their names
         $item = Item::where('name', $request->itemname)->first();
         $supplier = Supplier::where('name', $request->suppliername)->first();
-
+    
         if (!$item) {
-            return response()->json(['message' => 'Item not found'], 404);
+            return response()->json(['errors' => ['itemname' => ['Item not found']]], 404);
         }
-
+    
         if (!$supplier) {
-            return response()->json(['message' => 'Supplier not found'], 404);
+            return response()->json(['errors' => ['suppliername' => ['Supplier not found']]], 404);
         }
-
-
-        $oldquantity=$item->quantity;
-        $quantitytoremove=$itemsupplier->quantity;
-        $newoldquantity=$oldquantity-$quantitytoremove;
-        $quantitytoadd=$request->quantity;
-
-        $finalquantity=$newoldquantity+$quantitytoadd;
-        $item->quantity=$finalquantity;
+    
+        $oldquantity = $item->quantity;
+        $quantitytoremove = $itemsupplier->quantity;
+        $newoldquantity = $oldquantity - $quantitytoremove;
+        $quantitytoadd = $request->quantity;
+    
+        $finalquantity = $newoldquantity + $quantitytoadd;
+        $item->quantity = $finalquantity;
         $item->save();
         
-
         // Update the ItemSupplier record with the item_id and supplier_id
         $itemsupplier->item_id = $item->id;
         $itemsupplier->supplier_id = $supplier->id;
         $itemsupplier->buyprice = $request->buyprice;
         $itemsupplier->quantity = $request->quantity;
         $itemsupplier->save();
-
+    
         return response()->json(['message' => 'ItemSupplier updated successfully', 'itemsupplier' => $itemsupplier], 200);
     }
-
 
 
     

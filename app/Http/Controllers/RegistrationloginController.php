@@ -6,9 +6,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 
 class RegistrationloginController extends Controller
 {
+    
+
     public function register(Request $request)
     {
         $request->validate([
@@ -16,23 +19,32 @@ class RegistrationloginController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
+    
         // Generate a token for the user
         $token = $user->createToken('authToken')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'User registered successfully',
-            'user' => $user,
-            'token' => $token,
-        ]);
+    
+        // Check if it's an AJAX request (expects JSON)
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User registered successfully',
+                'user' => $user,
+                'token' => $token,
+                'redirect_url' => url('/dashboard'), // Send redirect URL
+            ]);
+        }
+    
+        // If not an AJAX request, redirect normally
+        return redirect('/dashboard');
     }
+    
+
 
     public function login(Request $request)
     {

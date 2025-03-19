@@ -105,131 +105,161 @@
             Create Your Account
         </h1>
 
-        <form id="registerForm" method="POST" action="{{ route('register') }}" class="space-y-6">
-            @csrf
+        <!-- Replace the form tag in your HTML with this -->
+<form id="registerForm" method="POST" action="{{ route('register') }}" class="space-y-6">
+    @csrf
 
-            <!-- Name -->
-            <div>
-                <label for="name" class="text-gray-700 font-medium">Name</label>
-                <input 
-                    id="name" 
-                    class="register-input mt-1" 
-                    type="text" 
-                    name="name" 
-                    value="{{ old('name') }}" 
-                    required 
-                    autofocus 
-                    autocomplete="name" 
-                />
-                @if ($errors->has('name'))
-                    <div class="input-error">{{ $errors->first('name') }}</div>
-                @endif
-            </div>
-
-            <!-- Email Address -->
-            <div>
-                <label for="email" class="text-gray-700 font-medium">Email</label>
-                <input 
-                    id="email" 
-                    class="register-input mt-1" 
-                    type="email" 
-                    name="email" 
-                    value="{{ old('email') }}" 
-                    required 
-                    autocomplete="username" 
-                />
-                @if ($errors->has('email'))
-                    <div class="input-error">{{ $errors->first('email') }}</div>
-                @endif
-            </div>
-
-            <!-- Password -->
-            <div>
-                <label for="password" class="text-gray-700 font-medium">Password</label>
-                <input 
-                    id="password" 
-                    class="register-input mt-1" 
-                    type="password" 
-                    name="password" 
-                    required 
-                    autocomplete="new-password" 
-                />
-                @if ($errors->has('password'))
-                    <div class="input-error">{{ $errors->first('password') }}</div>
-                @endif
-            </div>
-
-            <!-- Confirm Password -->
-            <div>
-                <label for="password_confirmation" class="text-gray-700 font-medium">Confirm Password</label>
-                <input 
-                    id="password_confirmation" 
-                    class="register-input mt-1" 
-                    type="password" 
-                    name="password_confirmation" 
-                    required 
-                    autocomplete="new-password" 
-                />
-                @if ($errors->has('password_confirmation'))
-                    <div class="input-error">{{ $errors->first('password_confirmation') }}</div>
-                @endif
-            </div>
-
-            <div class="flex items-center justify-between mt-6">
-                <a class="login-link" href="{{ route('login') }}">
-                    Already registered?
-                </a>
-
-                <button type="submit" class="register-btn" id="registerButton">
-                    Register
-                </button>
-            </div>
-        </form>
+    <!-- Name -->
+    <div>
+        <label for="name" class="text-gray-700 font-medium">Name</label>
+        <input 
+            id="name" 
+            class="register-input mt-1" 
+            type="text" 
+            name="name" 
+            value="{{ old('name') }}" 
+            required 
+            autofocus 
+            autocomplete="name" 
+        />
+        @if ($errors->has('name'))
+            <div class="input-error">{{ $errors->first('name') }}</div>
+        @endif
     </div>
 
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+    <!-- Email Address -->
+    <div>
+        <label for="email" class="text-gray-700 font-medium">Email</label>
+        <input 
+            id="email" 
+            class="register-input mt-1" 
+            type="email" 
+            name="email" 
+            value="{{ old('email') }}" 
+            required 
+            autocomplete="username" 
+        />
+        @if ($errors->has('email'))
+            <div class="input-error">{{ $errors->first('email') }}</div>
+        @endif
+    </div>
 
-            let formData = new FormData(this);
-            let registerButton = document.getElementById('registerButton');
+    <!-- Password -->
+    <div>
+        <label for="password" class="text-gray-700 font-medium">Password</label>
+        <input 
+            id="password" 
+            class="register-input mt-1" 
+            type="password" 
+            name="password" 
+            required 
+            autocomplete="new-password" 
+        />
+        @if ($errors->has('password'))
+            <div class="input-error">{{ $errors->first('password') }}</div>
+        @endif
+    </div>
+
+    <!-- Confirm Password -->
+    <div>
+        <label for="password_confirmation" class="text-gray-700 font-medium">Confirm Password</label>
+        <input 
+            id="password_confirmation" 
+            class="register-input mt-1" 
+            type="password" 
+            name="password_confirmation" 
+            required 
+            autocomplete="new-password" 
+        />
+        @if ($errors->has('password_confirmation'))
+            <div class="input-error">{{ $errors->first('password_confirmation') }}</div>
+        @endif
+    </div>
+
+    <div class="flex items-center justify-between mt-6">
+        <a class="login-link" href="{{ route('login') }}">
+            Already registered?
+        </a>
+
+        <button type="submit" class="register-btn" id="registerButton">
+            Register
+        </button>
+    </div>
+</form>
+
+<!-- No JavaScript for form submission -->
+    <script>
+    
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const registerForm = document.getElementById('registerForm');
+        
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const registerButton = document.getElementById('registerButton');
+            
+            // Disable button and change text
             registerButton.disabled = true;
             registerButton.innerText = 'Registering...';
-
-            fetch(this.action, {
+            
+            // Clear previous errors
+            document.querySelectorAll('.input-error').forEach(el => el.remove());
+            
+            fetch(registerForm.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                }
+                    'Accept': 'application/json'
+                },
+                redirect: 'follow'
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    if (data.redirect_url) {
-                        window.location.href = data.redirect_url;
-                    }
-                } else {
-                    // Handle validation errors
-                    if (data.errors) {
-                        Object.keys(data.errors).forEach(field => {
-                            let errorElement = document.querySelector(`#${field}-error`);
-                            if (errorElement) {
-                                errorElement.textContent = data.errors[field][0];
-                            }
-                        });
+                if (data.success && data.redirect_url) {
+                    // Manually redirect to the dashboard
+                    window.location.href = data.redirect_url;
+                } else if (data.errors) {
+                    // Display validation errors
+                    for (const field in data.errors) {
+                        const inputField = document.querySelector(`[name="${field}"]`);
+                        if (inputField) {
+                            const errorElement = document.createElement('div');
+                            errorElement.classList.add('input-error');
+                            errorElement.textContent = data.errors[field][0];
+                            inputField.parentNode.appendChild(errorElement);
+                        }
                     }
                 }
             })
             .catch(error => {
-                console.error('Request failed:', error);
+                console.error('Registration failed:', error);
             })
             .finally(() => {
+                // Re-enable button
                 registerButton.disabled = false;
                 registerButton.innerText = 'Register';
             });
         });
-    </script>
+    });
+
+
+function displayErrors(errors) {
+    for (const field in errors) {
+        let inputField = document.querySelector(`[name="${field}"]`);
+        if (inputField) {
+            let errorElement = document.createElement('div');
+            errorElement.classList.add('input-error');
+            errorElement.textContent = errors[field][0];
+            inputField.parentNode.appendChild(errorElement);
+        }
+    }
+}
+</script>
+
+
 </body>
 </html>

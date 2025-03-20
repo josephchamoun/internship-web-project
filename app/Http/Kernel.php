@@ -40,6 +40,7 @@ class Kernel extends HttpKernel
         ],
     
         'api' => [
+            'throttle:150,1',  
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class, // Ensure this is active if using Sanctum
             \Illuminate\Routing\Middleware\ThrottleRequests::class, // Apply rate limiting
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -68,4 +69,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'Manager' => \App\Http\Middleware\CheckIfManager::class,
     ];
+
+
+
+
+
 }

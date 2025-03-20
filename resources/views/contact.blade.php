@@ -81,11 +81,20 @@
     </div>
 
     <script src="https://cdn.tailwindcss.com"></script><!--heda daroure ta ye5od l design-->
-
     <script>
     // Handle form submission via AJAX
     document.getElementById('messageForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent normal form submission
+
+        // Get form values
+        var subject = document.getElementById('subject').value.trim();
+        var message = document.getElementById('message').value.trim();
+
+        // Validate form fields
+        if (!subject || !message) {
+            alert('Please enter both subject and message.');
+            return;
+        }
 
         var formData = new FormData(this);
         formData.append('_token', '{{ csrf_token() }}'); // Add CSRF token if not already included
@@ -107,5 +116,5 @@
             alert('Error occurred while sending the message');
         });
     });
-    </script>
+</script>
 </x-app-layout>

@@ -5,119 +5,100 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Supplier;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Cache;
 
 class SupplierController extends Controller
 {
     public function index(Request $request)
     {
         $searchTerm = $request->query('search');
-    
-        if ($searchTerm) {
-            $suppliers = Supplier::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
-        } else {
-            $suppliers = Supplier::simplePaginate(15);
-        }
-    
-        return response()->json($suppliers);
+        $page = $request->query('page', 1);
+        $cacheKey = $searchTerm ? "suppliers_search_{$searchTerm}_page_{$page}" : "suppliers_page_{$page}";
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($searchTerm) {
+            if ($searchTerm) {
+                return Supplier::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+            }
+            return Supplier::simplePaginate(15);
+        });
     }
-    
+
     public function store(Request $request)
     {
         try {
-            // Validate the request
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:suppliers',
                 'phone' => 'required|string|max:15'
             ]);
 
-            // Check if email exists manually (redundant because of `unique:suppliers`)
-            if (Supplier::where('email', $request->email)->exists()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => ['email' => ['Email already exists.']]
-                ], 400);
-            }
+            $supplier = Cache::rememberForever("supplier_{$validated['email']}", function () use ($validated) {
+                return Supplier::create($validated);
+            });
 
-            // Create the supplier
-            $supplier = Supplier::create($validated);
+            $this->clearSupplierCache($supplier);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Supplier created successfully!',
-                'supplier' => $supplier,
-            ], 201);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'errors' => $e->errors(),
-            ], 422);
+            return response()->json(['success' => true, 'message' => 'Supplier created successfully!', 'supplier' => $supplier], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
     }
 
-
-    
     public function edit($id)
     {
-        $supplier = Supplier::findOrFail($id);
+        $supplier = Cache::remember("supplier_{$id}", now()->addMinutes(10), function () use ($id) {
+            return Supplier::findOrFail($id);
+        });
+
         return view('suppliers.editsupplier', compact('supplier'));
     }
 
     public function update(Request $request, $id)
-{
-    try {
-        // Validate input
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:15',
-            'email' => 'required|email|max:255|unique:suppliers,email,' . $id
-        ]);
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'phone' => 'required|string|max:15',
+                'email' => 'required|email|max:255|unique:suppliers,email,' . $id
+            ]);
 
-        // Additional manual check if email already exists (extra safety)
-        if (Supplier::where('email', $request->email)->where('id', '!=', $id)->exists()) {
-            return response()->json([
-                'success' => false,
-                'errors' => ['email' => ['Email is already in use by another supplier.']]
-            ], 400);
+            $supplier = Supplier::findOrFail($id);
+            $supplier->update($validated);
+            
+            Cache::forget("supplier_{$id}");
+            Cache::forget("supplier_{$supplier->email}");
+            $this->clearSupplierCache($supplier);
+
+            return response()->json(['success' => true, 'message' => 'Supplier updated successfully', 'supplier' => $supplier], 200);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Something went wrong', 'error' => $e->getMessage()], 500);
         }
-
-        // Find supplier
-        $supplier = Supplier::findOrFail($id);
-        $supplier->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Supplier updated successfully',
-            'supplier' => $supplier
-        ], 200);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'errors' => $e->errors(),
-        ], 422);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
 
-    
     public function destroy($id)
     {
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
-    
+        
+        Cache::forget("supplier_{$id}");
+        Cache::forget("supplier_{$supplier->email}");
+        $this->clearSupplierCache($supplier);
+
         return response()->json(['success' => true, 'redirect_url' => route('itemsupplier')]);
     }
-    
+
+    private function clearSupplierCache($supplier)
+    {
+        Cache::forget("suppliers_page_1");
+        Cache::forget("suppliers_search_{$supplier->name}_page_1");
+
+        for ($i = 1; $i <= 10; $i++) {
+            Cache::forget("suppliers_page_{$i}");
+            Cache::forget("suppliers_search_{$supplier->name}_page_{$i}");
+        }
+    }
 }

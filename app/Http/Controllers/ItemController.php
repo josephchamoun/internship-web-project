@@ -61,7 +61,7 @@ class ItemController extends Controller
     $validator = Validator::make($request->all(), [
         'name' => 'required|unique:items,name|string',
         'description' => 'required|string',
-        'price' => 'required|numeric',
+        'price' => 'required|numeric|min:0|max:999999.99',
         'category' => 'required|integer',
         'gender' => 'required|string',
         'age' => 'required|string',
@@ -112,8 +112,8 @@ class ItemController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:items,name,' . $id . '|string',
             'description' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'quantity' => 'required|numeric',
+            'price' => 'required|numeric|min:0|max:999999.99',
+            'quantity' => 'required|numeric|min:0|max:999999.99',
         ]);
 
         if ($validator->fails()) {

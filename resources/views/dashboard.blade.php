@@ -1,4 +1,3 @@
-<!-- filepath: /c:/laragon/www/intershipwebproject/resources/views/dashboard.blade.php -->
 <x-app-layout>
 
 <x-slot name="header">
@@ -59,6 +58,35 @@
     </div>
 </x-slot>
 
+<!-- Toast Notification -->
+<div id="toast-notification" class="fixed right-4 top-20 bg-white rounded-lg shadow-lg max-w-sm w-full transform translate-x-full transition-transform duration-300 z-50 overflow-hidden">
+    <div class="p-4 flex items-start">
+        <div class="flex-shrink-0 bg-green-100 rounded-full p-2">
+            <i class="fas fa-check text-green-500"></i>
+        </div>
+        <div class="ml-3 w-0 flex-1">
+            <p class="font-medium text-gray-900" id="toast-title"></p>
+            <p class="mt-1 text-sm text-gray-500" id="toast-message"></p>
+            <div class="mt-2 flex space-x-3">
+                <button id="view-cart-btn" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    View Cart
+                </button>
+                <button id="dismiss-toast-btn" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Dismiss
+                </button>
+            </div>
+        </div>
+        <div class="ml-4 flex-shrink-0 flex">
+            <button id="close-toast-btn" class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <span class="sr-only">Close</span>
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Progress bar -->
+    <div id="toast-progress" class="h-1 bg-green-500 w-full" style="transition: width 3s linear;"></div>
+</div>
+
 <div class="container mx-auto px-4">
     <!-- Search Bar -->
     <form id="searchForm" class="mb-4 w-full md:w-1/3 ml-auto">
@@ -92,6 +120,42 @@
 
 <script>
     let currentPage = 1; // Track the current page
+    let toastTimeout; // For tracking the toast timeout
+
+    // Function to show toast notification
+    function showToast(title, message, duration = 3000) {
+        const toast = document.getElementById('toast-notification');
+        const toastTitle = document.getElementById('toast-title');
+        const toastMessage = document.getElementById('toast-message');
+        const toastProgress = document.getElementById('toast-progress');
+        
+        // Set content
+        toastTitle.textContent = title;
+        toastMessage.textContent = message;
+        
+        // Show toast
+        toast.classList.remove('translate-x-full');
+        toast.classList.add('translate-x-0');
+        
+        // Reset and start progress bar
+        toastProgress.style.width = '100%';
+        setTimeout(() => {
+            toastProgress.style.width = '0%';
+        }, 50);
+        
+        // Hide toast after duration
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            hideToast();
+        }, duration);
+    }
+    
+    // Function to hide toast notification
+    function hideToast() {
+        const toast = document.getElementById('toast-notification');
+        toast.classList.remove('translate-x-0');
+        toast.classList.add('translate-x-full');
+    }
 
     async function fetchItems(page = 1) {
         const query = document.getElementById('searchInput').value;
@@ -230,7 +294,7 @@
         let quantity = parseInt(quantityInput.value);
 
         if (quantity < 1 || quantity > maxQuantity) {
-            alert("Invalid quantity!");
+            showToast('Error', 'Invalid quantity selected!', 3000);
             return;
         }
 
@@ -238,24 +302,53 @@
 
         let existingItem = cart.find(item => item.id === id);
         if (existingItem) {
-            existingItem.quantity += quantity;
-            if (existingItem.quantity > maxQuantity) {
-                existingItem.quantity = maxQuantity;
+            let newQuantity = existingItem.quantity + quantity;
+            if (newQuantity > maxQuantity) {
+                newQuantity = maxQuantity;
+                showToast('Item Added to Cart', `Added ${name} to cart (max quantity reached)`, 3000);
+            } else {
+                showToast('Item Added to Cart', `Added ${quantity} ${name} to cart (total: ${newQuantity})`, 3000);
             }
+            existingItem.quantity = newQuantity;
         } else {
             cart.push({ id, name, price, quantity });
+            showToast('Item Added to Cart', `Added ${quantity} ${name} to cart`, 3000);
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert(`${name} added to cart!`);
+        
+        // Update cart button if it exists
+        updateCartCount();
+    }
+
+    function updateCartCount() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        
+        // If you have a cart count element, update it here
+        // For example: document.getElementById('cart-count').textContent = totalItems;
     }
 
     function loadCart() {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         console.log("Cart:", cart);
+        updateCartCount();
     }
 
-    document.addEventListener("DOMContentLoaded", loadCart);
+    document.addEventListener("DOMContentLoaded", () => {
+        loadCart();
+        
+        // Set up toast event listeners
+        document.getElementById('close-toast-btn').addEventListener('click', hideToast);
+        document.getElementById('dismiss-toast-btn').addEventListener('click', hideToast);
+        document.getElementById('view-cart-btn').addEventListener('click', () => {
+            // Redirect to cart page or open cart modal
+            // For now, just hide the toast
+            
+           window.location.href = '/cart';
+           hideToast();
+        });
+    });
 
     async function fetchCategories() {
         try {

@@ -102,14 +102,17 @@ class ItemOrderController extends Controller
             // Loop through the existing ItemOrder rows
             foreach ($existingOrderItems as $existingOrderItem) {
                 // Check if the item's ID exists in the request
-                if (!in_array($existingOrderItem->item_id, $requestedItemIds)) {
+                if (!in_array($existingOrderItem->item_id, $requestedItemIds)) {// If the item ID is not in the request
                     // Adjust the item's quantity back in the items table
                     $itemRecord = Item::find($existingOrderItem->item_id);
                     if ($itemRecord) {
                         $itemRecord->quantity += $existingOrderItem->quantity;
                         $itemRecord->save();
                     }
-        
+                    $itemTotal = $existingOrderItem->quantity * $existingOrderItem->item->price;
+
+                    // Update the order's total_amount
+                    $order->total_amount -= $itemTotal;
                     // Delete the ItemOrder row
                     $existingOrderItem->delete();
                 }
@@ -121,6 +124,9 @@ class ItemOrderController extends Controller
                 $orderItem = ItemOrder::where('order_id', $id)
                     ->where('item_id', $item['id'])
                     ->first();
+                    if($orderItem->item->quantity < $item['quantity']){
+                        return response()->json(['message' => 'The quantity of item '.$orderItem->item->name.' is not enough.'], 400);
+                    }
         
                 // If the ItemOrder exists, update the quantity
                 if ($orderItem) {

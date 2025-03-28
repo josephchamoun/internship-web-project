@@ -86,7 +86,7 @@ public function index(Request $request)
         }
 
         // Get authenticated user
-        $user = Auth::user() ?? User::find($request->user_id); // API may send user_id
+        $user = Auth::user() ?? User::find($request->user_id); 
 
         if (!$user) {
             if ($request->wantsJson()) {

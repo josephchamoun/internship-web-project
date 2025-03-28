@@ -149,7 +149,12 @@
         const response = await fetch(form.action, {
             method: 'POST',
             headers: {
+                
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                
+                
             },
             body: formData,
         });

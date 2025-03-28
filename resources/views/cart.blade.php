@@ -35,8 +35,7 @@
               <span class="text-blue-600">Total cost</span>
               <span class="text-pink-600" id="total-cost">$0.00</span>
             </div>
-            <form id="checkout-form" action="{{ url('/api/orders/addorder') }}" method="POST" class="space-y-4">
-              @csrf
+            <form id="checkout-form" method="POST" class="space-y-4">
               <div id="cart-items-inputs"></div> <!-- This will hold hidden inputs dynamically -->
               <input type="hidden" name="total_price" id="total_price" value="0">
               <button type="submit" class="w-full bg-gradient-to-r from-pink-400 to-blue-400 hover:from-pink-500 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg">
@@ -54,13 +53,46 @@
         loadCart();
         updateFormInputs();
 
-        document.getElementById("checkout-form").addEventListener("submit", function (event) {
+        document.getElementById("checkout-form").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             if (cart.length === 0) {
                 alert("Your cart is empty!");
-                event.preventDefault(); // Stop form submission if cart is empty
-            } else {
-                localStorage.removeItem("cart"); // Clear cart after successful checkout
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("total_price", document.getElementById("total_price").value);
+            
+            cart.forEach((item, index) => {
+                formData.append(`cart[${index}][item_id]`, item.id);
+                formData.append(`cart[${index}][quantity]`, item.quantity);
+                formData.append(`cart[${index}][price]`, item.price);
+            });
+
+            let token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+            try {
+                let response = await fetch("/api/orders/addorder", { // Direct API endpoint URL
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}` // Send token instead of CSRF
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                 
+                    localStorage.removeItem("cart"); // Clear cart
+                    window.location.href = "/myorders"; // Redirect user
+                } else {
+                    let errorData = await response.json();
+                    alert(`Error: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Something went wrong!");
             }
         });
     });

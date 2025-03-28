@@ -31,6 +31,8 @@ document.querySelector('#editCategoryForm').addEventListener('submit', async (ev
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Accept': 'application/json',
             },
             body: JSON.stringify(data),
         });

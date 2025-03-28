@@ -65,6 +65,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Authorization': 'Bearer ' + localStorage.getItem('token'),
                         },
                         body: JSON.stringify(data),
                     });

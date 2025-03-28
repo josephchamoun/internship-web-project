@@ -55,6 +55,8 @@
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                        'Accept': 'application/json',
                     },
                     body: formData, // Do NOT set 'Content-Type' header, fetch handles it
                 });

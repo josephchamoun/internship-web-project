@@ -101,6 +101,12 @@
 
         fetch('{{ route("messages.store") }}', {
             method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
             body: formData
         })
         .then(response => response.json())

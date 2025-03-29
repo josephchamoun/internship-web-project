@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Item;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
+
+
 class ItemController extends Controller
 {
 
@@ -102,31 +105,37 @@ class ItemController extends Controller
     public function edit($id)
     {
         $item = Item::findOrFail($id);
-        return view('items.edititem', compact('item'));
+        $categories = Category::all();
+        return view('items.edititem', compact('item', 'categories'));
     }
 
     
-    public function update(Request $request, $id)
-    {
-        
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:items,name,' . $id . '|string',
-            'description' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0|max:999999.99',
-            'quantity' => 'required|numeric|min:0|max:999999.99',
-        ]);
+   
+public function update(Request $request, $id)
+{
+    // Update validation rules to include gender, category_id, and age
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|unique:items,name,' . $id . '|string',
+        'description' => 'required|string|max:255',
+        'price' => 'required|numeric|min:0|max:999999.99',
+        'quantity' => 'required|numeric|min:0|max:999999.99',
+        'gender' => 'required|in:both,male,female',
+        'category_id' => 'required|exists:categories,id',
+        'age' => 'required|in:0-3,3-6,6-9,9-12,13-17,18+',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors()
-            ], 422); 
-        }
-
-        $item = Item::findOrFail($id);
-        $item->update($request->all());
-
-        return response()->json(['message' => 'Item updated successfully', 'item' => $item], 200);
+    if ($validator->fails()) {
+        return response()->json([
+            'errors' => $validator->errors()
+        ], 422); 
     }
+
+    // Find the item and update it with validated data
+    $item = Item::findOrFail($id);
+    $item->update($request->only(['name', 'description', 'price', 'quantity', 'gender', 'category_id', 'age']));
+
+    return response()->json(['message' => 'Item updated successfully', 'item' => $item], 200);
+}
     
     public function destroy($id)
     {

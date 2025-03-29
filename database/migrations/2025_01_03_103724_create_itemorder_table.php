@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('itemorder', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->foreignId('item_id')->constrained('items')->onDelete('cascade');
-            $table->integer('quantity');
-            $table->timestamps();
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade'); 
+            $table->foreignId('item_id')->constrained('items')->onDelete('cascade'); 
+            $table->integer('quantity'); 
+            $table->decimal('price', 10, 2)->nullable(); 
+            $table->timestamps(); 
         });
     }
+    
 
     /**
      * Reverse the migrations.

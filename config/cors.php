@@ -21,6 +21,8 @@ return [
 
     'allowed_origins' => ['*'],
 
+    'allowed_origins' => ['http://localhost:51180', 'http://127.0.0.1:51180'],
+    
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],

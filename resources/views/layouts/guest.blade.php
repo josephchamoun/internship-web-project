@@ -10,33 +10,74 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Styles -->
+        <style>
+            :root {
+                --pink: #FF69B4;
+                --blue: #00BFFF;
+                --soft-pink: #fff0f6;
+                --soft-blue: #f0faff;
+            }
+            
+            .bg-auth {
+                background: linear-gradient(135deg, var(--soft-pink) 0%, var(--soft-blue) 100%);
+            }
+            
+            .auth-card {
+                background: rgba(255,255,255,0.95);
+                border-radius: 20px;
+                border: 2px solid var(--pink);
+                box-shadow: 0 10px 30px rgba(255,105,180,0.15);
+            }
+            
+            .input-field {
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+            
+            .input-field:focus {
+                border-color: var(--pink);
+                box-shadow: 0 0 0 3px rgba(255,105,180,0.2);
+            }
+            
+            .auth-btn {
+                background: var(--pink);
+                color: white;
+                padding: 12px 30px;
+                border-radius: 12px;
+                transition: all 0.3s ease;
+            }
+            
+            .auth-btn:hover {
+                background: #ff1493;
+                transform: translateY(-2px);
+            }
+            
+            .forgot-link {
+                color: var(--blue);
+                transition: color 0.3s ease;
+            }
+            
+            .forgot-link:hover {
+                color: #009ACD;
+            }
+            
+            .checkbox:checked {
+                background-color: var(--pink);
+                border-color: var(--pink);
+            }
+        </style>
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-            <a href="/">
-            <div class="flex justify-center items-center w-[5vw] h-[5vh] mx-auto">
-    <x-application-logo class="fill-current text-gray-500" />
-</div>
-</a>
-
-
-
-
-
-
-
-            </div>
-
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+        <div class="min-h-screen flex items-center justify-center bg-auth">
+            <div class="w-full max-w-md space-y-8 auth-card p-8">
                 {{ $slot }}
             </div>
         </div>
-
-
-        <script src="https://cdn.tailwindcss.com"></script>
     </body>
 </html>

@@ -23,14 +23,15 @@ class CategoryController extends Controller
         // Cache the results for 10 minutes
         $categories = Cache::remember($cacheKey, 600, function () use ($searchTerm) {
             if ($searchTerm) {
-                return Category::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+                return Category::where('name', 'like', '%' . $searchTerm . '%')->get();
             } else {
-                return Category::simplePaginate(16);
+                return Category::all();
             }
         });
     
         return response()->json($categories);
     }
+    
     
 
     public function edit($id)

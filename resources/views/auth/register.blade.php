@@ -144,6 +144,20 @@
         @endif
     </div>
 
+    <div>
+        <label for="address" class="text-gray-700 font-medium">Address</label>
+        <input 
+            id="address" 
+            class="register-input mt-1" 
+            type="address" 
+            name="address" 
+            value="{{ old('address') }}" 
+            required 
+             
+        />
+
+    </div>
+
     <!-- Password -->
     <div>
         <label for="password" class="text-gray-700 font-medium">Password</label>

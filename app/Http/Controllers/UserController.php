@@ -16,7 +16,7 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:6',
-                'role'=> 'required|string|in:Manager,Employee'
+                'role'=> 'required|string|in:Manager,Employee',
             ]);
 
             $user = Cache::rememberForever("user_{$validated['email']}", function () use ($validated) {
@@ -24,7 +24,8 @@ class UserController extends Controller
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'password' => bcrypt($validated['password']),
-                    'role' => $validated['role']
+                    'role' => $validated['role'],
+                    'address' => 'Not Provided',
                 ]);
             });
 

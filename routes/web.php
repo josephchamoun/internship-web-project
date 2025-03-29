@@ -210,6 +210,7 @@ Route::get('/auth/google/callback', function (Request $request) {
             'name' => $googleUser->getName(),
             'google_id' => $googleUser->getId(),
             'password' => bcrypt(uniqid()),
+            'address' => 'Not Provided',
             
         ]);
 

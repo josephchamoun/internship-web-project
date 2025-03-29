@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Shopping Cart</title>
@@ -50,118 +51,161 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-        loadCart();
-        updateFormInputs();
+    loadCart();
+    updateFormInputs();
+});
 
-        document.getElementById("checkout-form").addEventListener("submit", async function (event) {
-            event.preventDefault(); // Prevent default form submission
+let cachedAddress = null; // Cache to store user address
 
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            if (cart.length === 0) {
-                alert("Your cart is empty!");
-                return;
-            }
+async function fetchUserAddress() {
+    if (cachedAddress) return cachedAddress; // Use cached address if available
 
-            let formData = new FormData();
-            formData.append("total_price", document.getElementById("total_price").value);
-            
-            cart.forEach((item, index) => {
-                formData.append(`cart[${index}][item_id]`, item.id);
-                formData.append(`cart[${index}][quantity]`, item.quantity);
-                formData.append(`cart[${index}][price]`, item.price);
-            });
-
-            let token = localStorage.getItem("token"); // Retrieve token from localStorage
-
-            try {
-                let response = await fetch("/api/orders/addorder", { // Direct API endpoint URL
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token}` // Send token instead of CSRF
-                    },
-                    body: formData
-                });
-
-                if (response.ok) {
-                 
-                    localStorage.removeItem("cart"); // Clear cart
-                    window.location.href = "/myorders"; // Redirect user
-                } else {
-                    let errorData = await response.json();
-                    alert(`Error: ${errorData.message}`);
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Something went wrong!");
+    let token = localStorage.getItem("token");
+    try {
+        let response = await fetch("/api/user/address", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
             }
         });
+
+        if (!response.ok) throw new Error("Failed to fetch user address");
+
+        let data = await response.json();
+        cachedAddress = data.address || "Not Provided"; // Cache result
+        return cachedAddress;
+    } catch (error) {
+        console.error("Error fetching user address:", error);
+        return "Not Provided";
+    }
+}
+
+document.getElementById("checkout-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cart.length === 0) {
+        showMessage("Your cart is empty!", "error");
+        return;
+    }
+
+    let userAddress = await fetchUserAddress();
+
+    if (!userAddress || userAddress.trim() === "Not Provided") {
+        showMessage("Error: You must provide an address before checkout!", "error");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("total_price", document.getElementById("total_price").value);
+
+    cart.forEach((item, index) => {
+        formData.append(`cart[${index}][item_id]`, item.id);
+        formData.append(`cart[${index}][quantity]`, item.quantity);
+        formData.append(`cart[${index}][price]`, item.price);
     });
 
-    function loadCart() {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let cartItemsContainer = document.getElementById('cart-items');
-        let cartCount = document.getElementById('cart-count');
-        let summaryCount = document.getElementById('summary-count');
-        let summaryTotalPrice = document.getElementById('summary-total-price');
-        let totalCost = document.getElementById('total-cost');
-        let totalPrice = 0;
-        
-        cartItemsContainer.innerHTML = '';
-        cart.forEach((item, index) => {
-            totalPrice += item.price * item.quantity;
-            cartItemsContainer.innerHTML += `
-              <div class="md:flex items-stretch py-8 border-t-2 border-blue-50">
+    let token = localStorage.getItem("token");
+    let checkoutButton = document.querySelector("#checkout-form button");
+    checkoutButton.disabled = true; // Disable button to prevent multiple clicks
+
+    try {
+        let response = await fetch("/api/orders/addorder", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            localStorage.removeItem("cart"); // Clear cart
+            window.location.href = "/myorders"; // Redirect user
+        } else {
+            let errorData = await response.json();
+            showMessage(`Error: ${errorData.message}`, "error");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        showMessage("Something went wrong!", "error");
+    } finally {
+        checkoutButton.disabled = false; // Re-enable button after response
+    }
+});
+
+function showMessage(message, type) {
+    alert(message); // Replace this with a custom UI message
+}
+
+function loadCart() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let cartItemsContainer = document.getElementById('cart-items');
+    let cartCount = document.getElementById('cart-count');
+    let summaryCount = document.getElementById('summary-count');
+    let summaryTotalPrice = document.getElementById('summary-total-price');
+    let totalCost = document.getElementById('total-cost');
+    let totalPrice = 0;
+    
+    cartItemsContainer.innerHTML = '';
+    cart.forEach((item, index) => {
+        totalPrice += item.price * item.quantity;
+        cartItemsContainer.innerHTML += `
+            <div class="md:flex items-stretch py-8 border-t-2 border-blue-50">
                 <div class="md:pl-6 md:w-8/12 flex flex-col justify-center">
-                  <div class="flex items-center justify-between w-full">
-                    <p class="text-lg font-bold text-blue-800">${item.name}</p>
-                    <input type="number" value="${item.quantity}" min="1" class="border-2 border-pink-300 text-center w-16 text-blue-800 font-bold rounded-md" readonly>
-                  </div>
-                  <p class="text-sm text-pink-600 pt-2">Price: $${item.price.toFixed(2)}</p>
-                  <div class="flex items-center justify-between pt-5">
-                    <button onclick="removeItem(${index})" class="text-sm text-pink-600 hover:text-pink-800 transition-colors">
-                      <i class="fas fa-trash-alt mr-1"></i>Remove
-                    </button>
-                    <p class="text-lg font-bold text-blue-800">$${(item.price * item.quantity).toFixed(2)}</p>
-                  </div>
+                    <div class="flex items-center justify-between w-full">
+                        <p class="text-lg font-bold text-blue-800">${item.name}</p>
+                        <input type="number" value="${item.quantity}" min="1" class="border-2 border-pink-300 text-center w-16 text-blue-800 font-bold rounded-md" readonly>
+                    </div>
+                    <p class="text-sm text-pink-600 pt-2">Price: $${item.price.toFixed(2)}</p>
+                    <div class="flex items-center justify-between pt-5">
+                        <button onclick="removeItem(${index})" class="text-sm text-pink-600 hover:text-pink-800 transition-colors">
+                            <i class="fas fa-trash-alt mr-1"></i>Remove
+                        </button>
+                        <p class="text-lg font-bold text-blue-800">$${(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
                 </div>
-              </div>`;
-        });
-        
-        cartCount.textContent = `${cart.length} Items`;
-        summaryCount.textContent = `${cart.length} Items`;
-        summaryTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
-        totalCost.textContent = `$${totalPrice.toFixed(2)}`;
+            </div>`;
+    });
+    
+    cartCount.textContent = `${cart.length} Items`;
+    summaryCount.textContent = `${cart.length} Items`;
+    summaryTotalPrice.textContent = `$${totalPrice.toFixed(2)}`;
+    totalCost.textContent = `$${totalPrice.toFixed(2)}`;
 
-        updateFormInputs(); // Update form inputs after reloading the cart
-    }
+    updateFormInputs(); // Update form inputs after reloading the cart
+}
 
-    function removeItem(index) {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.splice(index, 1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        loadCart(); // Reload cart display
-        updateFormInputs(); // Update hidden form inputs for checkout
-    }
+function removeItem(index) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCart(); // Reload cart display
+    updateFormInputs(); // Update hidden form inputs for checkout
+}
 
-    function updateFormInputs() {
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const cartItemsInputs = document.getElementById("cart-items-inputs");
-        const totalPriceInput = document.getElementById("total_price");
+function updateFormInputs() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartItemsInputs = document.getElementById("cart-items-inputs");
+    const totalPriceInput = document.getElementById("total_price");
 
-        cartItemsInputs.innerHTML = ""; // Clear previous inputs
-        let total = 0;
+    cartItemsInputs.innerHTML = ""; // Clear previous inputs
+    let total = 0;
 
-        cart.forEach((item, index) => {
-            total += item.price * item.quantity;
-            cartItemsInputs.innerHTML += `
-                <input type="hidden" name="cart[${index}][item_id]" value="${item.id}">
-                <input type="hidden" name="cart[${index}][quantity]" value="${item.quantity}">
-                <input type="hidden" name="cart[${index}][price]" value="${item.price}">
-            `;
-        });
+    cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        cartItemsInputs.innerHTML += `
+            <input type="hidden" name="cart[${index}][item_id]" value="${item.id}">
+            <input type="hidden" name="cart[${index}][quantity]" value="${item.quantity}">
+            <input type="hidden" name="cart[${index}][price]" value="${item.price}">
+        `;
+    });
 
-        totalPriceInput.value = total.toFixed(2); // Update total price
-    }
+    totalPriceInput.value = total.toFixed(2); // Update total price
+}
+
+    
   </script>
 </body>
 </html>

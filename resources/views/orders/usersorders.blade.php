@@ -139,41 +139,46 @@
                 const statusLabel = `<span class="${statusClass} text-xs font-semibold px-2.5 py-0.5 rounded capitalize">${order.status}</span>`;
 
                 const itemCard = `
-                <div class="bg-white shadow rounded-lg overflow-hidden transition-all hover:shadow-md">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <h5 class="font-bold text-lg text-gray-900">#${order.id}</h5>
-                            ${statusLabel}
-                        </div>
-                        <div class="mb-3">
-                            <div class="flex items-center gap-1 text-gray-700">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                <span class="font-medium">${order.user.name}</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-gray-700 mt-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span class="text-sm">${formattedDate}</span>
-                            </div>
-                        </div>
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="bg-blue-50 px-3 py-1 rounded-full">
-                                <span class="text-blue-800 font-semibold">$${parseFloat(order.total_amount).toFixed(2)}</span>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <a href="/userorder/details/${order.id}?status=${order.status}" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
+    <div class="bg-white shadow rounded-lg overflow-hidden transition-all hover:shadow-md">
+        <div class="p-5">
+            <div class="flex justify-between items-start mb-3">
+                <h5 class="font-bold text-lg text-gray-900">#${order.id}</h5>
+                ${statusLabel}
+            </div>
+            <div class="mb-3">
+                <div class="flex items-center gap-1 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="font-medium">${order.user.name}</span>
                 </div>
-                `;
-                
-                itemsContainer.innerHTML += itemCard;
+                <div class="flex items-center gap-1 text-gray-700 mt-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-sm">${formattedDate}</span>
+                </div>
+                <div class="flex items-center gap-1 text-gray-700 mt-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l9 11 9-11-9-11-9 11z" />
+                    </svg>
+                    <span class="text-sm">${order.user.address || 'Address not provided'}</span>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mb-3">
+                <div class="bg-blue-50 px-3 py-1 rounded-full">
+                    <span class="text-blue-800 font-semibold">$${parseFloat(order.total_amount).toFixed(2)}</span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="/userorder/details/${order.id}?status=${order.status}" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                    View Details
+                </a>
+            </div>
+        </div>
+    </div>
+`;
+itemsContainer.innerHTML += itemCard;
             });
 
             // Enhanced pagination

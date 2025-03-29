@@ -146,5 +146,12 @@ Route::prefix('person')->middleware('auth:sanctum')->group(function () {
 });
 
 
+Route::middleware('auth:sanctum')->get('/user/address', function (Request $request) {
+    $user = $request->user(); // Get authenticated user from token
+    return response()->json([
+        'address' => $user->address ?? 'Not Provided'
+    ]);
+});
+
 
 

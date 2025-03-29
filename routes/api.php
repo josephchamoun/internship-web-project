@@ -110,6 +110,8 @@ Route::prefix('orders')->middleware('Manager')->group(function () { //users orde
 });
 
 Route::middleware('auth:sanctum')->get('/categories', [CategoryController::class, 'index']);
+Route::middleware('auth:sanctum')->get('/categories2', [CategoryController::class, 'index2']);
+
 Route::prefix('categories')->middleware('Manager')->group(function () {
     
     Route::middleware('auth:sanctum')->post('/addcategory', [CategoryController::class, 'store'])->name('categories.store');

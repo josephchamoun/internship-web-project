@@ -18,6 +18,7 @@ class PersonController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
+            'address' => 'required|string|max:255',
            
         ]);
 
@@ -25,7 +26,7 @@ class PersonController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            
+            'address' => $request->address,
         ]);
 
         return response()->json(['message' => 'Success', 'user' => $user]);

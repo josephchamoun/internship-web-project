@@ -23,7 +23,7 @@ class CheckIfManager
         }
 
         // Redirect or abort if not a manager
-        return redirect('/users')->with('error', 'Unauthorized access.'); // Redirect to users with error
+        return redirect('/login')->with('error', 'Unauthorized access.'); // Redirect to users with error
         // Or use abort(403); // Uncomment to show a 403 Forbidden page
     }
 }

@@ -31,6 +31,22 @@ class CategoryController extends Controller
     
         return response()->json($categories);
     }
+
+
+
+    public function index2(Request $request)
+
+    {
+        $searchTerm = $request->query('search');
+
+        if ($searchTerm) {
+            $categories = Category::where('name', 'like', '%' . $searchTerm . '%')->simplePaginate(20);
+        } else {
+            $categories = Category::simplePaginate(16);
+        }
+
+        return response()->json($categories);
+    }
     
     
 

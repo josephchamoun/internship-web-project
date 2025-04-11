@@ -204,15 +204,26 @@ Route::get('/auth/google/callback', function (Request $request) {
             return response()->json(['error' => 'Google authentication failed'], 401);
         }
 
-        $user = User::updateOrCreate([
-            'email' => $googleUser->getEmail(),
-        ], [
-            'name' => $googleUser->getName(),
-            'google_id' => $googleUser->getId(),
-            'password' => bcrypt(uniqid()),
-            'address' => 'Not Provided',
-            
-        ]);
+        // Check if user already exists
+        $existingUser = User::where('email', $googleUser->getEmail())->first();
+        
+        if ($existingUser) {
+            // Update existing user without changing address
+            $user = User::where('email', $googleUser->getEmail())->update([
+                'name' => $googleUser->getName(),
+                'google_id' => $googleUser->getId(),
+            ]);
+            $user = $existingUser;
+        } else {
+            // Create new user with default address
+            $user = User::create([
+                'email' => $googleUser->getEmail(),
+                'name' => $googleUser->getName(),
+                'google_id' => $googleUser->getId(),
+                'password' => bcrypt(uniqid()),
+                'address' => 'Not Provided',
+            ]);
+        }
 
         Auth::login($user);
 
